@@ -2,46 +2,42 @@ namespace mfmat
 {
 
   template <typename T, std::size_t R, std::size_t C>
-  dense_matrix<T, R, C>::dense_matrix() noexcept
+  dense_matrix<T, R, C>::dense_matrix() noexcept :
+    storage_{{}}
   {
-    storage_.fill({});
   }
 
 
   template <typename T, std::size_t R, std::size_t C>
-  dense_matrix<T, R, C>::dense_matrix(identity_tag) noexcept
+  dense_matrix<T, R, C>::dense_matrix(identity_tag) noexcept :
+    storage_{{}}
   {
     static_assert(R == C, "Identity constructor requires a square matrix");
-    storage_.fill({});
     for (std::size_t i = 0; i < R; ++i)
       storage_[i][i] = 1;
   }
 
 
   template <typename T, std::size_t R, std::size_t C>
-  constexpr dense_matrix<T, R, C>::dense_matrix(matrix_init_list<T> mil) noexcept
+  template <typename T2, std::size_t R2, std::size_t C2>
+  dense_matrix<T, R, C>::dense_matrix(const T2(&mil)[R2][C2]) noexcept
   {
-    assert(mil.size() == R);
-    std::size_t i = 0;
-    for (auto ril : mil)
-    {
-      assert(ril.size() == C);
-      std::size_t j = 0;
-      for (auto c : ril)
-        storage_[i][j++] = c;
-      ++i;
-    }
+    static_assert(R == R2, "Rows count mismatch");
+    static_assert(C == C2, "Columns count mismatch");
+    for (std::size_t i = 0; i < R2; ++i)
+      for (std::size_t j = 0; j < C2; ++j)
+        storage_[i][j] = mil[i][j];
   }
 
 
   template <typename T, std::size_t R, std::size_t C>
-  dense_matrix<T, R, C>::dense_matrix(column_init_list<T> cil) noexcept
+  template <typename T2, std::size_t R2>
+  dense_matrix<T, R, C>::dense_matrix(const T2(&cil)[R2]) noexcept
   {
-    assert(cil.size() == R);
+    static_assert(R == R2, "Vector size mismatch");
     static_assert(C == 1, "Requires a vector");
-    std::size_t i = 0;
-    for (auto c : cil)
-      storage_[i++][0] = c;
+    for (std::size_t i = 0; i < R2; ++i)
+      storage_[i][0] = cil[i];
   }
 
 
@@ -76,6 +72,143 @@ namespace mfmat
   dense_matrix<T, R, C>::get() noexcept
   {
     return std::get<J>(std::get<I>(storage_));
+  }
+
+
+  template <typename T, std::size_t R, std::size_t C>
+  dense_matrix<T, R, C>&
+  dense_matrix<T, R, C>::operator+=(T val) noexcept
+  {
+    for (std::size_t i = 0; i < R; ++i)
+      for (std::size_t j = 0; j < C; ++j)
+        storage_[i][j] += val;
+    return *this;
+  }
+
+
+  template <typename T, std::size_t R, std::size_t C>
+  dense_matrix<T, R, C>&
+  dense_matrix<T, R, C>::operator-=(T val) noexcept
+  {
+    for (std::size_t i = 0; i < R; ++i)
+      for (std::size_t j = 0; j < C; ++j)
+        storage_[i][j] -= val;
+    return *this;
+  }
+
+
+  template <typename T, std::size_t R, std::size_t C>
+  dense_matrix<T, R, C>&
+  dense_matrix<T, R, C>::operator*=(T val) noexcept
+  {
+    for (std::size_t i = 0; i < R; ++i)
+      for (std::size_t j = 0; j < C; ++j)
+        storage_[i][j] *= val;
+    return *this;
+  }
+
+
+  template <typename T, std::size_t R, std::size_t C>
+  dense_matrix<T, R, C>&
+  dense_matrix<T, R, C>::operator/=(T val) noexcept
+  {
+    for (std::size_t i = 0; i < R; ++i)
+      for (std::size_t j = 0; j < C; ++j)
+        storage_[i][j] /= val;
+    return *this;
+  }
+
+
+  template <typename T, std::size_t R, std::size_t C>
+  bool dense_matrix<T, R, C>::operator==
+  (const dense_matrix<T, R, C>& rhs) const noexcept
+  {
+    if constexpr (std::numeric_limits<T>::is_integer)
+    {
+      for (std::size_t i = 0; i < R; ++i)
+        for (std::size_t j = 0; j < C; ++j)
+          if (storage_[i][j] != rhs.storage_[i][j])
+            return false;
+      return true;
+    }
+    else
+    {
+      for (std::size_t i = 0; i < R; ++i)
+        for (std::size_t j = 0; j < C; ++j)
+        {
+          auto lhs_cell = storage_[i][j];
+          auto rhs_cell = rhs.storage_[i][j];
+          if (std::abs(lhs_cell - rhs_cell) >
+              // scale machine epsilon to values magnitude (precision of 1 ULP)
+              std::numeric_limits<T>::epsilon() * std::abs(lhs_cell + rhs_cell))
+            return false;
+        }
+      return true;
+    }
+  }
+
+
+  template <typename T, std::size_t R, std::size_t C>
+  bool dense_matrix<T, R, C>::operator!=
+  (const dense_matrix<T, R, C>& rhs) const noexcept
+  {
+    return !operator==(rhs);
+  }
+
+
+  template <typename T, std::size_t R, std::size_t C>
+  dense_matrix<T, R, C>
+  operator+(const dense_matrix<T, R, C>& lhs, T rhs) noexcept
+  {
+    auto res = lhs;
+    res += rhs;
+    return res;
+  }
+
+
+  template <typename T, std::size_t R, std::size_t C>
+  dense_matrix<T, R, C>
+  operator+(T lhs, const dense_matrix<T, R, C>& rhs) noexcept
+  {
+    return rhs + lhs;
+  }
+
+
+  template <typename T, std::size_t R, std::size_t C>
+  dense_matrix<T, R, C>
+  operator-(const dense_matrix<T, R, C>& lhs, T rhs) noexcept
+  {
+    auto res = lhs;
+    res -= rhs;
+    return res;
+  }
+
+
+  template <typename T, std::size_t R, std::size_t C>
+  dense_matrix<T, R, C>
+  operator*(const dense_matrix<T, R, C>& lhs, T rhs) noexcept
+  {
+    auto res = lhs;
+    res *= rhs;
+    return res;
+  }
+
+
+  template <typename T, std::size_t R, std::size_t C>
+  dense_matrix<T, R, C>
+  operator*(T lhs, const dense_matrix<T, R, C>& rhs) noexcept
+  {
+    return rhs * lhs;
+  }
+
+
+  template <typename T, std::size_t R, std::size_t C>
+  dense_matrix<T, R, C>
+  operator/(const dense_matrix<T, R, C>& lhs, T rhs) noexcept
+  {
+    auto res = lhs;
+    res /= rhs;
+    return res;
   }
 
 } // !namespace mfmat

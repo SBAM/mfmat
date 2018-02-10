@@ -16,4 +16,7 @@ macro(build_and_run_test source_file)
   set_tests_properties(${test_name} PROPERTIES TIMEOUT 30)
 endmacro()
 
+build_and_run_test(compare_ops.cpp)
 build_and_run_test(construction.cpp)
+build_and_run_test(getters.cpp)
+build_and_run_test(scalar_ops.cpp)

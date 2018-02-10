@@ -28,15 +28,14 @@ namespace mfmat
   public:
     /// @brief Fills matrix with zeroes
     dense_matrix() noexcept;
-
     /// @brief Constructs an identity matrix
     dense_matrix(identity_tag) noexcept;
-
     /// @brief Constructor based on full matrix initialization list
-    constexpr dense_matrix(matrix_init_list<T> mil) noexcept;
-
+    template <typename T2, std::size_t R2, std::size_t C2>
+    dense_matrix(const T2(&cil)[R2][C2]) noexcept;
     /// @brief Constructor based on single column initialization list
-    dense_matrix(column_init_list<T> cil) noexcept;
+    template <typename T2, std::size_t R2>
+    dense_matrix(const T2(&cil)[R2]) noexcept;
 
     dense_matrix(const dense_matrix&) = default;
     dense_matrix(dense_matrix&&) = default;
@@ -45,21 +44,63 @@ namespace mfmat
 
     /// @brief constant runtime getter using indices
     constexpr const T& operator[](indices idx) const noexcept;
-
     /// @brief constant compile time getter
     template <std::size_t I, std::size_t J>
     constexpr const T& get() const noexcept;
-
     /// @brief runtime getter using indices
     constexpr T& operator[](indices idx) noexcept;
-
     /// @brief compile time getter
     template <std::size_t I, std::size_t J>
     constexpr T& get() noexcept;
 
+    /// @brief adds scalar and stores result
+    dense_matrix& operator+=(T val) noexcept;
+    /// @brief substracts scalar and stores result
+    dense_matrix& operator-=(T val) noexcept;
+    /// @brief multiplies by scalar and stores result
+    dense_matrix& operator*=(T val) noexcept;
+    /// @brief divides by scalar and stores result
+    dense_matrix& operator/=(T val) noexcept;
+
+    /// @return true if both matrices are equal
+    bool operator==(const dense_matrix& rhs) const noexcept;
+    /// @return true if both matrices are different
+    bool operator!=(const dense_matrix& rhs) const noexcept;
+
   private:
     storage_t storage_; ///< internal storage
   };
+
+
+  /// @brief external addition operator
+  template <typename T, std::size_t R, std::size_t C>
+  dense_matrix<T, R, C>
+  operator+(const dense_matrix<T, R, C>& lhs, T rhs) noexcept;
+
+  /// @brief external addition operator, commutative
+  template <typename T, std::size_t R, std::size_t C>
+  dense_matrix<T, R, C>
+  operator+(T lhs, const dense_matrix<T, R, C>& rhs) noexcept;
+
+  /// @brief external substraction operator
+  template <typename T, std::size_t R, std::size_t C>
+  dense_matrix<T, R, C>
+  operator-(const dense_matrix<T, R, C>& lhs, T rhs) noexcept;
+
+    /// @brief external multiply operator
+  template <typename T, std::size_t R, std::size_t C>
+  dense_matrix<T, R, C>
+  operator*(const dense_matrix<T, R, C>& lhs, T rhs) noexcept;
+
+  /// @brief external multiply operator, commutative
+  template <typename T, std::size_t R, std::size_t C>
+  dense_matrix<T, R, C>
+  operator+(T lhs, const dense_matrix<T, R, C>& rhs) noexcept;
+
+  /// @brief external divide operator
+  template <typename T, std::size_t R, std::size_t C>
+  dense_matrix<T, R, C>
+  operator/(const dense_matrix<T, R, C>& lhs, T rhs) noexcept;
 
 } // !namespace mfmat
 
