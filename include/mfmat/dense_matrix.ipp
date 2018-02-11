@@ -31,17 +31,6 @@ namespace mfmat
 
 
   template <typename T, std::size_t R, std::size_t C>
-  template <typename T2, std::size_t R2>
-  dense_matrix<T, R, C>::dense_matrix(const T2(&cil)[R2]) noexcept
-  {
-    static_assert(R == R2, "Vector size mismatch");
-    static_assert(C == 1, "Requires a vector");
-    for (std::size_t i = 0; i < R2; ++i)
-      storage_[i][0] = cil[i];
-  }
-
-
-  template <typename T, std::size_t R, std::size_t C>
   constexpr const T&
   dense_matrix<T, R, C>::operator[](indices idx) const noexcept
   {
@@ -116,6 +105,44 @@ namespace mfmat
       for (std::size_t j = 0; j < C; ++j)
         storage_[i][j] /= val;
     return *this;
+  }
+
+
+  template <typename T, std::size_t R, std::size_t C>
+  dense_matrix<T, R, C>&
+  dense_matrix<T, R, C>::operator+=(const dense_matrix<T, R, C>& rhs) noexcept
+  {
+    for (std::size_t i = 0; i < R; ++i)
+      for (std::size_t j = 0; j < C; ++j)
+        storage_[i][j] += rhs.storage_[i][j];
+    return *this;
+  }
+
+
+  template <typename T, std::size_t R, std::size_t C>
+  dense_matrix<T, R, C>&
+  dense_matrix<T, R, C>::operator-=(const dense_matrix<T, R, C>& rhs) noexcept
+  {
+    for (std::size_t i = 0; i < R; ++i)
+      for (std::size_t j = 0; j < C; ++j)
+        storage_[i][j] -= rhs.storage_[i][j];
+    return *this;
+  }
+
+
+  template <typename T, std::size_t R, std::size_t C>
+  template <typename T2, std::size_t R2, std::size_t C2>
+  auto dense_matrix<T, R, C>::operator*
+  (const dense_matrix<T2, R2, C2>& rhs) const noexcept
+  {
+    static_assert(C == R2, "Incompatible matrices, cannot multiply");
+    using RES_T = decltype(T{} * T2{});
+    auto res = dense_matrix<RES_T, R, C2>();
+    for (std::size_t i = 0; i < R; ++i)
+      for (std::size_t j = 0; j < C2; ++j)
+        for (std::size_t k = 0; k < C; ++k)
+          res.storage_[i][j] += storage_[i][k] * rhs.storage_[k][j];
+    return res;
   }
 
 
@@ -208,6 +235,28 @@ namespace mfmat
   {
     auto res = lhs;
     res /= rhs;
+    return res;
+  }
+
+
+  template <typename T, std::size_t R, std::size_t C>
+  dense_matrix<T, R, C>
+  operator+(const dense_matrix<T, R, C>& lhs,
+            const dense_matrix<T, R, C>& rhs) noexcept
+  {
+    auto res = lhs;
+    res += rhs;
+    return res;
+  }
+
+
+  template <typename T, std::size_t R, std::size_t C>
+  dense_matrix<T, R, C>
+  operator-(const dense_matrix<T, R, C>& lhs,
+            const dense_matrix<T, R, C>& rhs) noexcept
+  {
+    auto res = lhs;
+    res -= rhs;
     return res;
   }
 

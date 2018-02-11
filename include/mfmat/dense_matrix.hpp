@@ -18,6 +18,8 @@ namespace mfmat
   class dense_matrix
   {
   public:
+    template<typename, std::size_t, std::size_t>
+    friend class dense_matrix;
     static constexpr std::size_t row_count = R; ///< row count accessor
     static constexpr std::size_t col_count = C; ///< column count accessor
     /// @typedef cell_t shorthand to cell's type
@@ -33,9 +35,6 @@ namespace mfmat
     /// @brief Constructor based on full matrix initialization list
     template <typename T2, std::size_t R2, std::size_t C2>
     dense_matrix(const T2(&cil)[R2][C2]) noexcept;
-    /// @brief Constructor based on single column initialization list
-    template <typename T2, std::size_t R2>
-    dense_matrix(const T2(&cil)[R2]) noexcept;
 
     dense_matrix(const dense_matrix&) = default;
     dense_matrix(dense_matrix&&) = default;
@@ -61,6 +60,15 @@ namespace mfmat
     dense_matrix& operator*=(T val) noexcept;
     /// @brief divides by scalar and stores result
     dense_matrix& operator/=(T val) noexcept;
+
+    /// @brief adds matrix and stores result
+    dense_matrix& operator+=(const dense_matrix& rhs) noexcept;
+    /// @brief substracts matrix and stores result
+    dense_matrix& operator-=(const dense_matrix& rhs) noexcept;
+
+    /// @brief multiplies matrices
+    template <typename T2, std::size_t R2, std::size_t C2>
+    auto operator*(const dense_matrix<T2, R2, C2>& rhs) const noexcept;
 
     /// @return true if both matrices are equal
     bool operator==(const dense_matrix& rhs) const noexcept;
@@ -101,6 +109,18 @@ namespace mfmat
   template <typename T, std::size_t R, std::size_t C>
   dense_matrix<T, R, C>
   operator/(const dense_matrix<T, R, C>& lhs, T rhs) noexcept;
+
+    /// @brief external addition operator
+  template <typename T, std::size_t R, std::size_t C>
+  dense_matrix<T, R, C>
+  operator+(const dense_matrix<T, R, C>& lhs,
+            const dense_matrix<T, R, C>& rhs) noexcept;
+
+  /// @brief external substraction operator
+  template <typename T, std::size_t R, std::size_t C>
+  dense_matrix<T, R, C>
+  operator-(const dense_matrix<T, R, C>& lhs,
+            const dense_matrix<T, R, C>& rhs) noexcept;
 
 } // !namespace mfmat
 

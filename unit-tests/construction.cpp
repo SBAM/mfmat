@@ -55,18 +55,6 @@ BOOST_AUTO_TEST_CASE(matrix_initializer_list_constructor)
 }
 
 
-BOOST_AUTO_TEST_CASE(vector_initializer_list_constructor)
-{
-  auto mat = mfmat::dense_matrix<std::int16_t, 7, 1>({ 0, 1, 2, 3, 4, 5, 6 });
-  decltype(mat)::cell_t current = 0;
-  for (std::size_t i = 0; i < mat.row_count; ++i)
-  {
-    auto cell = mat[{i, 0}];
-    BOOST_CHECK(current++ == cell);
-  }
-}
-
-
 BOOST_AUTO_TEST_CASE(copy_constructor)
 {
   auto mat = mfmat::dense_matrix<std::int16_t, 3, 4>
