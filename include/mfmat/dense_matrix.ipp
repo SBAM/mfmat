@@ -1,6 +1,10 @@
 namespace mfmat
 {
 
+  /**
+   * @defgroup MemberMethods Member methods implementation
+   * @{
+   */
   template <typename T, std::size_t R, std::size_t C>
   dense_matrix<T, R, C>::dense_matrix() noexcept :
     storage_{{}}
@@ -150,28 +154,11 @@ namespace mfmat
   bool dense_matrix<T, R, C>::operator==
   (const dense_matrix<T, R, C>& rhs) const noexcept
   {
-    if constexpr (std::numeric_limits<T>::is_integer)
-    {
-      for (std::size_t i = 0; i < R; ++i)
-        for (std::size_t j = 0; j < C; ++j)
-          if (storage_[i][j] != rhs.storage_[i][j])
-            return false;
-      return true;
-    }
-    else
-    {
-      for (std::size_t i = 0; i < R; ++i)
-        for (std::size_t j = 0; j < C; ++j)
-        {
-          auto lhs_cell = storage_[i][j];
-          auto rhs_cell = rhs.storage_[i][j];
-          if (std::abs(lhs_cell - rhs_cell) >
-              // scale machine epsilon to values magnitude (precision of 1 ULP)
-              std::numeric_limits<T>::epsilon() * std::abs(lhs_cell + rhs_cell))
-            return false;
-        }
-      return true;
-    }
+    for (std::size_t i = 0; i < R; ++i)
+      for (std::size_t j = 0; j < C; ++j)
+        if (!are_equal(storage_[i][j],rhs.storage_[i][j]))
+          return false;
+    return true;
   }
 
 
@@ -183,6 +170,53 @@ namespace mfmat
   }
 
 
+  template <typename T, std::size_t R, std::size_t C>
+  constexpr T dense_matrix<T, R, C>::rec_det() const noexcept
+  {
+    static_assert(R == C, "Determinant only applies to a square matrix");
+    static_assert(R > 1, "Determinant requires at least a 2x2 matrix");
+    if constexpr (R == 2)
+      return get<0, 0>() * get<1, 1>() - get<0, 1>() * get<1, 0>();
+    else
+    {
+      // extracts sub matrix excluding first row and excluding specified column
+      auto sub = [this](std::size_t excluded_column)
+        {
+          auto res = dense_matrix<T, R - 1, C - 1>();
+          for (std::size_t i = 1; i < R; ++i)
+            for (std::size_t j = 0; j < C; ++j)
+              if (j < excluded_column)
+                res.storage_[i - 1][j] = storage_[i][j];
+              else
+                if (j == excluded_column)
+                  continue;
+                else
+                  res.storage_[i - 1][j - 1] = storage_[i][j];
+          return res;
+        };
+      auto res_det = T{};
+      bool sign = true;
+      for (std::size_t j = 0; j < C; ++j)
+      {
+        if (!is_zero(storage_[0][j]))
+        {
+          if (sign)
+            res_det += storage_[0][j] * sub(j).rec_det();
+          else
+            res_det -= storage_[0][j] * sub(j).rec_det();
+        }
+        sign = !sign;
+      }
+      return res_det;
+    }
+  }
+  /// @}
+
+
+  /**
+   * @defgroup ExternalFunctions External functions implementation
+   * @{
+   */
   template <typename T, std::size_t R, std::size_t C>
   dense_matrix<T, R, C>
   operator+(const dense_matrix<T, R, C>& lhs, T rhs) noexcept
@@ -259,5 +293,6 @@ namespace mfmat
     res -= rhs;
     return res;
   }
+  /// @}
 
 } // !namespace mfmat

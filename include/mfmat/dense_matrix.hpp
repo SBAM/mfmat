@@ -75,6 +75,12 @@ namespace mfmat
     /// @return true if both matrices are different
     bool operator!=(const dense_matrix& rhs) const noexcept;
 
+    /**
+     * @return matrix determinant
+     * @warning recursive method, very high complexity
+     */
+    constexpr T rec_det() const noexcept;
+
   private:
     storage_t storage_; ///< internal storage
   };

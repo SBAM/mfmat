@@ -18,6 +18,7 @@ endmacro()
 
 build_and_run_test(compare_ops.cpp)
 build_and_run_test(construction.cpp)
+build_and_run_test(determinant.cpp)
 build_and_run_test(getters.cpp)
 build_and_run_test(matrices_ops.cpp)
 build_and_run_test(scalar_ops.cpp)
