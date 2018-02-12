@@ -171,6 +171,17 @@ namespace mfmat
 
 
   template <typename T, std::size_t R, std::size_t C>
+  auto dense_matrix<T, R, C>::transpose() const noexcept
+  {
+    auto res = dense_matrix<T, C, R>();
+    for (std::size_t i = 0; i < R; ++i)
+      for (std::size_t j = 0; j < C; ++j)
+        res.storage_[j][i] = storage_[i][j];
+    return res;
+  }
+
+
+  template <typename T, std::size_t R, std::size_t C>
   constexpr T dense_matrix<T, R, C>::rec_det() const noexcept
   {
     static_assert(R == C, "Determinant only applies to a square matrix");

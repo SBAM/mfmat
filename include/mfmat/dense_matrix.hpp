@@ -75,6 +75,9 @@ namespace mfmat
     /// @return true if both matrices are different
     bool operator!=(const dense_matrix& rhs) const noexcept;
 
+    /// @brief transpose matrix
+    auto transpose() const noexcept;
+
     /**
      * @return matrix determinant
      * @warning recursive method, very high complexity
