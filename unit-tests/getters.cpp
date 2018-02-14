@@ -35,4 +35,36 @@ BOOST_AUTO_TEST_CASE(compile_time_getter)
   BOOST_CHECK(cell == 1);
 }
 
+
+BOOST_AUTO_TEST_CASE(compile_time_scan_rows_getter)
+{
+  auto mat = mfmat::dense_matrix<std::int64_t, 2, 3>
+    ({
+      { 1, 2, 3 },
+      { 4, 5, 6 }
+     });
+  BOOST_CHECK(mat.scan_r<0>() == 1);
+  BOOST_CHECK(mat.scan_r<1>() == 2);
+  BOOST_CHECK(mat.scan_r<2>() == 3);
+  BOOST_CHECK(mat.scan_r<3>() == 4);
+  BOOST_CHECK(mat.scan_r<4>() == 5);
+  BOOST_CHECK(mat.scan_r<5>() == 6);
+}
+
+
+BOOST_AUTO_TEST_CASE(compile_time_scan_columns_getter)
+{
+  auto mat = mfmat::dense_matrix<std::int64_t, 2, 3>
+    ({
+      { 1, 2, 3 },
+      { 4, 5, 6 }
+     });
+  BOOST_CHECK(mat.scan_c<0>() == 1);
+  BOOST_CHECK(mat.scan_c<1>() == 4);
+  BOOST_CHECK(mat.scan_c<2>() == 2);
+  BOOST_CHECK(mat.scan_c<3>() == 5);
+  BOOST_CHECK(mat.scan_c<4>() == 3);
+  BOOST_CHECK(mat.scan_c<5>() == 6);
+}
+
 BOOST_AUTO_TEST_SUITE_END()

@@ -42,15 +42,27 @@ namespace mfmat
     ~dense_matrix() = default;
 
     /// @brief constant runtime getter using indices
-    constexpr const T& operator[](indices idx) const noexcept;
-    /// @brief constant compile time getter
+    constexpr T operator[](indices idx) const noexcept;
+    /// @brief constant compile time getter (row & column index)
     template <std::size_t I, std::size_t J>
-    constexpr const T& get() const noexcept;
+    constexpr T get() const noexcept;
+    /// @brief constant compile time getter (traverse by rows)
+    template <std::size_t I>
+    constexpr T scan_r() const noexcept;
+    /// @brief constant compile time getter (traverse by columns)
+    template <std::size_t I>
+    constexpr T scan_c() const noexcept;
     /// @brief runtime getter using indices
     constexpr T& operator[](indices idx) noexcept;
-    /// @brief compile time getter
+    /// @brief compile time getter (row & column index)
     template <std::size_t I, std::size_t J>
     constexpr T& get() noexcept;
+    /// @brief compile time getter (traverse by rows)
+    template <std::size_t I>
+    constexpr T& scan_r() noexcept;
+    /// @brief compile time getter (traverse by columns)
+    template <std::size_t I>
+    constexpr T& scan_c() noexcept;
 
     /// @brief adds scalar and stores result
     dense_matrix& operator+=(T val) noexcept;
@@ -135,5 +147,6 @@ namespace mfmat
 } // !namespace mfmat
 
 # include "dense_matrix.ipp"
+# include "dense_matrix_externals.ipp"
 
 #endif // !MFMAT_DENSE_MATRIX_HPP_

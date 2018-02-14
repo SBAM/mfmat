@@ -32,14 +32,21 @@ namespace mfmat
   {
     static_assert(R == R2, "Rows count mismatch");
     static_assert(C == C2, "Columns count mismatch");
-    for (std::size_t i = 0; i < R2; ++i)
-      for (std::size_t j = 0; j < C2; ++j)
-        storage_[i][j] = mil[i][j];
+    constexpr auto getter = [](const T2(&mil)[R2][C2], std::size_t idx)
+      {
+        return mil[idx / C2][idx % C2];
+      };
+    auto cell_copy = [&]<std::size_t... Is>(std::index_sequence<Is...>)
+      {
+        ((this->scan_r<Is>() = getter(mil, Is)), ...);
+      };
+    using ISEQ = std::make_index_sequence<R * C>;
+    cell_copy(ISEQ{});
   }
 
 
   template <typename T, std::size_t R, std::size_t C>
-  constexpr const T&
+  constexpr T
   dense_matrix<T, R, C>::operator[](indices idx) const noexcept
   {
     return storage_[idx.first][idx.second];
@@ -48,10 +55,28 @@ namespace mfmat
 
   template <typename T, std::size_t R, std::size_t C>
   template <std::size_t I, std::size_t J>
-  constexpr const T&
+  constexpr T
   dense_matrix<T, R, C>::get() const noexcept
   {
     return std::get<J>(std::get<I>(storage_));
+  }
+
+
+  template <typename T, std::size_t R, std::size_t C>
+  template <std::size_t I>
+  constexpr T
+  dense_matrix<T, R, C>::scan_r() const noexcept
+  {
+    return std::get<I % C>(std::get<I / C>(storage_));
+  }
+
+
+  template <typename T, std::size_t R, std::size_t C>
+  template <std::size_t I>
+  constexpr T
+  dense_matrix<T, R, C>::scan_c() const noexcept
+  {
+    return std::get<I / R>(std::get<I % R>(storage_));
   }
 
 
@@ -73,12 +98,33 @@ namespace mfmat
 
 
   template <typename T, std::size_t R, std::size_t C>
+  template <std::size_t I>
+  constexpr T&
+  dense_matrix<T, R, C>::scan_r() noexcept
+  {
+    return std::get<I % C>(std::get<I / C>(storage_));
+  }
+
+
+  template <typename T, std::size_t R, std::size_t C>
+  template <std::size_t I>
+  constexpr T&
+  dense_matrix<T, R, C>::scan_c() noexcept
+  {
+    return std::get<I / R>(std::get<I % R>(storage_));
+  }
+
+
+  template <typename T, std::size_t R, std::size_t C>
   dense_matrix<T, R, C>&
   dense_matrix<T, R, C>::operator+=(T val) noexcept
   {
-    for (std::size_t i = 0; i < R; ++i)
-      for (std::size_t j = 0; j < C; ++j)
-        storage_[i][j] += val;
+    auto cell_add = [=]<std::size_t... Is>(std::index_sequence<Is...>)
+      {
+        ((this->scan_r<Is>() += val), ...);
+      };
+    using ISEQ = std::make_index_sequence<R * C>;
+    cell_add(ISEQ{});
     return *this;
   }
 
@@ -87,9 +133,12 @@ namespace mfmat
   dense_matrix<T, R, C>&
   dense_matrix<T, R, C>::operator-=(T val) noexcept
   {
-    for (std::size_t i = 0; i < R; ++i)
-      for (std::size_t j = 0; j < C; ++j)
-        storage_[i][j] -= val;
+    auto cell_sub = [=]<std::size_t... Is>(std::index_sequence<Is...>)
+      {
+        ((this->scan_r<Is>() -= val), ...);
+      };
+    using ISEQ = std::make_index_sequence<R * C>;
+    cell_sub(ISEQ{});
     return *this;
   }
 
@@ -98,9 +147,12 @@ namespace mfmat
   dense_matrix<T, R, C>&
   dense_matrix<T, R, C>::operator*=(T val) noexcept
   {
-    for (std::size_t i = 0; i < R; ++i)
-      for (std::size_t j = 0; j < C; ++j)
-        storage_[i][j] *= val;
+    auto cell_mul = [=]<std::size_t... Is>(std::index_sequence<Is...>)
+      {
+        ((this->scan_r<Is>() *= val), ...);
+      };
+    using ISEQ = std::make_index_sequence<R * C>;
+    cell_mul(ISEQ{});
     return *this;
   }
 
@@ -109,9 +161,12 @@ namespace mfmat
   dense_matrix<T, R, C>&
   dense_matrix<T, R, C>::operator/=(T val) noexcept
   {
-    for (std::size_t i = 0; i < R; ++i)
-      for (std::size_t j = 0; j < C; ++j)
-        storage_[i][j] /= val;
+    auto cell_div = [=]<std::size_t... Is>(std::index_sequence<Is...>)
+      {
+        ((this->scan_r<Is>() /= val), ...);
+      };
+    using ISEQ = std::make_index_sequence<R * C>;
+    cell_div(ISEQ{});
     return *this;
   }
 
@@ -120,9 +175,12 @@ namespace mfmat
   dense_matrix<T, R, C>&
   dense_matrix<T, R, C>::operator+=(const dense_matrix<T, R, C>& rhs) noexcept
   {
-    for (std::size_t i = 0; i < R; ++i)
-      for (std::size_t j = 0; j < C; ++j)
-        storage_[i][j] += rhs.storage_[i][j];
+    auto cell_add = [&]<std::size_t... Is>(std::index_sequence<Is...>)
+      {
+        ((this->scan_r<Is>() += rhs.template scan_r<Is>()), ...);
+      };
+    using ISEQ = std::make_index_sequence<R * C>;
+    cell_add(ISEQ{});
     return *this;
   }
 
@@ -131,9 +189,12 @@ namespace mfmat
   dense_matrix<T, R, C>&
   dense_matrix<T, R, C>::operator-=(const dense_matrix<T, R, C>& rhs) noexcept
   {
-    for (std::size_t i = 0; i < R; ++i)
-      for (std::size_t j = 0; j < C; ++j)
-        storage_[i][j] -= rhs.storage_[i][j];
+    auto cell_sub = [&]<std::size_t... Is>(std::index_sequence<Is...>)
+      {
+        ((this->scan_r<Is>() -= rhs.template scan_r<Is>()), ...);
+      };
+    using ISEQ = std::make_index_sequence<R * C>;
+    cell_sub(ISEQ{});
     return *this;
   }
 
@@ -158,11 +219,13 @@ namespace mfmat
   bool dense_matrix<T, R, C>::operator==
   (const dense_matrix<T, R, C>& rhs) const noexcept
   {
-    for (std::size_t i = 0; i < R; ++i)
-      for (std::size_t j = 0; j < C; ++j)
-        if (!are_equal(storage_[i][j],rhs.storage_[i][j]))
-          return false;
-    return true;
+    auto cell_eq = [&]<std::size_t... Is>(std::index_sequence<Is...>)
+      {
+        return
+          (are_equal(this->scan_r<Is>(), rhs.template scan_r<Is>()) && ...);
+      };
+    using ISEQ = std::make_index_sequence<R * C>;
+    return cell_eq(ISEQ{});
   }
 
 
@@ -178,9 +241,12 @@ namespace mfmat
   auto dense_matrix<T, R, C>::transpose() const noexcept
   {
     auto res = dense_matrix<T, C, R>();
-    for (std::size_t i = 0; i < R; ++i)
-      for (std::size_t j = 0; j < C; ++j)
-        res.storage_[j][i] = storage_[i][j];
+    auto cell_swap_copy = [&]<std::size_t... Is>(std::index_sequence<Is...>)
+      {
+        ((res.template scan_c<Is>() = this->scan_r<Is>()), ...);
+      };
+    using ISEQ = std::make_index_sequence<R * C>;
+    cell_swap_copy(ISEQ{});
     return res;
   }
 
@@ -237,89 +303,6 @@ namespace mfmat
       }
       return res_det;
     }
-  }
-  /// @}
-
-
-  /**
-   * @defgroup ExternalFunctions External functions implementation
-   * @{
-   */
-  template <typename T, std::size_t R, std::size_t C>
-  dense_matrix<T, R, C>
-  operator+(const dense_matrix<T, R, C>& lhs, T rhs) noexcept
-  {
-    auto res = lhs;
-    res += rhs;
-    return res;
-  }
-
-
-  template <typename T, std::size_t R, std::size_t C>
-  dense_matrix<T, R, C>
-  operator+(T lhs, const dense_matrix<T, R, C>& rhs) noexcept
-  {
-    return rhs + lhs;
-  }
-
-
-  template <typename T, std::size_t R, std::size_t C>
-  dense_matrix<T, R, C>
-  operator-(const dense_matrix<T, R, C>& lhs, T rhs) noexcept
-  {
-    auto res = lhs;
-    res -= rhs;
-    return res;
-  }
-
-
-  template <typename T, std::size_t R, std::size_t C>
-  dense_matrix<T, R, C>
-  operator*(const dense_matrix<T, R, C>& lhs, T rhs) noexcept
-  {
-    auto res = lhs;
-    res *= rhs;
-    return res;
-  }
-
-
-  template <typename T, std::size_t R, std::size_t C>
-  dense_matrix<T, R, C>
-  operator*(T lhs, const dense_matrix<T, R, C>& rhs) noexcept
-  {
-    return rhs * lhs;
-  }
-
-
-  template <typename T, std::size_t R, std::size_t C>
-  dense_matrix<T, R, C>
-  operator/(const dense_matrix<T, R, C>& lhs, T rhs) noexcept
-  {
-    auto res = lhs;
-    res /= rhs;
-    return res;
-  }
-
-
-  template <typename T, std::size_t R, std::size_t C>
-  dense_matrix<T, R, C>
-  operator+(const dense_matrix<T, R, C>& lhs,
-            const dense_matrix<T, R, C>& rhs) noexcept
-  {
-    auto res = lhs;
-    res += rhs;
-    return res;
-  }
-
-
-  template <typename T, std::size_t R, std::size_t C>
-  dense_matrix<T, R, C>
-  operator-(const dense_matrix<T, R, C>& lhs,
-            const dense_matrix<T, R, C>& rhs) noexcept
-  {
-    auto res = lhs;
-    res -= rhs;
-    return res;
   }
   /// @}
 
