@@ -17,8 +17,12 @@ namespace mfmat
     storage_{{}}
   {
     static_assert(R == C, "Identity constructor requires a square matrix");
-    for (std::size_t i = 0; i < R; ++i)
-      storage_[i][i] = 1;
+    auto diag_set = [this]<std::size_t... Is>(std::index_sequence<Is...>)
+      {
+        ((get<Is, Is>() = 1), ...);
+      };
+    using ISEQ = std::make_index_sequence<R>;
+    diag_set(ISEQ{});
   }
 
 
@@ -178,6 +182,19 @@ namespace mfmat
       for (std::size_t j = 0; j < C; ++j)
         res.storage_[j][i] = storage_[i][j];
     return res;
+  }
+
+
+  template <typename T, std::size_t R, std::size_t C>
+  constexpr T dense_matrix<T, R, C>::trace() const noexcept
+  {
+    static_assert(R == C, "Trace only applies to a square matrix");
+    auto diag_sum = [this]<std::size_t... Is>(std::index_sequence<Is...>)
+      {
+        return (get<Is, Is>() + ... + T{});
+      };
+    using ISEQ = std::make_index_sequence<R>;
+    return diag_sum(ISEQ{});
   }
 
 
