@@ -55,4 +55,19 @@ BOOST_AUTO_TEST_CASE(rec_det_5x5)
   BOOST_CHECK_CLOSE(res, 17.061, 0.001);
 }
 
+
+BOOST_AUTO_TEST_CASE(rec_det_5x5_2)
+{
+  auto mat = mfmat::dense_matrix<std::int32_t, 5, 5>
+    ({
+      {   2,   3,   5,   7,  11 },
+      {  13,  17,  19,  23,  31 },
+      {  37,  39,  43, - 2, - 3 },
+      { - 5, - 7, -11, -13, -17 },
+      { -19, -23, -31, -37, -39 }
+     });
+  auto res = mat.rec_det();
+  BOOST_CHECK(res == -11700);
+}
+
 BOOST_AUTO_TEST_SUITE_END()

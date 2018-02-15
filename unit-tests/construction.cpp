@@ -37,6 +37,21 @@ BOOST_AUTO_TEST_CASE(identity_constructor)
 }
 
 
+BOOST_AUTO_TEST_CASE(identity_constructor_float)
+{
+  auto mat = mfmat::dense_matrix<float, 8, 8>(mfmat::identity_tag());
+  for (std::size_t i = 0; i < mat.row_count; ++i)
+    for (std::size_t j = 0; j < mat.col_count; ++j)
+    {
+      auto cell = mat[{i, j}];
+      if (i == j)
+        BOOST_CHECK_CLOSE(cell, 1.0, 0.0000001);
+      else
+        BOOST_CHECK_CLOSE(cell, 0.0, 0.0000001);
+    }
+}
+
+
 BOOST_AUTO_TEST_CASE(matrix_initializer_list_constructor)
 {
   auto mat = mfmat::dense_matrix<std::int16_t, 3, 4>

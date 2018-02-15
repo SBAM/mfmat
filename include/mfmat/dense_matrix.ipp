@@ -21,8 +21,7 @@ namespace mfmat
       {
         ((get<Is, Is>() = 1), ...);
       };
-    using ISEQ = std::make_index_sequence<R>;
-    diag_set(ISEQ{});
+    diag_set(std::make_index_sequence<R>{});
   }
 
 
@@ -40,8 +39,7 @@ namespace mfmat
       {
         ((this->scan_r<Is>() = getter(mil, Is)), ...);
       };
-    using ISEQ = std::make_index_sequence<R * C>;
-    cell_copy(ISEQ{});
+    cell_copy(std::make_index_sequence<R * C>{});
   }
 
 
@@ -123,8 +121,7 @@ namespace mfmat
       {
         ((this->scan_r<Is>() += val), ...);
       };
-    using ISEQ = std::make_index_sequence<R * C>;
-    cell_add(ISEQ{});
+    cell_add(std::make_index_sequence<R * C>{});
     return *this;
   }
 
@@ -137,8 +134,7 @@ namespace mfmat
       {
         ((this->scan_r<Is>() -= val), ...);
       };
-    using ISEQ = std::make_index_sequence<R * C>;
-    cell_sub(ISEQ{});
+    cell_sub(std::make_index_sequence<R * C>{});
     return *this;
   }
 
@@ -151,8 +147,7 @@ namespace mfmat
       {
         ((this->scan_r<Is>() *= val), ...);
       };
-    using ISEQ = std::make_index_sequence<R * C>;
-    cell_mul(ISEQ{});
+    cell_mul(std::make_index_sequence<R * C>{});
     return *this;
   }
 
@@ -165,8 +160,7 @@ namespace mfmat
       {
         ((this->scan_r<Is>() /= val), ...);
       };
-    using ISEQ = std::make_index_sequence<R * C>;
-    cell_div(ISEQ{});
+    cell_div(std::make_index_sequence<R * C>{});
     return *this;
   }
 
@@ -179,8 +173,7 @@ namespace mfmat
       {
         ((this->scan_r<Is>() += rhs.template scan_r<Is>()), ...);
       };
-    using ISEQ = std::make_index_sequence<R * C>;
-    cell_add(ISEQ{});
+    cell_add(std::make_index_sequence<R * C>{});
     return *this;
   }
 
@@ -193,8 +186,7 @@ namespace mfmat
       {
         ((this->scan_r<Is>() -= rhs.template scan_r<Is>()), ...);
       };
-    using ISEQ = std::make_index_sequence<R * C>;
-    cell_sub(ISEQ{});
+    cell_sub(std::make_index_sequence<R * C>{});
     return *this;
   }
 
@@ -224,8 +216,7 @@ namespace mfmat
         return
           (are_equal(this->scan_r<Is>(), rhs.template scan_r<Is>()) && ...);
       };
-    using ISEQ = std::make_index_sequence<R * C>;
-    return cell_eq(ISEQ{});
+    return cell_eq(std::make_index_sequence<R * C>{});
   }
 
 
@@ -245,8 +236,7 @@ namespace mfmat
       {
         ((res.template scan_c<Is>() = this->scan_r<Is>()), ...);
       };
-    using ISEQ = std::make_index_sequence<R * C>;
-    cell_swap_copy(ISEQ{});
+    cell_swap_copy(std::make_index_sequence<R * C>{});
     return res;
   }
 
@@ -259,8 +249,7 @@ namespace mfmat
       {
         return (get<Is, Is>() + ... + T{});
       };
-    using ISEQ = std::make_index_sequence<R>;
-    return diag_sum(ISEQ{});
+    return diag_sum(std::make_index_sequence<R>{});
   }
 
 

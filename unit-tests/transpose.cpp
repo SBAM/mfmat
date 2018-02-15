@@ -55,4 +55,23 @@ BOOST_AUTO_TEST_CASE(rec_det_2x4)
   BOOST_CHECK(res == mat_res);
 }
 
+
+BOOST_AUTO_TEST_CASE(rec_det_2x4_double)
+{
+  auto mat = mfmat::dense_matrix<double, 2, 4>
+    ({
+      { 1.1, 2.2, 3.3, 4.4 },
+      { 5.5, 6.6, 7.7, 8.8 }
+     });
+  auto res = mat.transpose();
+  auto mat_res = mfmat::dense_matrix<double, 4, 2>
+    ({
+      { 1.1, 5.5 },
+      { 2.2, 6.6 },
+      { 3.3, 7.7 },
+      { 4.4, 8.8 }
+     });
+  BOOST_CHECK(res == mat_res);
+}
+
 BOOST_AUTO_TEST_SUITE_END()

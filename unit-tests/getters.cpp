@@ -67,4 +67,26 @@ BOOST_AUTO_TEST_CASE(compile_time_scan_columns_getter)
   BOOST_CHECK(mat.scan_c<5>() == 6);
 }
 
+
+BOOST_AUTO_TEST_CASE(compile_time_scan_double_getter)
+{
+  auto mat = mfmat::dense_matrix<double, 2, 3>
+    ({
+      { 1.1, 2.2, 3.3 },
+      { 4.4, 5.5, 6.6 }
+     });
+  BOOST_CHECK_CLOSE(mat.scan_r<0>(), 1.1, 0.0000001);
+  BOOST_CHECK_CLOSE(mat.scan_r<1>(), 2.2, 0.0000001);
+  BOOST_CHECK_CLOSE(mat.scan_r<2>(), 3.3, 0.0000001);
+  BOOST_CHECK_CLOSE(mat.scan_r<3>(), 4.4, 0.0000001);
+  BOOST_CHECK_CLOSE(mat.scan_r<4>(), 5.5, 0.0000001);
+  BOOST_CHECK_CLOSE(mat.scan_r<5>(), 6.6, 0.0000001);
+  BOOST_CHECK_CLOSE(mat.scan_c<0>(), 1.1, 0.0000001);
+  BOOST_CHECK_CLOSE(mat.scan_c<1>(), 4.4, 0.0000001);
+  BOOST_CHECK_CLOSE(mat.scan_c<2>(), 2.2, 0.0000001);
+  BOOST_CHECK_CLOSE(mat.scan_c<3>(), 5.5, 0.0000001);
+  BOOST_CHECK_CLOSE(mat.scan_c<4>(), 3.3, 0.0000001);
+  BOOST_CHECK_CLOSE(mat.scan_c<5>(), 6.6, 0.0000001);
+}
+
 BOOST_AUTO_TEST_SUITE_END()
