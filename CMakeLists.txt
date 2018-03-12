@@ -13,7 +13,7 @@ endif()
 add_definitions(-DBOOST_NO_AUTO_PTR)
 
 # Handles debug/release differences
-set(CMAKE_CXX_FLAGS_DEBUG "-Og")
+set(CMAKE_CXX_FLAGS_DEBUG "-O0")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG")
 
 # Searches for dependencies

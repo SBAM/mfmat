@@ -218,4 +218,28 @@ BOOST_AUTO_TEST_CASE(multiply_double)
   BOOST_CHECK(res == mat3);
 }
 
+
+BOOST_AUTO_TEST_CASE(multiply_outer)
+{
+  auto mat = mfmat::dense_matrix<std::int32_t, 3, 2>
+    ({
+      {  1, 2 },
+      {  3, 4 },
+      {  5, 6 }
+     });
+  auto mat2 = mfmat::dense_matrix<std::int32_t, 2, 3>
+    ({
+      {  1, 3, 5 },
+      {  2, 4, 6 }
+     });
+  auto mat3 = mfmat::dense_matrix<std::int32_t, 3, 3>
+    ({
+      {  5, 11, 17 },
+      { 11, 25, 39 },
+      { 17, 39, 61 }
+     });
+  auto res = mat * mat2;
+  BOOST_CHECK(res == mat3);
+}
+
 BOOST_AUTO_TEST_SUITE_END()
