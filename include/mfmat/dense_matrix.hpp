@@ -144,6 +144,18 @@ namespace mfmat
   operator-(const dense_matrix<T, R, C>& lhs,
             const dense_matrix<T, R, C>& rhs) noexcept;
 
+  /**
+   * @tparam DS dot product specifier
+   * @tparam S1 first matrix row/col index
+   * @tparam S2 second matrix row/col index
+   * @tparam M1 first matrix type
+   * @tparam M2 second matrix type
+   * @return dot product of specified row/col
+   */
+  template <dot_spec DS, std::size_t S1, std::size_t S2,
+            typename M1, typename M2>
+  auto dot(const M1& mat1, const M2& mat2) noexcept;
+
 } // !namespace mfmat
 
 # include "dense_matrix.ipp"

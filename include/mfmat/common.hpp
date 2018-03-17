@@ -25,6 +25,15 @@ namespace mfmat
   template <typename T>
   constexpr bool is_zero(T arg) noexcept;
 
+  /// @brief dot product specifier
+  enum class dot_spec
+  {
+    row_col,
+    row_row,
+    col_row,
+    col_col
+  };
+
 } // !namespace mfmat
 
 # include "common.ipp"
