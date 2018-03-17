@@ -6,8 +6,7 @@ namespace mfmat
    * @{
    */
   template <typename T, std::size_t R, std::size_t C>
-  dense_matrix<T, R, C>
-  operator+(const dense_matrix<T, R, C>& lhs, T rhs) noexcept
+  ct_mat<T, R, C> operator+(const ct_mat<T, R, C>& lhs, T rhs) noexcept
   {
     auto res = lhs;
     res += rhs;
@@ -16,16 +15,14 @@ namespace mfmat
 
 
   template <typename T, std::size_t R, std::size_t C>
-  dense_matrix<T, R, C>
-  operator+(T lhs, const dense_matrix<T, R, C>& rhs) noexcept
+  ct_mat<T, R, C> operator+(T lhs, const ct_mat<T, R, C>& rhs) noexcept
   {
     return rhs + lhs;
   }
 
 
   template <typename T, std::size_t R, std::size_t C>
-  dense_matrix<T, R, C>
-  operator-(const dense_matrix<T, R, C>& lhs, T rhs) noexcept
+  ct_mat<T, R, C> operator-(const ct_mat<T, R, C>& lhs, T rhs) noexcept
   {
     auto res = lhs;
     res -= rhs;
@@ -34,8 +31,7 @@ namespace mfmat
 
 
   template <typename T, std::size_t R, std::size_t C>
-  dense_matrix<T, R, C>
-  operator*(const dense_matrix<T, R, C>& lhs, T rhs) noexcept
+  ct_mat<T, R, C> operator*(const ct_mat<T, R, C>& lhs, T rhs) noexcept
   {
     auto res = lhs;
     res *= rhs;
@@ -44,16 +40,14 @@ namespace mfmat
 
 
   template <typename T, std::size_t R, std::size_t C>
-  dense_matrix<T, R, C>
-  operator*(T lhs, const dense_matrix<T, R, C>& rhs) noexcept
+  ct_mat<T, R, C> operator*(T lhs, const ct_mat<T, R, C>& rhs) noexcept
   {
     return rhs * lhs;
   }
 
 
   template <typename T, std::size_t R, std::size_t C>
-  dense_matrix<T, R, C>
-  operator/(const dense_matrix<T, R, C>& lhs, T rhs) noexcept
+  ct_mat<T, R, C> operator/(const ct_mat<T, R, C>& lhs, T rhs) noexcept
   {
     auto res = lhs;
     res /= rhs;
@@ -62,9 +56,8 @@ namespace mfmat
 
 
   template <typename T, std::size_t R, std::size_t C>
-  dense_matrix<T, R, C>
-  operator+(const dense_matrix<T, R, C>& lhs,
-            const dense_matrix<T, R, C>& rhs) noexcept
+  ct_mat<T, R, C> operator+(const ct_mat<T, R, C>& lhs,
+                            const ct_mat<T, R, C>& rhs) noexcept
   {
     auto res = lhs;
     res += rhs;
@@ -73,9 +66,8 @@ namespace mfmat
 
 
   template <typename T, std::size_t R, std::size_t C>
-  dense_matrix<T, R, C>
-  operator-(const dense_matrix<T, R, C>& lhs,
-            const dense_matrix<T, R, C>& rhs) noexcept
+  ct_mat<T, R, C> operator-(const ct_mat<T, R, C>& lhs,
+                            const ct_mat<T, R, C>& rhs) noexcept
   {
     auto res = lhs;
     res -= rhs;
@@ -137,7 +129,7 @@ namespace mfmat
     static_assert(M1::col_count == M2::row_count,
                   "Incompatible matrices, cannot multiply");
     using RES_T = decltype(typename M1::cell_t{} * typename M2::cell_t{});
-    auto res = dense_matrix<RES_T, M1::row_count, M2::col_count>();
+    auto res = ct_mat<RES_T, M1::row_count, M2::col_count>();
     auto sub_mul = [&]<std::size_t... Is>(std::index_sequence<Is...>)
       {
         ((res.template scan_r<Is>() = dot<dot_spec::row_col,

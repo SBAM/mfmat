@@ -12,7 +12,7 @@ BOOST_AUTO_TEST_SUITE(getters_test_suite)
 
 BOOST_AUTO_TEST_CASE(runtime_getter)
 {
-  auto mat = mfmat::dense_matrix<std::int32_t, 5, 10>();
+  auto mat = mfmat::ct_mat<std::int32_t, 5, 10>();
   for (std::size_t i = 0; i < mat.row_count; ++i)
     for (std::size_t j = 0; j < mat.col_count; ++j)
     {
@@ -24,7 +24,7 @@ BOOST_AUTO_TEST_CASE(runtime_getter)
 
 BOOST_AUTO_TEST_CASE(compile_time_getter)
 {
-  auto mat = mfmat::dense_matrix<std::int64_t, 2, 2>(mfmat::identity_tag());
+  auto mat = mfmat::ct_mat<std::int64_t, 2, 2>(mfmat::identity_tag());
   std::int64_t cell = mat.get<0, 0>();
   BOOST_CHECK(cell == 1);
   cell = mat.get<1, 0>();
@@ -38,7 +38,7 @@ BOOST_AUTO_TEST_CASE(compile_time_getter)
 
 BOOST_AUTO_TEST_CASE(compile_time_scan_rows_getter)
 {
-  auto mat = mfmat::dense_matrix<std::int64_t, 2, 3>
+  auto mat = mfmat::ct_mat<std::int64_t, 2, 3>
     ({
       { 1, 2, 3 },
       { 4, 5, 6 }
@@ -54,7 +54,7 @@ BOOST_AUTO_TEST_CASE(compile_time_scan_rows_getter)
 
 BOOST_AUTO_TEST_CASE(compile_time_scan_columns_getter)
 {
-  auto mat = mfmat::dense_matrix<std::int64_t, 2, 3>
+  auto mat = mfmat::ct_mat<std::int64_t, 2, 3>
     ({
       { 1, 2, 3 },
       { 4, 5, 6 }
@@ -70,7 +70,7 @@ BOOST_AUTO_TEST_CASE(compile_time_scan_columns_getter)
 
 BOOST_AUTO_TEST_CASE(compile_time_scan_double_getter)
 {
-  auto mat = mfmat::dense_matrix<double, 2, 3>
+  auto mat = mfmat::ct_mat<double, 2, 3>
     ({
       { 1.1, 2.2, 3.3 },
       { 4.4, 5.5, 6.6 }

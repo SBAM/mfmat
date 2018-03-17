@@ -12,7 +12,7 @@ BOOST_AUTO_TEST_SUITE(scalar_ops_test_suite)
 
 BOOST_AUTO_TEST_CASE(add_and_store)
 {
-  auto mat = mfmat::dense_matrix<std::int32_t, 2, 3>
+  auto mat = mfmat::ct_mat<std::int32_t, 2, 3>
     ({
       { 1, 1, 1 },
       { 1, 1, 1 }
@@ -29,7 +29,7 @@ BOOST_AUTO_TEST_CASE(add_and_store)
 
 BOOST_AUTO_TEST_CASE(substract_and_store)
 {
-  auto mat = mfmat::dense_matrix<std::int32_t, 2, 3>
+  auto mat = mfmat::ct_mat<std::int32_t, 2, 3>
     ({
       { -1, -1, -1 },
       { -1, -1, -1 }
@@ -46,7 +46,7 @@ BOOST_AUTO_TEST_CASE(substract_and_store)
 
 BOOST_AUTO_TEST_CASE(multiply_and_store)
 {
-  auto mat = mfmat::dense_matrix<std::int32_t, 2, 3>
+  auto mat = mfmat::ct_mat<std::int32_t, 2, 3>
     ({
       { 2, 2, 2 },
       { 2, 2, 2 }
@@ -63,7 +63,7 @@ BOOST_AUTO_TEST_CASE(multiply_and_store)
 
 BOOST_AUTO_TEST_CASE(divide_and_store)
 {
-  auto mat = mfmat::dense_matrix<std::int32_t, 2, 3>
+  auto mat = mfmat::ct_mat<std::int32_t, 2, 3>
     ({
       { 8, 8, 8 },
       { 8, 8, 8 }
@@ -80,7 +80,7 @@ BOOST_AUTO_TEST_CASE(divide_and_store)
 
 BOOST_AUTO_TEST_CASE(add)
 {
-  auto mat = mfmat::dense_matrix<std::int32_t, 2, 3>
+  auto mat = mfmat::ct_mat<std::int32_t, 2, 3>
     ({
       { 1, 1, 1 },
       { 1, 1, 1 }
@@ -100,7 +100,7 @@ BOOST_AUTO_TEST_CASE(add)
 
 BOOST_AUTO_TEST_CASE(add_double)
 {
-  auto mat = mfmat::dense_matrix<double, 2, 3>
+  auto mat = mfmat::ct_mat<double, 2, 3>
     ({
       { 1.1, 1.1, 1.1 },
       { 1.1, 1.1, 1.1 }
@@ -120,7 +120,7 @@ BOOST_AUTO_TEST_CASE(add_double)
 
 BOOST_AUTO_TEST_CASE(substract)
 {
-  auto mat = mfmat::dense_matrix<std::int32_t, 2, 3>
+  auto mat = mfmat::ct_mat<std::int32_t, 2, 3>
     ({
       { 5, 5, 5 },
       { 5, 5, 5 }
@@ -140,7 +140,7 @@ BOOST_AUTO_TEST_CASE(substract)
 
 BOOST_AUTO_TEST_CASE(substract_double)
 {
-  auto mat = mfmat::dense_matrix<double, 2, 3>
+  auto mat = mfmat::ct_mat<double, 2, 3>
     ({
       { 5.5, 5.5, 5.5 },
       { 5.5, 5.5, 5.5 }
@@ -160,7 +160,7 @@ BOOST_AUTO_TEST_CASE(substract_double)
 
 BOOST_AUTO_TEST_CASE(multiply)
 {
-  auto mat = mfmat::dense_matrix<std::int32_t, 2, 3>
+  auto mat = mfmat::ct_mat<std::int32_t, 2, 3>
     ({
       { 2, 2, 2 },
       { 2, 2, 2 }
@@ -180,7 +180,7 @@ BOOST_AUTO_TEST_CASE(multiply)
 
 BOOST_AUTO_TEST_CASE(multiply_double)
 {
-  auto mat = mfmat::dense_matrix<double, 2, 3>
+  auto mat = mfmat::ct_mat<double, 2, 3>
     ({
       { 2.2, 2.2, 2.2 },
       { 2.2, 2.2, 2.2 }
@@ -200,7 +200,7 @@ BOOST_AUTO_TEST_CASE(multiply_double)
 
 BOOST_AUTO_TEST_CASE(divide)
 {
-  auto mat = mfmat::dense_matrix<std::int32_t, 2, 3>
+  auto mat = mfmat::ct_mat<std::int32_t, 2, 3>
     ({
       { 8, 8, 8 },
       { 8, 8, 8 }
@@ -220,7 +220,7 @@ BOOST_AUTO_TEST_CASE(divide)
 
 BOOST_AUTO_TEST_CASE(divide_double)
 {
-  auto mat = mfmat::dense_matrix<double, 2, 3>
+  auto mat = mfmat::ct_mat<double, 2, 3>
     ({
       { 8.8, 8.8, 8.8 },
       { 8.8, 8.8, 8.8 }

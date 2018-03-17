@@ -12,7 +12,7 @@ BOOST_AUTO_TEST_SUITE(construction_test_suite)
 
 BOOST_AUTO_TEST_CASE(default_constructor)
 {
-  auto mat = mfmat::dense_matrix<std::int32_t, 5, 10>();
+  auto mat = mfmat::ct_mat<std::int32_t, 5, 10>();
   for (std::size_t i = 0; i < mat.row_count; ++i)
     for (std::size_t j = 0; j < mat.col_count; ++j)
     {
@@ -24,7 +24,7 @@ BOOST_AUTO_TEST_CASE(default_constructor)
 
 BOOST_AUTO_TEST_CASE(identity_constructor)
 {
-  auto mat = mfmat::dense_matrix<std::int64_t, 8, 8>(mfmat::identity_tag());
+  auto mat = mfmat::ct_mat<std::int64_t, 8, 8>(mfmat::identity_tag());
   for (std::size_t i = 0; i < mat.row_count; ++i)
     for (std::size_t j = 0; j < mat.col_count; ++j)
     {
@@ -39,7 +39,7 @@ BOOST_AUTO_TEST_CASE(identity_constructor)
 
 BOOST_AUTO_TEST_CASE(identity_constructor_float)
 {
-  auto mat = mfmat::dense_matrix<float, 8, 8>(mfmat::identity_tag());
+  auto mat = mfmat::ct_mat<float, 8, 8>(mfmat::identity_tag());
   for (std::size_t i = 0; i < mat.row_count; ++i)
     for (std::size_t j = 0; j < mat.col_count; ++j)
     {
@@ -54,7 +54,7 @@ BOOST_AUTO_TEST_CASE(identity_constructor_float)
 
 BOOST_AUTO_TEST_CASE(matrix_initializer_list_constructor)
 {
-  auto mat = mfmat::dense_matrix<std::int16_t, 3, 4>
+  auto mat = mfmat::ct_mat<std::int16_t, 3, 4>
     ({
       { 0, 1, 2, 3 },
       { 4, 5, 6, 7 },
@@ -72,7 +72,7 @@ BOOST_AUTO_TEST_CASE(matrix_initializer_list_constructor)
 
 BOOST_AUTO_TEST_CASE(copy_constructor)
 {
-  auto mat = mfmat::dense_matrix<std::int16_t, 3, 4>
+  auto mat = mfmat::ct_mat<std::int16_t, 3, 4>
     ({
       { 0, 1, 2, 3 },
       { 4, 5, 6, 7 },
@@ -91,7 +91,7 @@ BOOST_AUTO_TEST_CASE(copy_constructor)
 
 BOOST_AUTO_TEST_CASE(equal_op)
 {
-  auto mat = mfmat::dense_matrix<std::int16_t, 3, 4>
+  auto mat = mfmat::ct_mat<std::int16_t, 3, 4>
     ({
       { 0, 1, 2, 3 },
       { 4, 5, 6, 7 },

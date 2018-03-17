@@ -6,14 +6,14 @@ namespace mfmat
    * @{
    */
   template <typename T, std::size_t R, std::size_t C>
-  dense_matrix<T, R, C>::dense_matrix() noexcept :
+  ct_mat<T, R, C>::ct_mat() noexcept :
     storage_{{}}
   {
   }
 
 
   template <typename T, std::size_t R, std::size_t C>
-  dense_matrix<T, R, C>::dense_matrix(identity_tag) noexcept :
+  ct_mat<T, R, C>::ct_mat(identity_tag) noexcept :
     storage_{{}}
   {
     static_assert(R == C, "Identity constructor requires a square matrix");
@@ -27,7 +27,7 @@ namespace mfmat
 
   template <typename T, std::size_t R, std::size_t C>
   template <typename T2, std::size_t R2, std::size_t C2>
-  dense_matrix<T, R, C>::dense_matrix(const T2(&mil)[R2][C2]) noexcept
+  ct_mat<T, R, C>::ct_mat(const T2(&mil)[R2][C2]) noexcept
   {
     static_assert(R == R2, "Rows count mismatch");
     static_assert(C == C2, "Columns count mismatch");
@@ -44,8 +44,7 @@ namespace mfmat
 
 
   template <typename T, std::size_t R, std::size_t C>
-  constexpr T
-  dense_matrix<T, R, C>::operator[](indices idx) const noexcept
+  constexpr T ct_mat<T, R, C>::operator[](indices idx) const noexcept
   {
     return storage_[idx.first][idx.second];
   }
@@ -53,8 +52,7 @@ namespace mfmat
 
   template <typename T, std::size_t R, std::size_t C>
   template <std::size_t I, std::size_t J>
-  constexpr T
-  dense_matrix<T, R, C>::get() const noexcept
+  constexpr T ct_mat<T, R, C>::get() const noexcept
   {
     return std::get<J>(std::get<I>(storage_));
   }
@@ -62,8 +60,7 @@ namespace mfmat
 
   template <typename T, std::size_t R, std::size_t C>
   template <std::size_t I>
-  constexpr T
-  dense_matrix<T, R, C>::scan_r() const noexcept
+  constexpr T ct_mat<T, R, C>::scan_r() const noexcept
   {
     return std::get<I % C>(std::get<I / C>(storage_));
   }
@@ -71,16 +68,14 @@ namespace mfmat
 
   template <typename T, std::size_t R, std::size_t C>
   template <std::size_t I>
-  constexpr T
-  dense_matrix<T, R, C>::scan_c() const noexcept
+  constexpr T ct_mat<T, R, C>::scan_c() const noexcept
   {
     return std::get<I / R>(std::get<I % R>(storage_));
   }
 
 
   template <typename T, std::size_t R, std::size_t C>
-  constexpr T&
-  dense_matrix<T, R, C>::operator[](indices idx) noexcept
+  constexpr T& ct_mat<T, R, C>::operator[](indices idx) noexcept
   {
     return storage_[idx.first][idx.second];
   }
@@ -88,8 +83,7 @@ namespace mfmat
 
   template <typename T, std::size_t R, std::size_t C>
   template <std::size_t I, std::size_t J>
-  constexpr T&
-  dense_matrix<T, R, C>::get() noexcept
+  constexpr T& ct_mat<T, R, C>::get() noexcept
   {
     return std::get<J>(std::get<I>(storage_));
   }
@@ -97,8 +91,7 @@ namespace mfmat
 
   template <typename T, std::size_t R, std::size_t C>
   template <std::size_t I>
-  constexpr T&
-  dense_matrix<T, R, C>::scan_r() noexcept
+  constexpr T& ct_mat<T, R, C>::scan_r() noexcept
   {
     return std::get<I % C>(std::get<I / C>(storage_));
   }
@@ -106,16 +99,14 @@ namespace mfmat
 
   template <typename T, std::size_t R, std::size_t C>
   template <std::size_t I>
-  constexpr T&
-  dense_matrix<T, R, C>::scan_c() noexcept
+  constexpr T& ct_mat<T, R, C>::scan_c() noexcept
   {
     return std::get<I / R>(std::get<I % R>(storage_));
   }
 
 
   template <typename T, std::size_t R, std::size_t C>
-  dense_matrix<T, R, C>&
-  dense_matrix<T, R, C>::operator+=(T val) noexcept
+  ct_mat<T, R, C>& ct_mat<T, R, C>::operator+=(T val) noexcept
   {
     auto cell_add = [=]<std::size_t... Is>(std::index_sequence<Is...>)
       {
@@ -127,8 +118,7 @@ namespace mfmat
 
 
   template <typename T, std::size_t R, std::size_t C>
-  dense_matrix<T, R, C>&
-  dense_matrix<T, R, C>::operator-=(T val) noexcept
+  ct_mat<T, R, C>& ct_mat<T, R, C>::operator-=(T val) noexcept
   {
     auto cell_sub = [=]<std::size_t... Is>(std::index_sequence<Is...>)
       {
@@ -140,8 +130,7 @@ namespace mfmat
 
 
   template <typename T, std::size_t R, std::size_t C>
-  dense_matrix<T, R, C>&
-  dense_matrix<T, R, C>::operator*=(T val) noexcept
+  ct_mat<T, R, C>& ct_mat<T, R, C>::operator*=(T val) noexcept
   {
     auto cell_mul = [=]<std::size_t... Is>(std::index_sequence<Is...>)
       {
@@ -153,8 +142,7 @@ namespace mfmat
 
 
   template <typename T, std::size_t R, std::size_t C>
-  dense_matrix<T, R, C>&
-  dense_matrix<T, R, C>::operator/=(T val) noexcept
+  ct_mat<T, R, C>& ct_mat<T, R, C>::operator/=(T val) noexcept
   {
     auto cell_div = [=]<std::size_t... Is>(std::index_sequence<Is...>)
       {
@@ -166,8 +154,8 @@ namespace mfmat
 
 
   template <typename T, std::size_t R, std::size_t C>
-  dense_matrix<T, R, C>&
-  dense_matrix<T, R, C>::operator+=(const dense_matrix<T, R, C>& rhs) noexcept
+  ct_mat<T, R, C>&
+  ct_mat<T, R, C>::operator+=(const ct_mat<T, R, C>& rhs) noexcept
   {
     auto cell_add = [&]<std::size_t... Is>(std::index_sequence<Is...>)
       {
@@ -179,8 +167,8 @@ namespace mfmat
 
 
   template <typename T, std::size_t R, std::size_t C>
-  dense_matrix<T, R, C>&
-  dense_matrix<T, R, C>::operator-=(const dense_matrix<T, R, C>& rhs) noexcept
+  ct_mat<T, R, C>&
+  ct_mat<T, R, C>::operator-=(const ct_mat<T, R, C>& rhs) noexcept
   {
     auto cell_sub = [&]<std::size_t... Is>(std::index_sequence<Is...>)
       {
@@ -192,8 +180,7 @@ namespace mfmat
 
 
   template <typename T, std::size_t R, std::size_t C>
-  bool dense_matrix<T, R, C>::operator==
-  (const dense_matrix<T, R, C>& rhs) const noexcept
+  bool ct_mat<T, R, C>::operator==(const ct_mat<T, R, C>& rhs) const noexcept
   {
     auto cell_eq = [&]<std::size_t... Is>(std::index_sequence<Is...>)
       {
@@ -205,17 +192,16 @@ namespace mfmat
 
 
   template <typename T, std::size_t R, std::size_t C>
-  bool dense_matrix<T, R, C>::operator!=
-  (const dense_matrix<T, R, C>& rhs) const noexcept
+  bool ct_mat<T, R, C>::operator!=(const ct_mat<T, R, C>& rhs) const noexcept
   {
     return !operator==(rhs);
   }
 
 
   template <typename T, std::size_t R, std::size_t C>
-  auto dense_matrix<T, R, C>::transpose() const noexcept
+  auto ct_mat<T, R, C>::transpose() const noexcept
   {
-    auto res = dense_matrix<T, C, R>();
+    auto res = ct_mat<T, C, R>();
     auto cell_swap_copy = [&]<std::size_t... Is>(std::index_sequence<Is...>)
       {
         ((res.template scan_c<Is>() = this->scan_r<Is>()), ...);
@@ -226,7 +212,7 @@ namespace mfmat
 
 
   template <typename T, std::size_t R, std::size_t C>
-  constexpr T dense_matrix<T, R, C>::trace() const noexcept
+  constexpr T ct_mat<T, R, C>::trace() const noexcept
   {
     static_assert(R == C, "Trace only applies to a square matrix");
     auto diag_sum = [this]<std::size_t... Is>(std::index_sequence<Is...>)
@@ -238,7 +224,7 @@ namespace mfmat
 
 
   template <typename T, std::size_t R, std::size_t C>
-  constexpr T dense_matrix<T, R, C>::rec_det() const noexcept
+  constexpr T ct_mat<T, R, C>::rec_det() const noexcept
   {
     static_assert(R == C, "Determinant only applies to a square matrix");
     static_assert(R > 1, "Determinant requires at least a 2x2 matrix");
@@ -249,7 +235,7 @@ namespace mfmat
       // extracts sub matrix excluding first row and excluding specified column
       auto sub = [this](std::size_t excluded_column)
         {
-          auto res = dense_matrix<T, R - 1, C - 1>();
+          auto res = ct_mat<T, R - 1, C - 1>();
           for (std::size_t i = 1; i < R; ++i)
             for (std::size_t j = 0; j < C; ++j)
               if (j < excluded_column)
