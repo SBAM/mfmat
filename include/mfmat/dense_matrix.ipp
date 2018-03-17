@@ -192,22 +192,6 @@ namespace mfmat
 
 
   template <typename T, std::size_t R, std::size_t C>
-  template <typename T2, std::size_t R2, std::size_t C2>
-  auto dense_matrix<T, R, C>::operator*
-  (const dense_matrix<T2, R2, C2>& rhs) const noexcept
-  {
-    static_assert(C == R2, "Incompatible matrices, cannot multiply");
-    using RES_T = decltype(T{} * T2{});
-    auto res = dense_matrix<RES_T, R, C2>();
-    for (std::size_t i = 0; i < R; ++i)
-      for (std::size_t j = 0; j < C2; ++j)
-        for (std::size_t k = 0; k < C; ++k)
-          res.storage_[i][j] += storage_[i][k] * rhs.storage_[k][j];
-    return res;
-  }
-
-
-  template <typename T, std::size_t R, std::size_t C>
   bool dense_matrix<T, R, C>::operator==
   (const dense_matrix<T, R, C>& rhs) const noexcept
   {

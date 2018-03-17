@@ -78,10 +78,6 @@ namespace mfmat
     /// @brief substracts matrix and stores result
     dense_matrix& operator-=(const dense_matrix& rhs) noexcept;
 
-    /// @brief multiplies matrices
-    template <typename T2, std::size_t R2, std::size_t C2>
-    auto operator*(const dense_matrix<T2, R2, C2>& rhs) const noexcept;
-
     /// @return true if both matrices are equal
     bool operator==(const dense_matrix& rhs) const noexcept;
     /// @return true if both matrices are different
@@ -155,6 +151,10 @@ namespace mfmat
   template <dot_spec DS, std::size_t S1, std::size_t S2,
             typename M1, typename M2>
   auto dot(const M1& mat1, const M2& mat2) noexcept;
+
+  /// @brief multiplies matrices
+  template <typename M1, typename M2>
+  auto operator*(const M1& lhs, const M2& rhs) noexcept;
 
 } // !namespace mfmat
 
