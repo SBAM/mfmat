@@ -4,6 +4,7 @@
 # include <array>
 
 # include "common.hpp"
+# include "ct_sequence_helpers.hpp"
 
 namespace mfmat
 {
@@ -118,10 +119,15 @@ namespace mfmat
     /// @return true if both matrices are different
     bool operator!=(const ct_mat& rhs) const noexcept;
 
-    /// @return transposed matrix
-    auto transpose() const noexcept;
+    /**
+     * @brief transposes in place this matrix
+     * @note assumes this matrix is square
+     */
+    void transpose() noexcept;
+
     /// @return matrix' trace
     constexpr T trace() const noexcept;
+
     /**
      * @return matrix determinant
      * @warning recursive method, very high complexity
@@ -132,61 +138,8 @@ namespace mfmat
     storage_t storage_; ///< internal storage
   };
 
-
-  /// @brief external addition operator
-  template <typename T, std::size_t R, std::size_t C>
-  ct_mat<T, R, C> operator+(const ct_mat<T, R, C>& lhs, T rhs) noexcept;
-
-  /// @brief external addition operator, commutative
-  template <typename T, std::size_t R, std::size_t C>
-  ct_mat<T, R, C> operator+(T lhs, const ct_mat<T, R, C>& rhs) noexcept;
-
-  /// @brief external substraction operator
-  template <typename T, std::size_t R, std::size_t C>
-  ct_mat<T, R, C> operator-(const ct_mat<T, R, C>& lhs, T rhs) noexcept;
-
-    /// @brief external multiply operator
-  template <typename T, std::size_t R, std::size_t C>
-  ct_mat<T, R, C> operator*(const ct_mat<T, R, C>& lhs, T rhs) noexcept;
-
-  /// @brief external multiply operator, commutative
-  template <typename T, std::size_t R, std::size_t C>
-  ct_mat<T, R, C> operator+(T lhs, const ct_mat<T, R, C>& rhs) noexcept;
-
-  /// @brief external divide operator
-  template <typename T, std::size_t R, std::size_t C>
-  ct_mat<T, R, C> operator/(const ct_mat<T, R, C>& lhs, T rhs) noexcept;
-
-    /// @brief external addition operator
-  template <typename T, std::size_t R, std::size_t C>
-  ct_mat<T, R, C> operator+(const ct_mat<T, R, C>& lhs,
-                            const ct_mat<T, R, C>& rhs) noexcept;
-
-  /// @brief external substraction operator
-  template <typename T, std::size_t R, std::size_t C>
-  ct_mat<T, R, C> operator-(const ct_mat<T, R, C>& lhs,
-                            const ct_mat<T, R, C>& rhs) noexcept;
-
-  /**
-   * @tparam OW1 defines if dot product's LHS is a row or column
-   * @tparam IDX1 row/col index of dot product's LHS
-   * @tparam OW2 defines if dot product's RHS is a row or column
-   * @tparam IDX2 row/col index of dot product's RHS
-   * @tparam M1 first matrix type
-   * @tparam M2 second matrix type
-   * @return dot product of specified row/col
-   */
-  template <op_way OW1, std::size_t IDX1, op_way OW2, std::size_t IDX2,
-            typename M1, typename M2>
-  auto dot(const M1& mat1, const M2& mat2) noexcept;
-
-  /// @brief multiplies matrices
-  template <typename M1, typename M2>
-  auto operator*(const M1& lhs, const M2& rhs) noexcept;
-
 } // !namespace mfmat
 
 # include "ct_mat.ipp"
-# include "ct_mat_externals.ipp"
 
 #endif // !MFMAT_CT_MAT_HPP_

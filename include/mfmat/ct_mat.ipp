@@ -213,16 +213,15 @@ namespace mfmat
 
 
   template <typename T, std::size_t R, std::size_t C>
-  auto ct_mat<T, R, C>::transpose() const noexcept
+  void ct_mat<T, R, C>::transpose() noexcept
   {
-    auto res = ct_mat<T, C, R>();
-    auto cell_swap_copy = [&]<std::size_t... Is>(std::index_sequence<Is...>)
+    static_assert(R == C, "In place transpose only applies to a square matrix");
+    auto cell_swap = [&]<std::size_t... Is>(std::index_sequence<Is...>)
       {
-        ((res.template scan<op_way::row, Is>() =
-          this->scan<op_way::col, Is>()), ...);
+        ((std::swap(this->scan<op_way::row, Is>(),
+                    this->scan<op_way::col, Is>())), ...);
       };
-    cell_swap_copy(std::make_index_sequence<R * C>{});
-    return res;
+    cell_swap(make_upper_no_diag_mat_index_sequence<R, C>());
   }
 
 

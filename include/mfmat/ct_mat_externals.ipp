@@ -56,8 +56,8 @@ namespace mfmat
 
 
   template <typename T, std::size_t R, std::size_t C>
-  ct_mat<T, R, C> operator+(const ct_mat<T, R, C>& lhs,
-                            const ct_mat<T, R, C>& rhs) noexcept
+  ct_mat<T, R, C>
+  operator+(const ct_mat<T, R, C>& lhs, const ct_mat<T, R, C>& rhs) noexcept
   {
     auto res = lhs;
     res += rhs;
@@ -66,8 +66,8 @@ namespace mfmat
 
 
   template <typename T, std::size_t R, std::size_t C>
-  ct_mat<T, R, C> operator-(const ct_mat<T, R, C>& lhs,
-                            const ct_mat<T, R, C>& rhs) noexcept
+  ct_mat<T, R, C>
+  operator-(const ct_mat<T, R, C>& lhs, const ct_mat<T, R, C>& rhs) noexcept
   {
     auto res = lhs;
     res -= rhs;
@@ -75,7 +75,22 @@ namespace mfmat
   }
 
 
-  template <op_way OW1, std::size_t IDX1, op_way OW2, std::size_t IDX2,
+  template <typename T, std::size_t R, std::size_t C>
+  ct_mat<T, C, R> transpose(const ct_mat<T, R, C>& arg) noexcept
+  {
+    auto res = ct_mat<T, C, R>();
+    auto cell_swap_copy = [&]<std::size_t... Is>(std::index_sequence<Is...>)
+      {
+        ((res.template scan<op_way::row, Is>() =
+          arg.template scan<op_way::col, Is>()), ...);
+      };
+    cell_swap_copy(std::make_index_sequence<R * C>{});
+    return res;
+  }
+
+
+  template <op_way OW1, std::size_t IDX1,
+            op_way OW2, std::size_t IDX2,
             typename M1, typename M2>
   auto dot(const M1& mat1, const M2& mat2) noexcept
   {
