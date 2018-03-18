@@ -37,7 +37,7 @@ namespace mfmat
       };
     auto cell_copy = [&]<std::size_t... Is>(std::index_sequence<Is...>)
       {
-        ((this->scan_r<Is>() = getter(mil, Is)), ...);
+        ((this->scan<op_way::row, Is>() = getter(mil, Is)), ...);
       };
     cell_copy(std::make_index_sequence<R * C>{});
   }
@@ -51,26 +51,32 @@ namespace mfmat
 
 
   template <typename T, std::size_t R, std::size_t C>
-  template <std::size_t I, std::size_t J>
+  template <std::size_t R_IDX, std::size_t C_IDX>
   constexpr T ct_mat<T, R, C>::get() const noexcept
   {
-    return std::get<J>(std::get<I>(storage_));
+    return std::get<C_IDX>(std::get<R_IDX>(storage_));
   }
 
 
   template <typename T, std::size_t R, std::size_t C>
-  template <std::size_t I>
-  constexpr T ct_mat<T, R, C>::scan_r() const noexcept
+  template <op_way OW, std::size_t IDX1, std::size_t IDX2>
+  constexpr T ct_mat<T, R, C>::get() const noexcept
   {
-    return std::get<I % C>(std::get<I / C>(storage_));
+    if constexpr (OW == op_way::row)
+      return std::get<IDX2>(std::get<IDX1>(storage_));
+    else
+      return std::get<IDX1>(std::get<IDX2>(storage_));
   }
 
 
   template <typename T, std::size_t R, std::size_t C>
-  template <std::size_t I>
-  constexpr T ct_mat<T, R, C>::scan_c() const noexcept
+  template <op_way OW, std::size_t IDX>
+  constexpr T ct_mat<T, R, C>::scan() const noexcept
   {
-    return std::get<I / R>(std::get<I % R>(storage_));
+    if constexpr (OW == op_way::row)
+      return std::get<IDX % C>(std::get<IDX / C>(storage_));
+    else
+      return std::get<IDX / R>(std::get<IDX % R>(storage_));
   }
 
 
@@ -82,26 +88,32 @@ namespace mfmat
 
 
   template <typename T, std::size_t R, std::size_t C>
-  template <std::size_t I, std::size_t J>
+  template <std::size_t R_IDX, std::size_t C_IDX>
   constexpr T& ct_mat<T, R, C>::get() noexcept
   {
-    return std::get<J>(std::get<I>(storage_));
+    return std::get<C_IDX>(std::get<R_IDX>(storage_));
   }
 
 
   template <typename T, std::size_t R, std::size_t C>
-  template <std::size_t I>
-  constexpr T& ct_mat<T, R, C>::scan_r() noexcept
+  template <op_way OW, std::size_t IDX1, std::size_t IDX2>
+  constexpr T& ct_mat<T, R, C>::get() noexcept
   {
-    return std::get<I % C>(std::get<I / C>(storage_));
+    if constexpr (OW == op_way::row)
+      return std::get<IDX2>(std::get<IDX1>(storage_));
+    else
+      return std::get<IDX1>(std::get<IDX2>(storage_));
   }
 
 
   template <typename T, std::size_t R, std::size_t C>
-  template <std::size_t I>
-  constexpr T& ct_mat<T, R, C>::scan_c() noexcept
+  template <op_way OW, std::size_t IDX>
+  constexpr T& ct_mat<T, R, C>::scan() noexcept
   {
-    return std::get<I / R>(std::get<I % R>(storage_));
+    if constexpr (OW == op_way::row)
+      return std::get<IDX % C>(std::get<IDX / C>(storage_));
+    else
+      return std::get<IDX / R>(std::get<IDX % R>(storage_));
   }
 
 
@@ -110,7 +122,7 @@ namespace mfmat
   {
     auto cell_add = [=]<std::size_t... Is>(std::index_sequence<Is...>)
       {
-        ((this->scan_r<Is>() += val), ...);
+        ((this->scan<op_way::row, Is>() += val), ...);
       };
     cell_add(std::make_index_sequence<R * C>{});
     return *this;
@@ -122,7 +134,7 @@ namespace mfmat
   {
     auto cell_sub = [=]<std::size_t... Is>(std::index_sequence<Is...>)
       {
-        ((this->scan_r<Is>() -= val), ...);
+        ((this->scan<op_way::row, Is>() -= val), ...);
       };
     cell_sub(std::make_index_sequence<R * C>{});
     return *this;
@@ -134,7 +146,7 @@ namespace mfmat
   {
     auto cell_mul = [=]<std::size_t... Is>(std::index_sequence<Is...>)
       {
-        ((this->scan_r<Is>() *= val), ...);
+        ((this->scan<op_way::row, Is>() *= val), ...);
       };
     cell_mul(std::make_index_sequence<R * C>{});
     return *this;
@@ -146,7 +158,7 @@ namespace mfmat
   {
     auto cell_div = [=]<std::size_t... Is>(std::index_sequence<Is...>)
       {
-        ((this->scan_r<Is>() /= val), ...);
+        ((this->scan<op_way::row, Is>() /= val), ...);
       };
     cell_div(std::make_index_sequence<R * C>{});
     return *this;
@@ -159,7 +171,8 @@ namespace mfmat
   {
     auto cell_add = [&]<std::size_t... Is>(std::index_sequence<Is...>)
       {
-        ((this->scan_r<Is>() += rhs.template scan_r<Is>()), ...);
+        ((this->scan<op_way::row, Is>() +=
+          rhs.template scan<op_way::row, Is>()), ...);
       };
     cell_add(std::make_index_sequence<R * C>{});
     return *this;
@@ -172,7 +185,8 @@ namespace mfmat
   {
     auto cell_sub = [&]<std::size_t... Is>(std::index_sequence<Is...>)
       {
-        ((this->scan_r<Is>() -= rhs.template scan_r<Is>()), ...);
+        ((this->scan<op_way::row, Is>() -=
+          rhs.template scan<op_way::row, Is>()), ...);
       };
     cell_sub(std::make_index_sequence<R * C>{});
     return *this;
@@ -184,8 +198,8 @@ namespace mfmat
   {
     auto cell_eq = [&]<std::size_t... Is>(std::index_sequence<Is...>)
       {
-        return
-          (are_equal(this->scan_r<Is>(), rhs.template scan_r<Is>()) && ...);
+        return (are_equal(this->scan<op_way::row, Is>(),
+                          rhs.template scan<op_way::row, Is>()) && ...);
       };
     return cell_eq(std::make_index_sequence<R * C>{});
   }
@@ -204,7 +218,8 @@ namespace mfmat
     auto res = ct_mat<T, C, R>();
     auto cell_swap_copy = [&]<std::size_t... Is>(std::index_sequence<Is...>)
       {
-        ((res.template scan_c<Is>() = this->scan_r<Is>()), ...);
+        ((res.template scan<op_way::row, Is>() =
+          this->scan<op_way::col, Is>()), ...);
       };
     cell_swap_copy(std::make_index_sequence<R * C>{});
     return res;

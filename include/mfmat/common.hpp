@@ -25,13 +25,11 @@ namespace mfmat
   template <typename T>
   constexpr bool is_zero(T arg) noexcept;
 
-  /// @brief dot product specifier
-  enum class dot_spec
+  /// @brief defines operation way, row or column wise
+  enum class op_way
   {
-    row_col,
-    row_row,
-    col_row,
-    col_col
+    row,
+    col
   };
 
 } // !namespace mfmat

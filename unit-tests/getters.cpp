@@ -10,6 +10,9 @@
 
 BOOST_AUTO_TEST_SUITE(getters_test_suite)
 
+constexpr auto owr = mfmat::op_way::row;
+constexpr auto owc = mfmat::op_way::col;
+
 BOOST_AUTO_TEST_CASE(runtime_getter)
 {
   auto mat = mfmat::ct_mat<std::int32_t, 5, 10>();
@@ -25,14 +28,34 @@ BOOST_AUTO_TEST_CASE(runtime_getter)
 BOOST_AUTO_TEST_CASE(compile_time_getter)
 {
   auto mat = mfmat::ct_mat<std::int64_t, 2, 2>(mfmat::identity_tag());
-  std::int64_t cell = mat.get<0, 0>();
-  BOOST_CHECK(cell == 1);
-  cell = mat.get<1, 0>();
-  BOOST_CHECK(cell == 0);
-  cell = mat.get<0, 1>();
-  BOOST_CHECK(cell == 0);
-  cell = mat.get<1, 1>();
-  BOOST_CHECK(cell == 1);
+  std::int64_t res{};
+  res = mat.get<0, 0>(); BOOST_CHECK(res == 1);
+  res = mat.get<1, 0>(); BOOST_CHECK(res == 0);
+  res = mat.get<0, 1>(); BOOST_CHECK(res == 0);
+  res = mat.get<1, 1>(); BOOST_CHECK(res == 1);
+}
+
+
+BOOST_AUTO_TEST_CASE(compile_time_getter_with_way_specifier)
+{
+  auto mat = mfmat::ct_mat<std::int64_t, 2, 3>
+    ({
+      { 1, 2, 3 },
+      { 4, 5, 6 }
+     });
+  std::int64_t res{};
+  res = mat.get<owr, 0, 0>(); BOOST_CHECK(res == 1);
+  res = mat.get<owr, 0, 1>(); BOOST_CHECK(res == 2);
+  res = mat.get<owr, 0, 2>(); BOOST_CHECK(res == 3);
+  res = mat.get<owr, 1, 0>(); BOOST_CHECK(res == 4);
+  res = mat.get<owr, 1, 1>(); BOOST_CHECK(res == 5);
+  res = mat.get<owr, 1, 2>(); BOOST_CHECK(res == 6);
+  res = mat.get<owc, 0, 0>(); BOOST_CHECK(res == 1);
+  res = mat.get<owc, 1, 0>(); BOOST_CHECK(res == 2);
+  res = mat.get<owc, 2, 0>(); BOOST_CHECK(res == 3);
+  res = mat.get<owc, 0, 1>(); BOOST_CHECK(res == 4);
+  res = mat.get<owc, 1, 1>(); BOOST_CHECK(res == 5);
+  res = mat.get<owc, 2, 1>(); BOOST_CHECK(res == 6);
 }
 
 
@@ -43,12 +66,13 @@ BOOST_AUTO_TEST_CASE(compile_time_scan_rows_getter)
       { 1, 2, 3 },
       { 4, 5, 6 }
      });
-  BOOST_CHECK(mat.scan_r<0>() == 1);
-  BOOST_CHECK(mat.scan_r<1>() == 2);
-  BOOST_CHECK(mat.scan_r<2>() == 3);
-  BOOST_CHECK(mat.scan_r<3>() == 4);
-  BOOST_CHECK(mat.scan_r<4>() == 5);
-  BOOST_CHECK(mat.scan_r<5>() == 6);
+  std::int64_t res{};
+  res = mat.scan<owr, 0>(); BOOST_CHECK(res == 1);
+  res = mat.scan<owr, 1>(); BOOST_CHECK(res == 2);
+  res = mat.scan<owr, 2>(); BOOST_CHECK(res == 3);
+  res = mat.scan<owr, 3>(); BOOST_CHECK(res == 4);
+  res = mat.scan<owr, 4>(); BOOST_CHECK(res == 5);
+  res = mat.scan<owr, 5>(); BOOST_CHECK(res == 6);
 }
 
 
@@ -59,12 +83,13 @@ BOOST_AUTO_TEST_CASE(compile_time_scan_columns_getter)
       { 1, 2, 3 },
       { 4, 5, 6 }
      });
-  BOOST_CHECK(mat.scan_c<0>() == 1);
-  BOOST_CHECK(mat.scan_c<1>() == 4);
-  BOOST_CHECK(mat.scan_c<2>() == 2);
-  BOOST_CHECK(mat.scan_c<3>() == 5);
-  BOOST_CHECK(mat.scan_c<4>() == 3);
-  BOOST_CHECK(mat.scan_c<5>() == 6);
+  std::int64_t res{};
+  res = mat.scan<owc, 0>(); BOOST_CHECK(res == 1);
+  res = mat.scan<owc, 1>(); BOOST_CHECK(res == 4);
+  res = mat.scan<owc, 2>(); BOOST_CHECK(res == 2);
+  res = mat.scan<owc, 3>(); BOOST_CHECK(res == 5);
+  res = mat.scan<owc, 4>(); BOOST_CHECK(res == 3);
+  res = mat.scan<owc, 5>(); BOOST_CHECK(res == 6);
 }
 
 
@@ -75,18 +100,19 @@ BOOST_AUTO_TEST_CASE(compile_time_scan_double_getter)
       { 1.1, 2.2, 3.3 },
       { 4.4, 5.5, 6.6 }
      });
-  BOOST_CHECK_CLOSE(mat.scan_r<0>(), 1.1, 0.0000001);
-  BOOST_CHECK_CLOSE(mat.scan_r<1>(), 2.2, 0.0000001);
-  BOOST_CHECK_CLOSE(mat.scan_r<2>(), 3.3, 0.0000001);
-  BOOST_CHECK_CLOSE(mat.scan_r<3>(), 4.4, 0.0000001);
-  BOOST_CHECK_CLOSE(mat.scan_r<4>(), 5.5, 0.0000001);
-  BOOST_CHECK_CLOSE(mat.scan_r<5>(), 6.6, 0.0000001);
-  BOOST_CHECK_CLOSE(mat.scan_c<0>(), 1.1, 0.0000001);
-  BOOST_CHECK_CLOSE(mat.scan_c<1>(), 4.4, 0.0000001);
-  BOOST_CHECK_CLOSE(mat.scan_c<2>(), 2.2, 0.0000001);
-  BOOST_CHECK_CLOSE(mat.scan_c<3>(), 5.5, 0.0000001);
-  BOOST_CHECK_CLOSE(mat.scan_c<4>(), 3.3, 0.0000001);
-  BOOST_CHECK_CLOSE(mat.scan_c<5>(), 6.6, 0.0000001);
+  double res{};
+  res = mat.scan<owr, 0>(); BOOST_CHECK_CLOSE(res, 1.1, 0.0000001);
+  res = mat.scan<owr, 1>(); BOOST_CHECK_CLOSE(res, 2.2, 0.0000001);
+  res = mat.scan<owr, 2>(); BOOST_CHECK_CLOSE(res, 3.3, 0.0000001);
+  res = mat.scan<owr, 3>(); BOOST_CHECK_CLOSE(res, 4.4, 0.0000001);
+  res = mat.scan<owr, 4>(); BOOST_CHECK_CLOSE(res, 5.5, 0.0000001);
+  res = mat.scan<owr, 5>(); BOOST_CHECK_CLOSE(res, 6.6, 0.0000001);
+  res = mat.scan<owc, 0>(); BOOST_CHECK_CLOSE(res, 1.1, 0.0000001);
+  res = mat.scan<owc, 1>(); BOOST_CHECK_CLOSE(res, 4.4, 0.0000001);
+  res = mat.scan<owc, 2>(); BOOST_CHECK_CLOSE(res, 2.2, 0.0000001);
+  res = mat.scan<owc, 3>(); BOOST_CHECK_CLOSE(res, 5.5, 0.0000001);
+  res = mat.scan<owc, 4>(); BOOST_CHECK_CLOSE(res, 3.3, 0.0000001);
+  res = mat.scan<owc, 5>(); BOOST_CHECK_CLOSE(res, 6.6, 0.0000001);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

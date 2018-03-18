@@ -9,10 +9,10 @@ namespace mfmat
 {
 
   /**
-   * @brief Compile time dense matrix.
+   * @brief Dense matrix with compile time defined dimensions
    * @tparam T matrix cells' type
    * @tparam R rows count
-   * @tparam columns count
+   * @tparam C columns count
    */
   template <typename T, std::size_t R, std::size_t C>
   class ct_mat
@@ -41,29 +41,63 @@ namespace mfmat
     ct_mat& operator=(const ct_mat&) = default;
     ~ct_mat() = default;
 
-    /// @brief constant runtime getter using indices
+    /**
+     * @brief constant runtime getter using indices pair
+     * @param idx idx.first=row_idx, idx.second=col_idx
+     */
     constexpr T operator[](indices idx) const noexcept;
-    /// @brief constant compile time getter (row & column index)
-    template <std::size_t I, std::size_t J>
+    /**
+     * @brief constant compile time getter
+     * @tparam R_IDX row index
+     * @tparam C_IDX column index
+     */
+    template <std::size_t R_IDX, std::size_t C_IDX>
     constexpr T get() const noexcept;
-    /// @brief constant compile time getter (traverse by rows)
-    template <std::size_t I>
-    constexpr T scan_r() const noexcept;
-    /// @brief constant compile time getter (traverse by columns)
-    template <std::size_t I>
-    constexpr T scan_c() const noexcept;
+    /**
+     * @brief constant compile time getter
+     * @note equivalent to get<R_IDX, C_IDX> when op_way is by row
+     * @tparam OW operation way, specifies first index direction
+     * @tparam IDX1 first index, defined by previous operation way
+     * @tparam IDX2 second index for specified row or column
+     */
+    template <op_way OW, std::size_t IDX1, std::size_t IDX2>
+    constexpr T get() const noexcept;
+    /**
+     * @brief constant compile time getter using global index over matrix
+     * @tparam OW operation way, scan matrix by rows or columns
+     * @tparam IDX global index
+     */
+    template <op_way OW, std::size_t IDX>
+    constexpr T scan() const noexcept;
 
-    /// @brief runtime getter using indices
+    /**
+     * @brief modify runtime getter using indices pair
+     * @param idx idx.first=row_idx, idx.second=col_idx
+     */
     constexpr T& operator[](indices idx) noexcept;
-    /// @brief compile time getter (row & column index)
-    template <std::size_t I, std::size_t J>
+    /**
+     * @brief modify compile time getter
+     * @tparam R_IDX row index
+     * @tparam C_IDX column index
+     */
+    template <std::size_t R_IDX, std::size_t C_IDX>
     constexpr T& get() noexcept;
-    /// @brief compile time getter (traverse by rows)
-    template <std::size_t I>
-    constexpr T& scan_r() noexcept;
-    /// @brief compile time getter (traverse by columns)
-    template <std::size_t I>
-    constexpr T& scan_c() noexcept;
+    /**
+     * @brief modify compile time getter
+     * @note equivalent to get<R_IDX, C_IDX> when op_way is by row
+     * @tparam OW operation way, specifies first index direction
+     * @tparam IDX1 first index, defined be previous operation way
+     * @tparam IDX2 second index for specified row or column
+     */
+    template <op_way OW, std::size_t IDX1, std::size_t IDX2>
+    constexpr T& get() noexcept;
+    /**
+     * @brief modify compile time getter using global index over matrix
+     * @tparam OW operation way, scan matrix by rows or columns
+     * @tparam IDX global index
+     */
+    template <op_way OW, std::size_t IDX>
+    constexpr T& scan() noexcept;
 
     /// @brief adds scalar and stores result
     ct_mat& operator+=(T val) noexcept;
@@ -134,14 +168,15 @@ namespace mfmat
                             const ct_mat<T, R, C>& rhs) noexcept;
 
   /**
-   * @tparam DS dot product specifier
-   * @tparam S1 first matrix row/col index
-   * @tparam S2 second matrix row/col index
+   * @tparam OW1 defines if dot product's LHS is a row or column
+   * @tparam IDX1 row/col index of dot product's LHS
+   * @tparam OW2 defines if dot product's RHS is a row or column
+   * @tparam IDX2 row/col index of dot product's RHS
    * @tparam M1 first matrix type
    * @tparam M2 second matrix type
    * @return dot product of specified row/col
    */
-  template <dot_spec DS, std::size_t S1, std::size_t S2,
+  template <op_way OW1, std::size_t IDX1, op_way OW2, std::size_t IDX2,
             typename M1, typename M2>
   auto dot(const M1& mat1, const M2& mat2) noexcept;
 
