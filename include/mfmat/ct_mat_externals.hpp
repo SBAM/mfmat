@@ -8,37 +8,37 @@ namespace mfmat
 
   /// @brief adds scalar to each matrix's cell
   template <typename T, std::size_t R, std::size_t C>
-  ct_mat<T, R, C> operator+(const ct_mat<T, R, C>& lhs, T rhs) noexcept;
+  ct_mat<T, R, C> operator+(ct_mat<T, R, C> lhs, T rhs) noexcept;
 
-  /// @brief adds scalar to each matrix's cell, commutative version
+  /// @brief adds scalar to each matrix's cell, reversed
   template <typename T, std::size_t R, std::size_t C>
-  ct_mat<T, R, C> operator+(T lhs, const ct_mat<T, R, C>& rhs) noexcept;
+  ct_mat<T, R, C> operator+(T lhs, ct_mat<T, R, C> rhs) noexcept;
 
   /// @brief substracts scalar from each matrix's cell
   template <typename T, std::size_t R, std::size_t C>
-  ct_mat<T, R, C> operator-(const ct_mat<T, R, C>& lhs, T rhs) noexcept;
+  ct_mat<T, R, C> operator-(ct_mat<T, R, C> lhs, T rhs) noexcept;
 
   /// @brief multiplies each matrix's cell by scalar
   template <typename T, std::size_t R, std::size_t C>
-  ct_mat<T, R, C> operator*(const ct_mat<T, R, C>& lhs, T rhs) noexcept;
+  ct_mat<T, R, C> operator*(ct_mat<T, R, C> lhs, T rhs) noexcept;
 
-  /// @brief multiplies each matrix's cell by scalar, commutative version
+  /// @brief multiplies each matrix's cell by scalar, reversed
   template <typename T, std::size_t R, std::size_t C>
-  ct_mat<T, R, C> operator+(T lhs, const ct_mat<T, R, C>& rhs) noexcept;
+  ct_mat<T, R, C> operator*(T lhs, ct_mat<T, R, C> rhs) noexcept;
 
   /// @brief divides each matrix's cell by scalar
   template <typename T, std::size_t R, std::size_t C>
-  ct_mat<T, R, C> operator/(const ct_mat<T, R, C>& lhs, T rhs) noexcept;
+  ct_mat<T, R, C> operator/(ct_mat<T, R, C> lhs, T rhs) noexcept;
 
-    /// @brief sums two matrices
+  /// @brief sums two matrices
   template <typename T, std::size_t R, std::size_t C>
   ct_mat<T, R, C>
-  operator+(const ct_mat<T, R, C>& lhs, const ct_mat<T, R, C>& rhs) noexcept;
+  operator+(ct_mat<T, R, C> lhs, const ct_mat<T, R, C>& rhs) noexcept;
 
   /// @brief substracts a matrix from another
   template <typename T, std::size_t R, std::size_t C>
   ct_mat<T, R, C>
-  operator-(const ct_mat<T, R, C>& lhs, const ct_mat<T, R, C>& rhs) noexcept;
+  operator-(ct_mat<T, R, C> lhs, const ct_mat<T, R, C>& rhs) noexcept;
 
   /// @brief transposes given matrix
   template <typename T, std::size_t R, std::size_t C>

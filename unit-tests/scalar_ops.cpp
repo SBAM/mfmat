@@ -206,7 +206,7 @@ BOOST_AUTO_TEST_CASE(divide)
       { 8, 8, 8 }
      });
   auto mat2 = mat / 2;
-  auto mat3 = mat2 / 2;
+  auto mat3 = mat / 2 / 2;
   for (std::size_t i = 0; i < mat.row_count; ++i)
     for (std::size_t j = 0; j < mat.col_count; ++j)
     {
@@ -226,7 +226,7 @@ BOOST_AUTO_TEST_CASE(divide_double)
       { 8.8, 8.8, 8.8 }
      });
   auto mat2 = mat / 2.2;
-  auto mat3 = mat2 / 2.0;
+  auto mat3 = mat / 2.2 / 2.0;
   for (std::size_t i = 0; i < mat.row_count; ++i)
     for (std::size_t j = 0; j < mat.col_count; ++j)
     {

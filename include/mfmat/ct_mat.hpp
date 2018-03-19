@@ -40,6 +40,7 @@ namespace mfmat
     ct_mat(const ct_mat&) = default;
     ct_mat(ct_mat&&) = default;
     ct_mat& operator=(const ct_mat&) = default;
+    ct_mat& operator=(ct_mat&&) = default;
     ~ct_mat() = default;
 
     /**

@@ -6,72 +6,66 @@ namespace mfmat
    * @{
    */
   template <typename T, std::size_t R, std::size_t C>
-  ct_mat<T, R, C> operator+(const ct_mat<T, R, C>& lhs, T rhs) noexcept
+  ct_mat<T, R, C> operator+(ct_mat<T, R, C> lhs, T rhs) noexcept
   {
-    auto res = lhs;
-    res += rhs;
-    return res;
+    lhs += rhs;
+    return lhs;
   }
 
 
   template <typename T, std::size_t R, std::size_t C>
-  ct_mat<T, R, C> operator+(T lhs, const ct_mat<T, R, C>& rhs) noexcept
+  ct_mat<T, R, C> operator+(T lhs, ct_mat<T, R, C> rhs) noexcept
   {
     return rhs + lhs;
   }
 
 
   template <typename T, std::size_t R, std::size_t C>
-  ct_mat<T, R, C> operator-(const ct_mat<T, R, C>& lhs, T rhs) noexcept
+  ct_mat<T, R, C> operator-(ct_mat<T, R, C> lhs, T rhs) noexcept
   {
-    auto res = lhs;
-    res -= rhs;
-    return res;
+    lhs -= rhs;
+    return lhs;
   }
 
 
   template <typename T, std::size_t R, std::size_t C>
-  ct_mat<T, R, C> operator*(const ct_mat<T, R, C>& lhs, T rhs) noexcept
+  ct_mat<T, R, C> operator*(ct_mat<T, R, C> lhs, T rhs) noexcept
   {
-    auto res = lhs;
-    res *= rhs;
-    return res;
+    lhs *= rhs;
+    return lhs;
   }
 
 
   template <typename T, std::size_t R, std::size_t C>
-  ct_mat<T, R, C> operator*(T lhs, const ct_mat<T, R, C>& rhs) noexcept
+  ct_mat<T, R, C> operator*(T lhs, ct_mat<T, R, C> rhs) noexcept
   {
     return rhs * lhs;
   }
 
 
   template <typename T, std::size_t R, std::size_t C>
-  ct_mat<T, R, C> operator/(const ct_mat<T, R, C>& lhs, T rhs) noexcept
+  ct_mat<T, R, C> operator/(ct_mat<T, R, C> lhs, T rhs) noexcept
   {
-    auto res = lhs;
-    res /= rhs;
-    return res;
+    lhs /= rhs;
+    return lhs;
   }
 
 
   template <typename T, std::size_t R, std::size_t C>
   ct_mat<T, R, C>
-  operator+(const ct_mat<T, R, C>& lhs, const ct_mat<T, R, C>& rhs) noexcept
+  operator+(ct_mat<T, R, C> lhs, const ct_mat<T, R, C>& rhs) noexcept
   {
-    auto res = lhs;
-    res += rhs;
-    return res;
+    lhs += rhs;
+    return lhs;
   }
 
 
   template <typename T, std::size_t R, std::size_t C>
   ct_mat<T, R, C>
-  operator-(const ct_mat<T, R, C>& lhs, const ct_mat<T, R, C>& rhs) noexcept
+  operator-(ct_mat<T, R, C> lhs, const ct_mat<T, R, C>& rhs) noexcept
   {
-    auto res = lhs;
-    res -= rhs;
-    return res;
+    lhs -= rhs;
+    return lhs;
   }
 
 
