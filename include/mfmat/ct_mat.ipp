@@ -17,7 +17,7 @@ namespace mfmat
     storage_{{}}
   {
     static_assert(R == C, "Identity constructor requires a square matrix");
-    auto diag_set = [this]<std::size_t... Is>(std::index_sequence<Is...>)
+    auto diag_set = [this]<auto... Is>(std::index_sequence<Is...>)
       {
         ((get<Is, Is>() = 1), ...);
       };
@@ -35,7 +35,7 @@ namespace mfmat
       {
         return mil[idx / C2][idx % C2];
       };
-    auto cell_copy = [&]<std::size_t... Is>(std::index_sequence<Is...>)
+    auto cell_copy = [&]<auto... Is>(std::index_sequence<Is...>)
       {
         ((this->scan<op_way::row, Is>() = getter(mil, Is)), ...);
       };
@@ -44,7 +44,7 @@ namespace mfmat
 
 
   template <typename T, std::size_t R, std::size_t C>
-  constexpr T ct_mat<T, R, C>::operator[](indices idx) const noexcept
+  T ct_mat<T, R, C>::operator[](indices idx) const noexcept
   {
     return storage_[idx.first][idx.second];
   }
@@ -81,7 +81,7 @@ namespace mfmat
 
 
   template <typename T, std::size_t R, std::size_t C>
-  constexpr T& ct_mat<T, R, C>::operator[](indices idx) noexcept
+  T& ct_mat<T, R, C>::operator[](indices idx) noexcept
   {
     return storage_[idx.first][idx.second];
   }
@@ -120,7 +120,7 @@ namespace mfmat
   template <typename T, std::size_t R, std::size_t C>
   ct_mat<T, R, C>& ct_mat<T, R, C>::operator+=(T val) noexcept
   {
-    auto cell_add = [=]<std::size_t... Is>(std::index_sequence<Is...>)
+    auto cell_add = [=]<auto... Is>(std::index_sequence<Is...>)
       {
         ((this->scan<op_way::row, Is>() += val), ...);
       };
@@ -132,7 +132,7 @@ namespace mfmat
   template <typename T, std::size_t R, std::size_t C>
   ct_mat<T, R, C>& ct_mat<T, R, C>::operator-=(T val) noexcept
   {
-    auto cell_sub = [=]<std::size_t... Is>(std::index_sequence<Is...>)
+    auto cell_sub = [=]<auto... Is>(std::index_sequence<Is...>)
       {
         ((this->scan<op_way::row, Is>() -= val), ...);
       };
@@ -144,7 +144,7 @@ namespace mfmat
   template <typename T, std::size_t R, std::size_t C>
   ct_mat<T, R, C>& ct_mat<T, R, C>::operator*=(T val) noexcept
   {
-    auto cell_mul = [=]<std::size_t... Is>(std::index_sequence<Is...>)
+    auto cell_mul = [=]<auto... Is>(std::index_sequence<Is...>)
       {
         ((this->scan<op_way::row, Is>() *= val), ...);
       };
@@ -156,7 +156,7 @@ namespace mfmat
   template <typename T, std::size_t R, std::size_t C>
   ct_mat<T, R, C>& ct_mat<T, R, C>::operator/=(T val) noexcept
   {
-    auto cell_div = [=]<std::size_t... Is>(std::index_sequence<Is...>)
+    auto cell_div = [=]<auto... Is>(std::index_sequence<Is...>)
       {
         ((this->scan<op_way::row, Is>() /= val), ...);
       };
@@ -169,7 +169,7 @@ namespace mfmat
   ct_mat<T, R, C>&
   ct_mat<T, R, C>::operator+=(const ct_mat<T, R, C>& rhs) noexcept
   {
-    auto cell_add = [&]<std::size_t... Is>(std::index_sequence<Is...>)
+    auto cell_add = [&]<auto... Is>(std::index_sequence<Is...>)
       {
         ((this->scan<op_way::row, Is>() +=
           rhs.template scan<op_way::row, Is>()), ...);
@@ -183,7 +183,7 @@ namespace mfmat
   ct_mat<T, R, C>&
   ct_mat<T, R, C>::operator-=(const ct_mat<T, R, C>& rhs) noexcept
   {
-    auto cell_sub = [&]<std::size_t... Is>(std::index_sequence<Is...>)
+    auto cell_sub = [&]<auto... Is>(std::index_sequence<Is...>)
       {
         ((this->scan<op_way::row, Is>() -=
           rhs.template scan<op_way::row, Is>()), ...);
@@ -196,7 +196,7 @@ namespace mfmat
   template <typename T, std::size_t R, std::size_t C>
   bool ct_mat<T, R, C>::operator==(const ct_mat<T, R, C>& rhs) const noexcept
   {
-    auto cell_eq = [&]<std::size_t... Is>(std::index_sequence<Is...>)
+    auto cell_eq = [&]<auto... Is>(std::index_sequence<Is...>)
       {
         return (are_equal(this->scan<op_way::row, Is>(),
                           rhs.template scan<op_way::row, Is>()) && ...);
@@ -213,10 +213,23 @@ namespace mfmat
 
 
   template <typename T, std::size_t R, std::size_t C>
+  template <op_way OW, std::size_t IDX>
+  T ct_mat<T, R, C>::norm() const noexcept
+  {
+    constexpr auto VL = OW == op_way::row ? C : R;
+    auto sum_square = [this]<auto... Is>(std::index_sequence<Is...>)
+      {
+        return ((this->get<OW, IDX, Is>() * this->get<OW, IDX, Is>()) + ...);
+      };
+    return std::sqrt(sum_square(std::make_index_sequence<VL>{}));
+  }
+
+
+  template <typename T, std::size_t R, std::size_t C>
   void ct_mat<T, R, C>::transpose() noexcept
   {
     static_assert(R == C, "In place transpose only applies to a square matrix");
-    auto cell_swap = [&]<std::size_t... Is>(std::index_sequence<Is...>)
+    auto cell_swap = [&]<auto... Is>(std::index_sequence<Is...>)
       {
         ((std::swap(this->scan<op_way::row, Is>(),
                     this->scan<op_way::col, Is>())), ...);
@@ -226,12 +239,12 @@ namespace mfmat
 
 
   template <typename T, std::size_t R, std::size_t C>
-  constexpr T ct_mat<T, R, C>::trace() const noexcept
+  T ct_mat<T, R, C>::trace() const noexcept
   {
     static_assert(R == C, "Trace only applies to a square matrix");
-    auto diag_sum = [this]<std::size_t... Is>(std::index_sequence<Is...>)
+    auto diag_sum = [this]<auto... Is>(std::index_sequence<Is...>)
       {
-        return (get<Is, Is>() + ... + T{});
+        return (get<Is, Is>() + ...);
       };
     return diag_sum(std::make_index_sequence<R>{});
   }

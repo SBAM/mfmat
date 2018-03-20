@@ -2,6 +2,7 @@
 # define MFMAT_COMMON_HPP_
 
 # include <cstdint>
+# include <cmath>
 # include <limits>
 # include <utility>
 

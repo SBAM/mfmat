@@ -73,7 +73,7 @@ namespace mfmat
   ct_mat<T, C, R> transpose(const ct_mat<T, R, C>& arg) noexcept
   {
     auto res = ct_mat<T, C, R>();
-    auto cell_swap_copy = [&]<std::size_t... Is>(std::index_sequence<Is...>)
+    auto cell_swap_copy = [&]<auto... Is>(std::index_sequence<Is...>)
       {
         ((res.template scan<op_way::row, Is>() =
           arg.template scan<op_way::col, Is>()), ...);
@@ -91,7 +91,7 @@ namespace mfmat
     constexpr auto L1 = OW1 == op_way::row ? M1::col_count : M1::row_count;
     constexpr auto L2 = OW2 == op_way::row ? M2::col_count : M2::row_count;
     static_assert(L1 == L2, "Incompatible vectors lengths");
-    auto sub_dot = [&]<std::size_t... Is>(std::index_sequence<Is...>)
+    auto sub_dot = [&]<auto... Is>(std::index_sequence<Is...>)
       {
         return ((mat1.template get<OW1, IDX1, Is>() *
                  mat2.template get<OW2, IDX2, Is>()) + ...);
@@ -107,7 +107,7 @@ namespace mfmat
                   "Incompatible matrices, cannot multiply");
     using RES_T = decltype(typename M1::cell_t{} * typename M2::cell_t{});
     auto res = ct_mat<RES_T, M1::row_count, M2::col_count>();
-    auto sub_mul = [&]<std::size_t... Is>(std::index_sequence<Is...>)
+    auto sub_mul = [&]<auto... Is>(std::index_sequence<Is...>)
       {
         ((res.template scan<op_way::row, Is>() =
             dot<op_way::row, Is / M2::col_count,

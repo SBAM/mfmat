@@ -47,7 +47,7 @@ namespace mfmat
      * @brief constant runtime getter using indices pair
      * @param idx idx.first=row_idx, idx.second=col_idx
      */
-    constexpr T operator[](indices idx) const noexcept;
+    T operator[](indices idx) const noexcept;
     /**
      * @brief constant compile time getter
      * @tparam R_IDX row index
@@ -76,7 +76,7 @@ namespace mfmat
      * @brief modify runtime getter using indices pair
      * @param idx idx.first=row_idx, idx.second=col_idx
      */
-    constexpr T& operator[](indices idx) noexcept;
+    T& operator[](indices idx) noexcept;
     /**
      * @brief modify compile time getter
      * @tparam R_IDX row index
@@ -121,13 +121,21 @@ namespace mfmat
     bool operator!=(const ct_mat& rhs) const noexcept;
 
     /**
+     * @return norm of given row/column at IDX location
+     * @tparam OW operation way, norm of row or column
+     * @tparam IDX row or column index
+     */
+    template <op_way OW, std::size_t IDX>
+    T norm() const noexcept;
+
+    /**
      * @brief transposes in place this matrix
      * @note assumes this matrix is square
      */
     void transpose() noexcept;
 
     /// @return matrix' trace
-    constexpr T trace() const noexcept;
+    T trace() const noexcept;
 
     /**
      * @return matrix determinant
