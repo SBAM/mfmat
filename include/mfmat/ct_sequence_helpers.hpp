@@ -14,11 +14,16 @@ namespace mfmat
   template <std::size_t MIN, std::size_t MAX>
   constexpr auto make_index_range()
   {
-    auto build = []<std::size_t... Is>(std::index_sequence<Is...>)
-      {
-        return std::index_sequence<MIN + Is...>{};
-      };
-    return build(std::make_index_sequence<MAX - MIN>{});
+    if constexpr (MIN > MAX)
+      return std::make_index_sequence<0>{};
+    else
+    {
+      auto build = []<std::size_t... Is>(std::index_sequence<Is...>)
+        {
+          return std::index_sequence<MIN + Is...>{};
+        };
+      return build(std::make_index_sequence<MAX - MIN>{});
+    }
   }
 
 
@@ -79,6 +84,11 @@ namespace mfmat
          make_upper_no_diag_mat_index_sequence<R, C, CURR_ROW + 1>());
     }
   }
+
+
+  /// @typedef decl_ic shorthand to declare a std::size_t constant
+  template <std::size_t IC>
+  using decl_ic = std::integral_constant<std::size_t, IC>;
 
 } // !namespace mfmat
 

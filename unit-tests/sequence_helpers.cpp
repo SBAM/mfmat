@@ -65,6 +65,18 @@ BOOST_AUTO_TEST_CASE(test_range_3)
 }
 
 
+BOOST_AUTO_TEST_CASE(test_range_4)
+{
+  std::vector<std::size_t> res;
+  auto test = [&]<std::size_t... Is>(std::index_sequence<Is...>)
+    {
+      (res.push_back(Is), ...);
+    };
+  test(mfmat::make_index_range<1, 0>());
+  BOOST_CHECK(res.empty());
+}
+
+
 BOOST_AUTO_TEST_CASE(cat_sequences_1)
 {
   std::vector<std::size_t> res;

@@ -226,6 +226,25 @@ namespace mfmat
 
 
   template <typename T, std::size_t R, std::size_t C>
+  template <op_way OW, std::size_t IDX>
+  bool ct_mat<T, R, C>::normalize() noexcept
+  {
+    if (auto vec_norm = norm<OW, IDX>(); is_zero(vec_norm))
+      return false;
+    else
+    {
+      constexpr auto VL = OW == op_way::row ? C : R;
+      auto cell_div = [&]<auto... Is>(std::index_sequence<Is...>)
+      {
+        return ((this->get<OW, IDX, Is>() /= vec_norm), ...);
+      };
+      cell_div(std::make_index_sequence<VL>{});
+      return true;
+    }
+  }
+
+
+  template <typename T, std::size_t R, std::size_t C>
   void ct_mat<T, R, C>::transpose() noexcept
   {
     static_assert(R == C, "In place transpose only applies to a square matrix");

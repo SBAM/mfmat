@@ -129,6 +129,14 @@ namespace mfmat
     T norm() const noexcept;
 
     /**
+     * @return false if vector length was 0, data then remains untouched
+     * @tparam OW operation way, normalize row or column
+     * @tparam IDX row or column index to normalize
+     */
+    template <op_way OW, std::size_t IDX>
+    bool normalize() noexcept;
+
+    /**
      * @brief transposes in place this matrix
      * @note assumes this matrix is square
      */

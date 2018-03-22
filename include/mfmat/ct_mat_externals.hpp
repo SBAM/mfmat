@@ -40,6 +40,21 @@ namespace mfmat
   ct_mat<T, R, C>
   operator-(ct_mat<T, R, C> lhs, const ct_mat<T, R, C>& rhs) noexcept;
 
+  /**
+   * @brief copies a vector (row or column) from a source matrix to a vector
+   *        (row or column) in given destination matrix
+   * @tparam OW_SRC defines if copy source is a row or column
+   * @tparam IDX_SRC row/col index of vector to copy
+   * @tparam OW_DST defines if copy destination is a row or column
+   * @tparam IDX_DST row/col index of copy destination
+   * @tparam M_SRC source matrix type
+   * @tparam M_DST destination matrix type
+   */
+  template <op_way OW_SRC, std::size_t IDX_SRC,
+            op_way OW_DST, std::size_t IDX_DST,
+            typename M_SRC, typename M_DST>
+  void copy_vector(const M_SRC& src, M_DST& dst) noexcept;
+
   /// @brief transposes given matrix
   template <typename T, std::size_t R, std::size_t C>
   ct_mat<T, C, R> transpose(const ct_mat<T, R, C>& arg) noexcept;
@@ -61,6 +76,13 @@ namespace mfmat
   /// @brief multiplies matrices
   template <typename M1, typename M2>
   auto operator*(const M1& lhs, const M2& rhs) noexcept;
+
+  /**
+   * @warning high complexity
+   * @return this matrix ortho-normalized using Gram-Schmidt
+   */
+  template <typename T, std::size_t R, std::size_t C>
+  ct_mat<T, R, C> orthonormalize(const ct_mat<T, R, C>& arg) noexcept;
 
 } // !namespace mfmat
 
