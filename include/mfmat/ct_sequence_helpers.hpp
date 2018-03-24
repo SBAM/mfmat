@@ -1,10 +1,15 @@
 #ifndef MFMAT_CT_SEQUENCE_HELPERS_HPP_
 # define MFMAT_CT_SEQUENCE_HELPERS_HPP_
 
-# include <utility>
+# include "common.hpp"
 
 namespace mfmat
 {
+
+  /// @typedef decl_ic shorthand to declare a std::size_t constant
+  template <std::size_t IC>
+  using decl_ic = std::integral_constant<std::size_t, IC>;
+
 
   /**
    * @tparam MIN range start value
@@ -18,7 +23,7 @@ namespace mfmat
       return std::make_index_sequence<0>{};
     else
     {
-      auto build = []<std::size_t... Is>(std::index_sequence<Is...>)
+      constexpr auto build = []<std::size_t... Is>(std::index_sequence<Is...>)
         {
           return std::index_sequence<MIN + Is...>{};
         };
@@ -86,9 +91,58 @@ namespace mfmat
   }
 
 
-  /// @typedef decl_ic shorthand to declare a std::size_t constant
-  template <std::size_t IC>
-  using decl_ic = std::integral_constant<std::size_t, IC>;
+  /**
+   * @brief This helper takes an index_sequence running along rows of a matrix
+   *        whose dimensions are R=row/C=col and excludes indices that belong
+   *        to the REMnth Row/Col (as specified by OW)
+   * @tparam OW specifies if a row or columns is to be removed
+   * @tparam R matrix's row count
+   * @tparam C matrix's column count
+   * @tparam REM identifies which row/column is to be removed
+   * @tparam Is input index sequence to filter
+   * @return a filtered index sequence
+   */
+  template <op_way OW, std::size_t R, std::size_t C,
+            std::size_t REM, std::size_t... Is>
+  constexpr auto remove_seq(std::index_sequence<Is...>)
+  {
+    if constexpr(OW == op_way::row)
+      static_assert(REM < R, "Row index is greater than row count");
+    else
+      static_assert(REM < C, "Column index is greater than column count");
+    if constexpr(sizeof...(Is) == 0)
+      return std::index_sequence<>{};
+    else
+    {
+      // silence warning, self is not used when TAIL is empty
+# pragma GCC diagnostic push
+# pragma GCC diagnostic ignored "-Wunused-but-set-parameter"
+      constexpr auto build = []<std::size_t HEAD, std::size_t... TAIL>
+        (auto self, std::index_sequence<HEAD, TAIL...>)
+        {
+          constexpr bool filter = (OW == op_way::row && HEAD / C == REM) ||
+                                  (OW == op_way::col && HEAD % C == REM);
+          if constexpr(sizeof...(TAIL) == 0)
+          {
+            if constexpr (filter)
+              return std::index_sequence<>{};
+            else
+              return std::index_sequence<HEAD>{};
+          }
+          else
+          {
+            if constexpr (filter)
+              return self(self, std::index_sequence<TAIL...>{});
+            else
+              return cat_index_sequence
+                (std::index_sequence<HEAD>{},
+                 self(self, std::index_sequence<TAIL...>{}));
+          }
+        };
+      return build(build, std::index_sequence<Is...>{});
+# pragma GCC diagnostic pop
+    }
+  }
 
 } // !namespace mfmat
 
