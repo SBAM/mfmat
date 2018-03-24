@@ -152,23 +152,31 @@ namespace mfmat
     // projection to make both columns orthogonal
     auto substract_proj = [&]<auto N, auto K>(decl_ic<N>, decl_ic<K>)
       {
-        auto scale = dot<op_way::col, K, op_way::col, N>(res, arg);
-        substract_scaled(decl_ic<N>{},
-                         decl_ic<K>{},
-                         scale, make_index_range<0, R>());
+        /**
+         * @note we're reusing the currently processed column, not the original
+         *       column from arg, this is the stabilized Gram-Schmidt version.
+         *       classical version would use rather use:
+         *         dot<op_way::col, K, op_way::col, N>(res, arg)
+         */
+        auto scale = dot<op_way::col, K, op_way::col, N>(res, res);
+        substract_scaled(decl_ic<N>{}, decl_ic<K>{}, scale,
+                         make_index_range<0, R>());
       };
-    // projects column N on each previously orthonormalized columns Ks...
+    // projects column N on each previously orthonormalized columns Ks
     auto all_proj = [&]<auto N, auto... Ks>
       (decl_ic<N>, std::index_sequence<Ks...>)
       {
         ((substract_proj(decl_ic<N>{}, decl_ic<Ks>{})), ...);
       };
-    // processes a single column, copy it to output, apply projections and
-    // normalize it
+    // processes a single column, copies it to output, substracts projections
+    // against previously orthogonalized colums then normalizes it
     auto process_column = [&]<auto... Is>(std::index_sequence<Is...>)
       {
+        // copy current column from initial matrix to result
         ((copy_vector<op_way::col, Is, op_way::col, Is>(arg, res),
+          // make current column orthogonal to previous columns
           all_proj(decl_ic<Is>{}, make_index_range<0, Is>()),
+          // normalize result column
           res.template normalize<op_way::col, Is>()), ...);
       };
     process_column(std::make_index_sequence<C>{});

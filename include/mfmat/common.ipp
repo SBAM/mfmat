@@ -9,8 +9,9 @@ namespace mfmat
     else
       return
         std::abs(lhs - rhs) <=
-        // scale machine epsilon to values magnitude (precision of 1 ULP)
-        std::numeric_limits<T>::epsilon() * std::abs(lhs + rhs);
+        // scale machine epsilon to values magnitude
+        std::numeric_limits<T>::epsilon() *
+        std::max(1.0, std::abs(lhs) + std::abs(rhs));
   }
 
 

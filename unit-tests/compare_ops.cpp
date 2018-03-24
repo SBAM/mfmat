@@ -32,10 +32,10 @@ BOOST_AUTO_TEST_CASE(integer_diff)
 
 BOOST_AUTO_TEST_CASE(double_compare)
 {
-  auto mat = mfmat::ct_mat<double, 2, 3>
+  auto mat = mfmat::ct_mat<double, 2, 4>
     ({
-      {  99999999999999999.0,  1.0,  0.000000000000000001 },
-      { -99999999999999999.0, -1.0, -0.000000000000000001 }
+      {  1.0e15,  1.0,  1.0e-15,  0.0 },
+      { -1.0e15, -1.0, -1.0e-15, -0.0 }
      });
   auto mat2 = mat;
   BOOST_CHECK(mat == mat2);
@@ -44,34 +44,33 @@ BOOST_AUTO_TEST_CASE(double_compare)
 
 BOOST_AUTO_TEST_CASE(double_diff1)
 {
-  auto mat = mfmat::ct_mat<double, 1, 1>({{  99999999999999999.0 }});
-  auto mat2 = mfmat::ct_mat<double, 1, 1>({{ 99999999999999955.0 }});
+  auto mat = mfmat::ct_mat<double, 1, 1>({{  999999999999999.0 }});
+  auto mat2 = mfmat::ct_mat<double, 1, 1>({{ 999999999999998.0 }});
   BOOST_CHECK(mat != mat2);
 }
 
 
 BOOST_AUTO_TEST_CASE(double_diff2)
 {
-  auto mat = mfmat::ct_mat<double, 1, 1>({{  -99999999999999999.0 }});
-  auto mat2 = mfmat::ct_mat<double, 1, 1>({{ -99999999999999955.0 }});
+  auto mat = mfmat::ct_mat<double, 1, 1>({{  -999999999999999.0 }});
+  auto mat2 = mfmat::ct_mat<double, 1, 1>({{ -999999999999998.0 }});
   BOOST_CHECK(mat != mat2);
 }
 
 
 BOOST_AUTO_TEST_CASE(double_diff3)
 {
-  auto mat = mfmat::ct_mat<double, 1, 1>({{  0.000000000000000001 }});
-  auto mat2 = mfmat::ct_mat<double, 1, 1>({{ 0.000000000000000002 }});
+  auto mat = mfmat::ct_mat<double, 1, 1>({{  1.0e-15 }});
+  auto mat2 = mfmat::ct_mat<double, 1, 1>({{ 2.0e-15 }});
   BOOST_CHECK(mat != mat2);
 }
 
 
 BOOST_AUTO_TEST_CASE(double_diff4)
 {
-  auto mat = mfmat::ct_mat<double, 1, 1>({{  -0.000000000000000001 }});
-  auto mat2 = mfmat::ct_mat<double, 1, 1>({{ -0.000000000000000002 }});
+  auto mat = mfmat::ct_mat<double, 1, 1>({{  -1.0e-15 }});
+  auto mat2 = mfmat::ct_mat<double, 1, 1>({{ -2.0e-15 }});
   BOOST_CHECK(mat != mat2);
 }
-
 
 BOOST_AUTO_TEST_SUITE_END()
