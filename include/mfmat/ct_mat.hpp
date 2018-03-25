@@ -36,6 +36,14 @@ namespace mfmat
     /// @brief Constructor based on full matrix initialization list
     template <typename T2, std::size_t R2, std::size_t C2>
     ct_mat(const T2(&cil)[R2][C2]) noexcept;
+    /**
+     * @brief Initializes this matrix by picking only elements pointed by IDXs
+     *        from rhs. Those elements are copied sequentially along rows of
+     *        this matrix.
+     */
+    template <std::size_t R2, std::size_t C2, std::size_t... IDXs>
+    ct_mat(const ct_mat<T, R2, C2>& rhs,
+           std::index_sequence<IDXs...> seq) noexcept;
 
     ct_mat(const ct_mat&) = default;
     ct_mat(ct_mat&&) = default;
@@ -54,7 +62,7 @@ namespace mfmat
      * @tparam C_IDX column index
      */
     template <std::size_t R_IDX, std::size_t C_IDX>
-    constexpr T get() const noexcept;
+    constexpr T get() const;
     /**
      * @brief constant compile time getter
      * @note equivalent to get<R_IDX, C_IDX> when op_way is by row
@@ -63,14 +71,14 @@ namespace mfmat
      * @tparam IDX2 second index for specified row or column
      */
     template <op_way OW, std::size_t IDX1, std::size_t IDX2>
-    constexpr T get() const noexcept;
+    constexpr T get() const;
     /**
      * @brief constant compile time getter using global index over matrix
      * @tparam OW operation way, scan matrix by rows or columns
      * @tparam IDX global index
      */
     template <op_way OW, std::size_t IDX>
-    constexpr T scan() const noexcept;
+    constexpr T scan() const;
 
     /**
      * @brief modify runtime getter using indices pair
@@ -83,7 +91,7 @@ namespace mfmat
      * @tparam C_IDX column index
      */
     template <std::size_t R_IDX, std::size_t C_IDX>
-    constexpr T& get() noexcept;
+    constexpr T& get();
     /**
      * @brief modify compile time getter
      * @note equivalent to get<R_IDX, C_IDX> when op_way is by row
@@ -92,14 +100,14 @@ namespace mfmat
      * @tparam IDX2 second index for specified row or column
      */
     template <op_way OW, std::size_t IDX1, std::size_t IDX2>
-    constexpr T& get() noexcept;
+    constexpr T& get();
     /**
      * @brief modify compile time getter using global index over matrix
      * @tparam OW operation way, scan matrix by rows or columns
      * @tparam IDX global index
      */
     template <op_way OW, std::size_t IDX>
-    constexpr T& scan() noexcept;
+    constexpr T& scan();
 
     /// @brief adds scalar and stores result
     ct_mat& operator+=(T val) noexcept;
@@ -149,7 +157,7 @@ namespace mfmat
      * @return matrix determinant
      * @warning recursive method, very high complexity
      */
-    constexpr T rec_det() const noexcept;
+    T rec_det() const noexcept;
 
   private:
     storage_t storage_; ///< internal storage

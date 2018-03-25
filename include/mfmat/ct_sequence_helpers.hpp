@@ -95,7 +95,7 @@ namespace mfmat
    * @brief This helper takes an index_sequence running along rows of a matrix
    *        whose dimensions are R=row/C=col and excludes indices that belong
    *        to the REMnth Row/Col (as specified by OW)
-   * @tparam OW specifies if a row or columns is to be removed
+   * @tparam OW specifies if a row or column is to be removed
    * @tparam R matrix's row count
    * @tparam C matrix's column count
    * @tparam REM identifies which row/column is to be removed
@@ -104,13 +104,13 @@ namespace mfmat
    */
   template <op_way OW, std::size_t R, std::size_t C,
             std::size_t REM, std::size_t... Is>
-  constexpr auto remove_seq(std::index_sequence<Is...>)
+  constexpr auto remove_seq(std::index_sequence<Is...> seq)
   {
     if constexpr(OW == op_way::row)
       static_assert(REM < R, "Row index is greater than row count");
     else
       static_assert(REM < C, "Column index is greater than column count");
-    if constexpr(sizeof...(Is) == 0)
+    if constexpr(seq.size() == 0)
       return std::index_sequence<>{};
     else
     {
@@ -118,7 +118,7 @@ namespace mfmat
 # pragma GCC diagnostic push
 # pragma GCC diagnostic ignored "-Wunused-but-set-parameter"
       constexpr auto build = []<std::size_t HEAD, std::size_t... TAIL>
-        (auto self, std::index_sequence<HEAD, TAIL...>)
+        (const auto& self, std::index_sequence<HEAD, TAIL...>)
         {
           constexpr bool filter = (OW == op_way::row && HEAD / C == REM) ||
                                   (OW == op_way::col && HEAD % C == REM);
@@ -139,9 +139,31 @@ namespace mfmat
                  self(self, std::index_sequence<TAIL...>{}));
           }
         };
-      return build(build, std::index_sequence<Is...>{});
+      return build(build, seq);
 # pragma GCC diagnostic pop
     }
+  }
+
+
+  /**
+   * @tparam HEAD first index sequence element
+   * @tparam TAIL remaining index sequence elements past HEAD
+   * @tparam MAX current sequence maximum
+   * @return max value from an input index sequence
+   */
+  template <std::size_t HEAD, std::size_t... TAIL, std::size_t MAX = 0>
+  constexpr auto seq_max(std::index_sequence<HEAD, TAIL...>, decl_ic<MAX> = {})
+  {
+    if constexpr(sizeof...(TAIL) == 0)
+      if constexpr(HEAD > MAX)
+        return decl_ic<HEAD>{};
+      else
+        return decl_ic<MAX>{};
+    else
+      if constexpr(HEAD > MAX)
+        return seq_max(std::index_sequence<TAIL...>{}, decl_ic<HEAD>{});
+      else
+        return seq_max(std::index_sequence<TAIL...>{}, decl_ic<MAX>{});
   }
 
 } // !namespace mfmat

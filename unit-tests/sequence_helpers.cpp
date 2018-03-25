@@ -666,4 +666,36 @@ BOOST_AUTO_TEST_CASE(exclude_mix)
   BOOST_CHECK(res.empty());
 }
 
+
+BOOST_AUTO_TEST_CASE(seq_max_test_0)
+{
+  auto base_seq = std::index_sequence<0>{};
+  auto seq_max = mfmat::seq_max(base_seq);
+  BOOST_CHECK(seq_max.value == 0);
+}
+
+
+BOOST_AUTO_TEST_CASE(seq_max_test_1)
+{
+  auto base_seq = std::index_sequence<1>{};
+  auto seq_max = mfmat::seq_max(base_seq);
+  BOOST_CHECK(seq_max.value == 1);
+}
+
+
+BOOST_AUTO_TEST_CASE(seq_max_test_2)
+{
+  auto base_seq = std::make_index_sequence<100>{};
+  auto seq_max = mfmat::seq_max(base_seq);
+  BOOST_CHECK(seq_max.value == 99);
+}
+
+
+BOOST_AUTO_TEST_CASE(seq_max_test_3)
+{
+  auto base_seq = std::index_sequence<1, 10, 100, 1000, 100, 10, 1>{};
+  auto seq_max = mfmat::seq_max(base_seq);
+  BOOST_CHECK(seq_max.value == 1000);
+}
+
 BOOST_AUTO_TEST_SUITE_END()

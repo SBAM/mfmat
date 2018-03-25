@@ -44,6 +44,27 @@ namespace mfmat
 
 
   template <typename T, std::size_t R, std::size_t C>
+  template <std::size_t R2, std::size_t C2, std::size_t... IDXs>
+  ct_mat<T, R, C>::ct_mat(const ct_mat<T, R2, C2>& rhs,
+                          std::index_sequence<IDXs...> seq) noexcept :
+    storage_{{}}
+  {
+    static_assert(seq.size() <= R * C,
+                  "Sequence is larger than this matrix's cell count");
+    static_assert(seq_max(seq).value < R2 * C2,
+                  "Sequence max index points outside rhs");
+    auto cell_copy = [&]<std::size_t I, std::size_t HEAD, std::size_t... TAIL>
+      (const auto& self, decl_ic<I>, std::index_sequence<HEAD, TAIL...>)
+      {
+        this->scan<op_way::row, I>() = rhs.template scan<op_way::row, HEAD>();
+        if constexpr(sizeof...(TAIL) > 0)
+          self(self, decl_ic<I + 1>{}, std::index_sequence<TAIL...>{});
+      };
+    cell_copy(cell_copy, decl_ic<0>{}, seq);
+  }
+
+
+  template <typename T, std::size_t R, std::size_t C>
   T ct_mat<T, R, C>::operator[](indices idx) const noexcept
   {
     return storage_[idx.first][idx.second];
@@ -52,7 +73,7 @@ namespace mfmat
 
   template <typename T, std::size_t R, std::size_t C>
   template <std::size_t R_IDX, std::size_t C_IDX>
-  constexpr T ct_mat<T, R, C>::get() const noexcept
+  constexpr T ct_mat<T, R, C>::get() const
   {
     return std::get<C_IDX>(std::get<R_IDX>(storage_));
   }
@@ -60,7 +81,7 @@ namespace mfmat
 
   template <typename T, std::size_t R, std::size_t C>
   template <op_way OW, std::size_t IDX1, std::size_t IDX2>
-  constexpr T ct_mat<T, R, C>::get() const noexcept
+  constexpr T ct_mat<T, R, C>::get() const
   {
     if constexpr (OW == op_way::row)
       return std::get<IDX2>(std::get<IDX1>(storage_));
@@ -71,7 +92,7 @@ namespace mfmat
 
   template <typename T, std::size_t R, std::size_t C>
   template <op_way OW, std::size_t IDX>
-  constexpr T ct_mat<T, R, C>::scan() const noexcept
+  constexpr T ct_mat<T, R, C>::scan() const
   {
     if constexpr (OW == op_way::row)
       return std::get<IDX % C>(std::get<IDX / C>(storage_));
@@ -89,7 +110,7 @@ namespace mfmat
 
   template <typename T, std::size_t R, std::size_t C>
   template <std::size_t R_IDX, std::size_t C_IDX>
-  constexpr T& ct_mat<T, R, C>::get() noexcept
+  constexpr T& ct_mat<T, R, C>::get()
   {
     return std::get<C_IDX>(std::get<R_IDX>(storage_));
   }
@@ -97,7 +118,7 @@ namespace mfmat
 
   template <typename T, std::size_t R, std::size_t C>
   template <op_way OW, std::size_t IDX1, std::size_t IDX2>
-  constexpr T& ct_mat<T, R, C>::get() noexcept
+  constexpr T& ct_mat<T, R, C>::get()
   {
     if constexpr (OW == op_way::row)
       return std::get<IDX2>(std::get<IDX1>(storage_));
@@ -108,7 +129,7 @@ namespace mfmat
 
   template <typename T, std::size_t R, std::size_t C>
   template <op_way OW, std::size_t IDX>
-  constexpr T& ct_mat<T, R, C>::scan() noexcept
+  constexpr T& ct_mat<T, R, C>::scan()
   {
     if constexpr (OW == op_way::row)
       return std::get<IDX % C>(std::get<IDX / C>(storage_));
@@ -270,7 +291,7 @@ namespace mfmat
 
 
   template <typename T, std::size_t R, std::size_t C>
-  constexpr T ct_mat<T, R, C>::rec_det() const noexcept
+  T ct_mat<T, R, C>::rec_det() const noexcept
   {
     static_assert(R == C, "Determinant only applies to a square matrix");
     static_assert(R > 1, "Determinant requires at least a 2x2 matrix");

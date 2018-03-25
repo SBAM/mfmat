@@ -11,7 +11,7 @@ namespace mfmat
         std::abs(lhs - rhs) <=
         // scale machine epsilon to values magnitude
         std::numeric_limits<T>::epsilon() *
-        std::max(1.0, std::abs(lhs) + std::abs(rhs));
+        std::max(T(1.0), std::abs(lhs) + std::abs(rhs));
   }
 
 
