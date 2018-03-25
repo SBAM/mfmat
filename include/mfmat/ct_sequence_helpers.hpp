@@ -6,7 +6,7 @@
 namespace mfmat
 {
 
-  /// @typedef decl_ic shorthand to declare a std::size_t constant
+  /// @typedef decl_ic shorthand to declare an intergral constant
   template <std::size_t IC>
   using decl_ic = std::integral_constant<std::size_t, IC>;
 

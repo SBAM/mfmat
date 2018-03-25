@@ -300,34 +300,30 @@ namespace mfmat
     else
     {
       // extracts sub matrix excluding first row and excluding specified column
-      auto sub = [this](std::size_t excluded_column)
+      auto extract_sub = [this]<std::size_t EC>(decl_ic<EC>)
         {
-          auto res = ct_mat<T, R - 1, C - 1>();
-          for (std::size_t i = 1; i < R; ++i)
-            for (std::size_t j = 0; j < C; ++j)
-              if (j < excluded_column)
-                res.storage_[i - 1][j] = storage_[i][j];
-              else
-                if (j == excluded_column)
-                  continue;
-                else
-                  res.storage_[i - 1][j - 1] = storage_[i][j];
-          return res;
+          constexpr auto s0 = std::make_index_sequence<R * C>{};
+          constexpr auto s1 = remove_seq<op_way::row, R, C, 0>(s0);
+          constexpr auto s2 = remove_seq<op_way::col, R, C, EC>(s1);
+          return ct_mat<T, R - 1, C - 1>(*this, s2);
         };
-      auto res_det = T{};
-      bool sign = true;
-      for (std::size_t j = 0; j < C; ++j)
-      {
-        if (!is_zero(storage_[0][j]))
+      auto process_cell = [&]<std::size_t I>(decl_ic<I>)
         {
-          if (sign)
-            res_det += storage_[0][j] * sub(j).rec_det();
+          if (is_zero(this->get<0, I>()))
+            return T{};
           else
-            res_det -= storage_[0][j] * sub(j).rec_det();
-        }
-        sign = !sign;
-      }
-      return res_det;
+          {
+            if constexpr(I % 2 == 0)
+              return this->get<0, I>() * extract_sub(decl_ic<I>{}).rec_det();
+            else
+              return -this->get<0, I>() * extract_sub(decl_ic<I>{}).rec_det();
+          }
+        };
+      auto scan_col = [&]<std::size_t... Cs>(std::index_sequence<Cs...>)
+        {
+          return (process_cell(decl_ic<Cs>{}) + ...);
+        };
+      return scan_col(std::make_index_sequence<C>{});
     }
   }
   /// @}
