@@ -182,6 +182,37 @@ namespace mfmat
     process_column(std::make_index_sequence<C>{});
     return res;
   }
+
+
+  template <op_way OW, typename T, std::size_t R, std::size_t C>
+  auto mean(const ct_mat<T, R, C>& arg) noexcept
+  {
+    auto res = ct_mat<T,
+                      (OW == op_way::col) ? 1 : R,
+                      (OW == op_way::col) ? C : 1>();
+    // size of vectors on which mean is computed
+    constexpr auto i_len = (OW == op_way::col) ? R : C;
+    // size of vectors as matrix cells' type
+    constexpr auto t_len = T{i_len};
+    // size of result vector
+    constexpr auto res_len = (OW == op_way::col) ? C : R;
+    // defines result's operation way
+    constexpr auto res_ow = (OW == op_way::col) ? op_way::row : op_way::col;
+    // computes mean of row/column whose index is N
+    auto vec_mean = [&, t_len]<auto N, auto... Is>
+      (decl_ic<N>, std::index_sequence<Is...>)
+      {
+        return (arg.template get<OW, N, Is>() + ...) / t_len;
+      };
+    // computes mean on all vectors
+    auto process_vec = [&]<auto... Is>(std::index_sequence<Is...>)
+      {
+        ((res.template get<res_ow, 0, Is>() =
+          vec_mean(decl_ic<Is>{}, std::make_index_sequence<i_len>{})), ...);
+      };
+    process_vec(std::make_index_sequence<res_len>{});
+    return res;
+  }
   /// @}
 
 } // !namespace mfmat
