@@ -61,7 +61,7 @@ BOOST_AUTO_TEST_CASE(mean_5x3)
       { 90.0, 60.0, 80.0 },
       { 60.0, 50.0, 70.0 },
       { 30.0, 40.0, 70.0 },
-      { 30.0, 20.0, 90.0 },
+      { 30.0, 20.0, 90.0 }
      });
   auto mean_col = mfmat::mean<owc>(mat);
   auto res_col = mfmat::ct_mat<double, 1, 3>

@@ -192,17 +192,15 @@ namespace mfmat
                       (OW == op_way::col) ? C : 1>();
     // size of vectors on which mean is computed
     constexpr auto i_len = (OW == op_way::col) ? R : C;
-    // size of vectors as matrix cells' type
-    constexpr auto t_len = T{i_len};
     // size of result vector
     constexpr auto res_len = (OW == op_way::col) ? C : R;
     // defines result's operation way
     constexpr auto res_ow = (OW == op_way::col) ? op_way::row : op_way::col;
     // computes mean of row/column whose index is N
-    auto vec_mean = [&, t_len]<auto N, auto... Is>
+    auto vec_mean = [&]<auto N, auto... Is>
       (decl_ic<N>, std::index_sequence<Is...>)
       {
-        return (arg.template get<OW, N, Is>() + ...) / t_len;
+        return (arg.template get<OW, N, Is>() + ...) / T{i_len};
       };
     // computes mean on all vectors
     auto process_vec = [&]<auto... Is>(std::index_sequence<Is...>)
@@ -211,6 +209,52 @@ namespace mfmat
           vec_mean(decl_ic<Is>{}, std::make_index_sequence<i_len>{})), ...);
       };
     process_vec(std::make_index_sequence<res_len>{});
+    return res;
+  }
+
+
+  template <op_way OW, typename T, std::size_t R, std::size_t C>
+  ct_mat<T, R, C> deviation(const ct_mat<T, R, C>& arg) noexcept
+  {
+    auto res = arg;
+    // retrieve mean vectors, following specified operation way
+    auto mean_vec = mean<OW>(arg);
+    // size of vectors on which mean is substracted
+    constexpr auto i_len = (OW == op_way::col) ? R : C;
+    // res vectors' count
+    constexpr auto r_len = (OW == op_way::col) ? C : R;
+    // substract mean vector component from row/column
+    auto substract_mean = [&]<auto N, auto... Is>
+      (decl_ic<N>, std::index_sequence<Is...>)
+      {
+        ((res.template get<OW, N, Is>() -=
+          mean_vec.template get<OW, N, 0>()), ...);
+      };
+    // applies mean substraction on each row/column
+    auto process_vec = [&]<auto... Is>(std::index_sequence<Is...>)
+      {
+        (substract_mean(decl_ic<Is>{}, std::make_index_sequence<i_len>{}), ...);
+      };
+    process_vec(std::make_index_sequence<r_len>{});
+    return res;
+  }
+
+
+  template <op_way OW, typename T, std::size_t R, std::size_t C>
+  auto covariance(const ct_mat<T, R, C>& arg) noexcept
+  {
+    auto dev = deviation<OW>(arg);
+    // number of observations as cell's type
+    constexpr auto num_obs = T{(OW == op_way::col) ? R : C};
+    auto res = ct_mat<T, dev.col_count, dev.col_count>();
+    // 1/num_obs * transpose(dev) * dev
+    auto self_mul = [&]<auto... Is>(std::index_sequence<Is...>)
+      {
+        ((res.template scan<op_way::row, Is>() =
+            dot<op_way::col, Is / dev.col_count,
+                op_way::col, Is % dev.col_count>(dev, dev) / num_obs), ...);
+      };
+    self_mul(std::make_index_sequence<res.row_count * res.col_count>{});
     return res;
   }
   /// @}
