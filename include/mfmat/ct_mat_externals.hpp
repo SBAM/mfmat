@@ -102,10 +102,11 @@ namespace mfmat
   ct_mat<T, R, C> deviation(const ct_mat<T, R, C>& arg) noexcept;
 
   /**
-   * @tparam OW defines if observations are stored as rows or columns
-   * @return covariance of arg matrix normalized by the number of observations
+   * @brief Computes covariance of a data-set where observations are stored as
+   *        rows.
+   * @return matrix normalized by the number of observations
    */
-  template <op_way OW, typename T, std::size_t R, std::size_t C>
+  template <typename T, std::size_t R, std::size_t C>
   auto covariance(const ct_mat<T, R, C>& arg) noexcept;
 
 } // !namespace mfmat

@@ -240,21 +240,21 @@ namespace mfmat
   }
 
 
-  template <op_way OW, typename T, std::size_t R, std::size_t C>
+  template <typename T, std::size_t R, std::size_t C>
   auto covariance(const ct_mat<T, R, C>& arg) noexcept
   {
-    auto dev = deviation<OW>(arg);
+    auto dev = deviation<op_way::col>(arg);
     // number of observations as cell's type
-    constexpr auto num_obs = T{(OW == op_way::col) ? R : C};
-    auto res = ct_mat<T, dev.col_count, dev.col_count>();
+    auto res = ct_mat<T, C, C>();
     // 1/num_obs * transpose(dev) * dev
     auto self_mul = [&]<auto... Is>(std::index_sequence<Is...>)
       {
         ((res.template scan<op_way::row, Is>() =
-            dot<op_way::col, Is / dev.col_count,
-                op_way::col, Is % dev.col_count>(dev, dev) / num_obs), ...);
+          res.template scan<op_way::col, Is>() =
+            dot<op_way::col, Is / C,
+                op_way::col, Is % C>(dev, dev) / T{R}), ...);
       };
-    self_mul(std::make_index_sequence<res.row_count * res.col_count>{});
+    self_mul(make_upper_mat_index_sequence<C>());
     return res;
   }
   /// @}
