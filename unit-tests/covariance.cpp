@@ -10,9 +10,6 @@
 
 BOOST_AUTO_TEST_SUITE(covariance_test_suite)
 
-constexpr auto owr = mfmat::op_way::row;
-constexpr auto owc = mfmat::op_way::col;
-
 BOOST_AUTO_TEST_CASE(identity_1x1_covariance)
 {
   auto mat1 = mfmat::ct_mat<std::int32_t, 1, 1>(mfmat::identity_tag());
@@ -70,6 +67,7 @@ BOOST_AUTO_TEST_CASE(covariance_5x3)
      });
   BOOST_CHECK(cov == res);
 }
+
 
 BOOST_AUTO_TEST_CASE(covariance_10x5)
 {

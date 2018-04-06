@@ -85,12 +85,11 @@ namespace mfmat
   ct_mat<T, R, C> orthonormalize(const ct_mat<T, R, C>& arg) noexcept;
 
   /**
-   * @brief Builds a vector that stores the mean value of each row/column
-   * @tparam OW defines if mean is computed along rows or columns
-   * @return a row of size C or column of size R
+   * @brief Builds a vector that stores the mean value of columns
+   * @return a row of size C
    */
-  template <op_way OW, typename T, std::size_t R, std::size_t C>
-  auto mean(const ct_mat<T, R, C>& arg) noexcept;
+  template <typename T, std::size_t R, std::size_t C>
+  ct_mat<T, 1, C> mean(const ct_mat<T, R, C>& arg) noexcept;
 
   /**
    * @brief Builds the deviation matrix according to the mean computed against
@@ -98,7 +97,7 @@ namespace mfmat
    * @tparam OW defines if mean is computed along rows or columns
    * @return deviation matrix with dimensions matching original arg
    */
-  template <op_way OW, typename T, std::size_t R, std::size_t C>
+  template <typename T, std::size_t R, std::size_t C>
   ct_mat<T, R, C> deviation(const ct_mat<T, R, C>& arg) noexcept;
 
   /**
@@ -107,7 +106,7 @@ namespace mfmat
    * @return matrix normalized by the number of observations
    */
   template <typename T, std::size_t R, std::size_t C>
-  auto covariance(const ct_mat<T, R, C>& arg) noexcept;
+  ct_mat<T, C, C> covariance(const ct_mat<T, R, C>& arg) noexcept;
 
 } // !namespace mfmat
 
