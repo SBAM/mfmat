@@ -91,6 +91,16 @@ namespace mfmat
   template <typename T, std::size_t R, std::size_t C>
   ct_mat<T, 1, C> mean(const ct_mat<T, R, C>& arg) noexcept;
 
+
+  /**
+   * @brief Builds a vector that stores the standard deviation of each column
+   * @param pc_mean pre-computed mean, if available, speeds up computation
+   * @return a row of size C
+   */
+  template <typename T, std::size_t R, std::size_t C>
+  ct_mat<T, 1, C> std_dev(const ct_mat<T, R, C>& arg,
+                          const ct_mat_opt<T, 1, C>& pc_mean = std::nullopt);
+
   /**
    * @brief Builds the deviation matrix according to the mean computed against
    *        rows or columns.

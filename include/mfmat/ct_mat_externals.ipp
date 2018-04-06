@@ -195,12 +195,38 @@ namespace mfmat
         return (arg.template get<Is, N>() + ...) / T{R};
       };
     // computes mean on all columns
-    auto process_vec = [&]<auto... Is>(std::index_sequence<Is...>)
+    auto process_col = [&]<auto... Is>(std::index_sequence<Is...>)
       {
         ((res.template get<0, Is>() =
           vec_mean(decl_ic<Is>{}, std::make_index_sequence<R>{})), ...);
       };
-    process_vec(std::make_index_sequence<C>{});
+    process_col(std::make_index_sequence<C>{});
+    return res;
+  }
+
+
+  template <typename T, std::size_t R, std::size_t C>
+  ct_mat<T, 1, C> std_dev(const ct_mat<T, R, C>& arg,
+                          const ct_mat_opt<T, 1, C>& pc_mean)
+  {
+    auto res = ct_mat<T, 1, C>();
+    // computes mean if precomputed mean is not available
+    const auto& mean_vec = pc_mean ? *pc_mean : mean(arg);
+    // computes standard deviation of column whose index is N
+    auto stddev_col = [&]<auto N, auto... Is>
+      (decl_ic<N>, std::index_sequence<Is...>)
+      {
+        return std::sqrt
+          (((std::pow(arg.template get<Is, N>() -
+                      mean_vec.template get<0, N>(), 2) / T{R}) + ...));
+      };
+    // computes standard deviation on all columns
+    auto process_col = [&]<auto... Is>(std::index_sequence<Is...>)
+      {
+        ((res.template get<0, Is>() =
+          stddev_col(decl_ic<Is>{}, std::make_index_sequence<R>{})), ...);
+      };
+    process_col(std::make_index_sequence<C>{});
     return res;
   }
 

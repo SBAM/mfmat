@@ -2,6 +2,7 @@
 # define MFMAT_CT_MAT_HPP_
 
 # include <array>
+# include <optional>
 
 # include "common.hpp"
 # include "ct_sequence_helpers.hpp"
@@ -162,6 +163,11 @@ namespace mfmat
   private:
     storage_t storage_; ///< internal storage
   };
+
+
+  /// @typedef ct_mat_opt shorthand to optional ct_mat
+  template <typename T, std::size_t R, std::size_t C>
+  using ct_mat_opt = std::optional<ct_mat<T, R, C>>;
 
 } // !namespace mfmat
 
