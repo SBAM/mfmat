@@ -33,7 +33,7 @@ BOOST_AUTO_TEST_CASE(identity_1x1_mean_center)
 }
 
 
-BOOST_AUTO_TEST_CASE(deviation_3x3)
+BOOST_AUTO_TEST_CASE(mean_center_3x3)
 {
   auto mat = mfmat::ct_mat<double, 3, 3>
     ({
@@ -57,7 +57,7 @@ BOOST_AUTO_TEST_CASE(deviation_3x3)
 }
 
 
-BOOST_AUTO_TEST_CASE(deviation_5x3)
+BOOST_AUTO_TEST_CASE(mean_center_5x3)
 {
   auto mat = mfmat::ct_mat<double, 5, 3>
     ({

@@ -97,6 +97,7 @@ namespace mfmat
   /**
    * @brief Computes covariance of a data-set where observations are stored as
    *        rows.
+   * @param pc_mean pre-computed mean, if available, speeds up computation
    * @return matrix normalized by the number of observations
    */
   template <typename T, std::size_t R, std::size_t C>

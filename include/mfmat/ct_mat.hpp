@@ -175,6 +175,16 @@ namespace mfmat
      */
     ct_mat& mean_center(const opt<T, 1, C>& pc_mean = std::nullopt) noexcept;
 
+    /**
+     * @brief Centers matrix according to columns' standard deviations, modifies
+     *        this matrix.
+     * @param pc_mean pre-computed mean, if available, speeds up computation
+     * @param pc_stdd pre-computed standard deviation, if available, speeds up
+     *                computation
+     */
+    ct_mat& stddev_center(const opt<T, 1, C>& pc_mean = std::nullopt,
+                          const opt<T, 1, C>& pc_stdd = std::nullopt) noexcept;
+
   private:
     storage_t storage_; ///< internal storage
   };

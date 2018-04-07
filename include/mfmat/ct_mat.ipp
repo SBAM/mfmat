@@ -392,6 +392,33 @@ namespace mfmat
     process_col(std::make_index_sequence<C>{});
     return *this;
   }
+
+
+  template <typename T, std::size_t R, std::size_t C>
+  ct_mat<T, R, C>&
+  ct_mat<T, R, C>::stddev_center
+  (const ct_mat::opt<T, 1, C>& pc_mean, const opt<T, 1, C>& pc_stdd) noexcept
+  {
+    // computes mean if precomputed mean is not available
+    const auto& mean_vec = pc_mean ? *pc_mean : std::make_optional(mean(*this));
+    // computes stddev if precomputed stddev is not available
+    const auto& stddev_vec = pc_stdd ? * pc_stdd : std_dev(*this, mean_vec);
+    // substract mean vector component from columns and normalize by stddev
+    auto sub_center = [&]<auto N, auto... Is>
+      (decl_ic<N>, std::index_sequence<Is...>)
+      {
+        ((this->get<Is, N>() = (this->get<Is, N>() -
+                                mean_vec->template get<0, N>()) /
+                                stddev_vec.template get<0, N>()), ...);
+      };
+    // applies stddev centering on each column
+    auto process_col = [&]<auto... Is>(std::index_sequence<Is...>)
+      {
+        (sub_center(decl_ic<Is>{}, std::make_index_sequence<R>{}), ...);
+      };
+    process_col(std::make_index_sequence<C>{});
+    return *this;
+  }
   /// @}
 
 } // !namespace mfmat

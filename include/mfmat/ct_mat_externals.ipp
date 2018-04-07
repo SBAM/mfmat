@@ -172,7 +172,7 @@ namespace mfmat
       {
         return std::sqrt
           (((std::pow(arg.template get<Is, N>() -
-                      mean_vec.template get<0, N>(), 2) / T{R}) + ...));
+                      mean_vec.template get<0, N>(), 2)) + ...) / T{R});
       };
     // computes standard deviation on all columns
     auto process_col = [&]<auto... Is>(std::index_sequence<Is...>)
