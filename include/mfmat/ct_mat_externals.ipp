@@ -206,8 +206,9 @@ namespace mfmat
 
 
   template <typename T, std::size_t R, std::size_t C>
-  ct_mat<T, 1, C> std_dev(const ct_mat<T, R, C>& arg,
-                          const ct_mat_opt<T, 1, C>& pc_mean)
+  ct_mat<T, 1, C>
+  std_dev(const ct_mat<T, R, C>& arg,
+          const ct_mat_opt<T, 1, C>& pc_mean) noexcept
   {
     auto res = ct_mat<T, 1, C>();
     // computes mean if precomputed mean is not available
@@ -232,40 +233,20 @@ namespace mfmat
 
 
   template <typename T, std::size_t R, std::size_t C>
-  ct_mat<T, R, C> deviation(const ct_mat<T, R, C>& arg) noexcept
+  ct_mat<T, C, C>
+  covariance(ct_mat<T, R, C> arg,
+             const ct_mat_opt<T, 1, C>& pc_mean) noexcept
   {
-    auto res = arg;
-    // retrieve mean vectors
-    auto mean_vec = mean(arg);
-    // substract mean vector component from columns
-    auto substract_mean = [&]<auto N, auto... Is>
-      (decl_ic<N>, std::index_sequence<Is...>)
-      {
-        ((res.template get<Is, N>() -= mean_vec.template get<0, N>()), ...);
-      };
-    // applies mean substraction on each column
-    auto process_vec = [&]<auto... Is>(std::index_sequence<Is...>)
-      {
-        (substract_mean(decl_ic<Is>{}, std::make_index_sequence<R>{}), ...);
-      };
-    process_vec(std::make_index_sequence<C>{});
-    return res;
-  }
-
-
-  template <typename T, std::size_t R, std::size_t C>
-  ct_mat<T, C, C> covariance(const ct_mat<T, R, C>& arg) noexcept
-  {
-    auto dev = deviation(arg);
-    // number of observations as cell's type
     auto res = ct_mat<T, C, C>();
-    // 1/num_obs * transpose(dev) * dev
+    // center in place arg
+    arg.mean_center(pc_mean);
+    // 1/num_obs * transpose(centered_arg) * centered_arg
     auto self_mul = [&]<auto... Is>(std::index_sequence<Is...>)
       {
         ((res.template scan<op_way::row, Is>() =
           res.template scan<op_way::col, Is>() =
             dot<op_way::col, Is / C,
-                op_way::col, Is % C>(dev, dev) / T{R}), ...);
+                op_way::col, Is % C>(arg, arg) / T{R}), ...);
       };
     self_mul(make_upper_mat_index_sequence<C>());
     return res;

@@ -326,6 +326,28 @@ namespace mfmat
       return scan_col(std::make_index_sequence<C>{});
     }
   }
+
+
+  template <typename T, std::size_t R, std::size_t C>
+  ct_mat<T, R, C>&
+  ct_mat<T, R, C>::mean_center(const ct_mat::opt<T, 1, C>& pc_mean) noexcept
+  {
+    // computes mean if precomputed mean is not available
+    const auto& mean_vec = pc_mean ? *pc_mean : mean(*this);
+    // substract mean vector component from columns
+    auto substract_mean = [&]<auto N, auto... Is>
+      (decl_ic<N>, std::index_sequence<Is...>)
+      {
+        ((this->get<Is, N>() -= mean_vec.template get<0, N>()), ...);
+      };
+    // applies mean substraction on each column
+    auto process_col = [&]<auto... Is>(std::index_sequence<Is...>)
+      {
+        (substract_mean(decl_ic<Is>{}, std::make_index_sequence<R>{}), ...);
+      };
+    process_col(std::make_index_sequence<C>{});
+    return *this;
+  }
   /// @}
 
 } // !namespace mfmat

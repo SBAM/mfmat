@@ -28,6 +28,9 @@ namespace mfmat
     using cell_t = T;
     /// @typedef storage_t Shorthand to internal storage type
     using storage_t = std::array<std::array<T, C>, R>;
+    /// @typedef opt shorthand to optional ct_mat
+    template<typename T2, std::size_t R2, std::size_t C2>
+    using opt = std::optional<ct_mat<T2, R2, C2>>;
 
   public:
     /// @brief Fills matrix with zeroes
@@ -160,13 +163,18 @@ namespace mfmat
      */
     T rec_det() const noexcept;
 
+    /**
+     * @brief Centers matrix according to columns' means, modifies this matrix.
+     * @param pc_mean pre-computed mean, if available, speeds up computation
+     */
+    ct_mat& mean_center(const opt<T, 1, C>& pc_mean = std::nullopt) noexcept;
+
   private:
     storage_t storage_; ///< internal storage
   };
 
-
   /// @typedef ct_mat_opt shorthand to optional ct_mat
-  template <typename T, std::size_t R, std::size_t C>
+  template<typename T, std::size_t R, std::size_t C>
   using ct_mat_opt = std::optional<ct_mat<T, R, C>>;
 
 } // !namespace mfmat
