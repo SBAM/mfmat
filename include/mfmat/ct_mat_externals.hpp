@@ -78,13 +78,6 @@ namespace mfmat
   auto operator*(const M1& lhs, const M2& rhs) noexcept;
 
   /**
-   * @warning high complexity
-   * @return this matrix ortho-normalized using Gram-Schmidt
-   */
-  template <typename T, std::size_t R, std::size_t C>
-  ct_mat<T, R, C> orthonormalize(const ct_mat<T, R, C>& arg) noexcept;
-
-  /**
    * @brief Builds a vector that stores the mean value of columns
    * @return a row of size C
    */

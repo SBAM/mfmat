@@ -149,6 +149,12 @@ namespace mfmat
     bool normalize() noexcept;
 
     /**
+     * @return this matrix ortho-normalized in-place, using Gram-Schmidt
+     * @warning high complexity
+     */
+    ct_mat& orthonormalize() noexcept;
+
+    /**
      * @brief transposes in place this matrix
      * @note assumes this matrix is square
      */

@@ -1,3 +1,5 @@
+#include "ct_mat_externals.hpp"
+
 namespace mfmat
 {
 
@@ -262,6 +264,48 @@ namespace mfmat
       cell_div(std::make_index_sequence<VL>{});
       return true;
     }
+  }
+
+
+  template <typename T, std::size_t R, std::size_t C>
+  ct_mat<T, R, C>& ct_mat<T, R, C>::orthonormalize() noexcept
+  {
+    // substracts scaled column K (col N projected against col K) from column N
+    auto substract_scaled = [&]<auto N, auto K, auto... Is>
+      (decl_ic<N>, decl_ic<K>, auto scale, std::index_sequence<Is...>)
+      {
+        ((this->get<op_way::col, N, Is>() -=
+          this->get<op_way::col, K, Is>() * scale), ...);
+      };
+    // computes projection of column N against column K then substracts
+    // projection to make both columns orthogonal
+    auto substract_proj = [&]<auto N, auto K>(decl_ic<N>, decl_ic<K>)
+      {
+        /**
+         * @note we're applying stabilized Gram-Schmidt version, projecting
+         *       against previously orthonormalized columns.
+         */
+        auto scale = dot<op_way::col, K, op_way::col, N>(*this, *this);
+        substract_scaled(decl_ic<N>{}, decl_ic<K>{}, scale,
+                         make_index_range<0, R>());
+      };
+    // projects column N on each previously orthonormalized columns Ks
+    auto all_proj = [&]<auto N, auto... Ks>
+      (decl_ic<N>, std::index_sequence<Ks...>)
+      {
+        ((substract_proj(decl_ic<N>{}, decl_ic<Ks>{})), ...);
+      };
+    // processes a single column, substracts projections against previously
+    // orthonormalized colums then normalizes it
+    auto process_column = [&]<auto... Is>(std::index_sequence<Is...>)
+      {
+        // make current column orthogonal to previous columns
+        ((all_proj(decl_ic<Is>{}, make_index_range<0, Is>()),
+          // normalize result column
+          this->normalize<op_way::col, Is>()), ...);
+      };
+    process_column(std::make_index_sequence<C>{});
+    return *this;
   }
 
 

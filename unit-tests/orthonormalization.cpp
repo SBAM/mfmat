@@ -41,7 +41,8 @@ void check_transpose_is_inverse(const T& mat, double tolerence = 0.0)
 BOOST_AUTO_TEST_CASE(identity_1x1)
 {
   auto mat = mfmat::ct_mat<double, 1, 1>(mfmat::identity_tag());
-  auto on = orthonormalize(mat);
+  auto on = mat;
+  mat.orthonormalize();
   BOOST_CHECK(mat == on);
   check_transpose_is_inverse(on);
 }
@@ -51,7 +52,8 @@ BOOST_AUTO_TEST_CASE(identity_5x5)
 {
   auto orig = mfmat::ct_mat<double, 5, 5>(mfmat::identity_tag());
   auto mat = orig * 5.0;
-  auto on = orthonormalize(mat);
+  auto on = mat;
+  on.orthonormalize();
   BOOST_CHECK(on == orig);
   check_transpose_is_inverse(on);
 }
@@ -66,7 +68,8 @@ BOOST_AUTO_TEST_CASE(upper_triangular_3x3)
       { 0, 3, 1 },
       { 0, 0, 3 }
      });
-  auto on = orthonormalize(mat);
+  auto on = mat;
+  on.orthonormalize();
   BOOST_CHECK(on == orig);
   check_transpose_is_inverse(on);
 }
@@ -92,7 +95,8 @@ BOOST_AUTO_TEST_CASE(test_1_3x3)
           1.0 * std::sqrt(22.0) / 33.0 ,
           2.0 * std::sqrt(2.0)  /  3.0 }
      });
-  auto on = orthonormalize(mat);
+  auto on = mat;
+  on.orthonormalize();
   BOOST_CHECK(on == res);
   check_transpose_is_inverse(on);
 }
@@ -118,7 +122,8 @@ BOOST_AUTO_TEST_CASE(test_2_3x3)
         - 1.0 * std::sqrt(195.0) /  39.0 ,
           1.0 * std::sqrt(26.0)  /  26.0  }
      });
-  auto on = orthonormalize(mat);
+  auto on = mat;
+  on.orthonormalize();
   BOOST_CHECK(on == res);
   check_transpose_is_inverse(on);
 }
@@ -138,7 +143,8 @@ BOOST_AUTO_TEST_CASE(test_3_3x3)
       { 0, 0, 0 },
       { 0, 0, 0 }
      });
-  auto on = orthonormalize(mat);
+  auto on = mat;
+  on.orthonormalize();
   BOOST_CHECK(on == res);
 }
 
@@ -163,7 +169,8 @@ BOOST_AUTO_TEST_CASE(test_4_3x3)
         - 41.0 * std::sqrt(342390.0) /  68478.0 ,
            1.0 * std::sqrt(  1010.0) /   202.0 }
      });
-  auto on = orthonormalize(mat);
+  auto on = mat;
+  on.orthonormalize();
   check_tolerence(on, res, 1.0e-14);
   check_transpose_is_inverse(on, 1.0e-14);
 }
@@ -197,7 +204,8 @@ BOOST_AUTO_TEST_CASE(test_5x3)
         - 1.0 * std::sqrt( 51.0) /  17.0 ,
          23.0 * std::sqrt(238.0) / 476.0 }
      });
-  auto on = orthonormalize(mat);
+  auto on = mat;
+  on.orthonormalize();
   check_tolerence(on, res, 1.0e-14);
 }
 
@@ -240,7 +248,8 @@ BOOST_AUTO_TEST_CASE(test_5x5)
          25.0 * std::sqrt(  13.0) /  286.0 ,
         - 8.0 * std::sqrt(   3.0) /   33.0 }
      });
-  auto on = orthonormalize(mat);
+  auto on = mat;
+  on.orthonormalize();
   BOOST_CHECK(on == res);
   check_transpose_is_inverse(on);
 }
