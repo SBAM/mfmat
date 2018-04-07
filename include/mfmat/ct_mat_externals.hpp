@@ -105,6 +105,20 @@ namespace mfmat
   covariance(ct_mat<T, R, C> arg,
              const ct_mat_opt<T, 1, C>& pc_mean = std::nullopt) noexcept;
 
+  /**
+   * @brief Computes correlation of a data-set where observations are stored as
+   *        rows.
+   * @param pc_mean pre-computed mean, if available, speeds up computation
+   * @param pc_stdd pre-computed standard deviation, if available, speeds up
+   *                computation
+   * @return correlation matrix
+   */
+  template <typename T, std::size_t R, std::size_t C>
+  ct_mat<T, C, C>
+  correlation(ct_mat<T, R, C> arg,
+              const ct_mat_opt<T, 1, C>& pc_mean = std::nullopt,
+              const ct_mat_opt<T, 1, C>& pc_stdd = std::nullopt) noexcept;
+
 } // !namespace mfmat
 
 # include "ct_mat_externals.ipp"

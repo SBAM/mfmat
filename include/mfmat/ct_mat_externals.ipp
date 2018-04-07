@@ -204,6 +204,28 @@ namespace mfmat
     self_mul(make_upper_mat_index_sequence<C>());
     return res;
   }
+
+
+  template <typename T, std::size_t R, std::size_t C>
+  ct_mat<T, C, C>
+  correlation(ct_mat<T, R, C> arg,
+              const ct_mat_opt<T, 1, C>& pc_mean,
+              const ct_mat_opt<T, 1, C>& pc_stdd) noexcept
+  {
+    auto res = ct_mat<T, C, C>();
+    // stddev center in place arg
+    arg.stddev_center(pc_mean, pc_stdd);
+    // 1/num_obs * transpose(centered_arg) * centered_arg
+    auto self_mul = [&]<auto... Is>(std::index_sequence<Is...>)
+      {
+        ((res.template scan<op_way::row, Is>() =
+          res.template scan<op_way::col, Is>() =
+            dot<op_way::col, Is / C,
+                op_way::col, Is % C>(arg, arg) / T{R}), ...);
+      };
+    self_mul(make_upper_mat_index_sequence<C>());
+    return res;
+  }
   /// @}
 
 } // !namespace mfmat
