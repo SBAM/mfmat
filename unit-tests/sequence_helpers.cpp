@@ -288,6 +288,101 @@ BOOST_AUTO_TEST_CASE(upper_mat_no_diag_sequence_4)
 }
 
 
+BOOST_AUTO_TEST_CASE(full_mat_no_diag_sequence_1)
+{
+  std::vector<std::size_t> res;
+  auto test = [&]<std::size_t... Is>(std::index_sequence<Is...>)
+    {
+      (res.push_back(Is), ...);
+    };
+  test(mfmat::make_no_diag_index_sequence<1>());
+  BOOST_CHECK(res.empty());
+}
+
+
+BOOST_AUTO_TEST_CASE(full_mat_no_diag_sequence_2)
+{
+  std::vector<std::size_t> res;
+  auto test = [&]<std::size_t... Is>(std::index_sequence<Is...>)
+    {
+      (res.push_back(Is), ...);
+    };
+  /*
+   * | 0, 1, 2 |
+   * | 3, 4, 5 |
+   * | 6, 7, 8 |
+   */
+  test(mfmat::make_no_diag_index_sequence<3>());
+  BOOST_CHECK(res.size() == 6);
+  BOOST_CHECK(res[0] == 1);
+  BOOST_CHECK(res[1] == 2);
+  BOOST_CHECK(res[2] == 3);
+  BOOST_CHECK(res[3] == 5);
+  BOOST_CHECK(res[4] == 6);
+  BOOST_CHECK(res[5] == 7);
+}
+
+
+BOOST_AUTO_TEST_CASE(full_mat_no_diag_sequence_3)
+{
+  std::vector<std::size_t> res;
+  auto test = [&]<std::size_t... Is>(std::index_sequence<Is...>)
+    {
+      (res.push_back(Is), ...);
+    };
+  /*
+   * |  0,  1,  2,  3,  4 |
+   * |  5,  6,  7,  8,  9 |
+   * | 10, 11, 12, 13, 14 |
+   */
+  test(mfmat::make_no_diag_index_sequence<3, 5>());
+  BOOST_CHECK(res.size() == 12);
+  BOOST_CHECK(res[ 0] ==  1);
+  BOOST_CHECK(res[ 1] ==  2);
+  BOOST_CHECK(res[ 2] ==  3);
+  BOOST_CHECK(res[ 3] ==  4);
+  BOOST_CHECK(res[ 4] ==  5);
+  BOOST_CHECK(res[ 5] ==  7);
+  BOOST_CHECK(res[ 6] ==  8);
+  BOOST_CHECK(res[ 7] ==  9);
+  BOOST_CHECK(res[ 8] == 10);
+  BOOST_CHECK(res[ 9] == 11);
+  BOOST_CHECK(res[10] == 13);
+  BOOST_CHECK(res[11] == 14);
+}
+
+
+BOOST_AUTO_TEST_CASE(full_mat_no_diag_sequence_4)
+{
+  std::vector<std::size_t> res;
+  auto test = [&]<std::size_t... Is>(std::index_sequence<Is...>)
+    {
+      (res.push_back(Is), ...);
+    };
+  /*
+   * |  0,  1,  2 |
+   * |  3,  4,  5 |
+   * |  6,  7,  8 |
+   * |  9, 10, 11 |
+   * | 12, 13, 14 |
+   */
+  test(mfmat::make_no_diag_index_sequence<5, 3>());
+  BOOST_CHECK(res.size() == 12);
+  BOOST_CHECK(res[ 0] ==  1);
+  BOOST_CHECK(res[ 1] ==  2);
+  BOOST_CHECK(res[ 2] ==  3);
+  BOOST_CHECK(res[ 3] ==  5);
+  BOOST_CHECK(res[ 4] ==  6);
+  BOOST_CHECK(res[ 5] ==  7);
+  BOOST_CHECK(res[ 6] ==  9);
+  BOOST_CHECK(res[ 7] == 10);
+  BOOST_CHECK(res[ 8] == 11);
+  BOOST_CHECK(res[ 9] == 12);
+  BOOST_CHECK(res[10] == 13);
+  BOOST_CHECK(res[11] == 14);
+}
+
+
 BOOST_AUTO_TEST_CASE(exclude_row_0)
 {
   std::vector<std::size_t> res;

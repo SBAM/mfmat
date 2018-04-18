@@ -20,7 +20,7 @@ namespace mfmat
   constexpr auto make_index_range()
   {
     if constexpr (MIN > MAX)
-      return std::make_index_sequence<0>{};
+      return std::index_sequence<>{};
     else
     {
       constexpr auto build = []<std::size_t... Is>(std::index_sequence<Is...>)
@@ -87,6 +87,36 @@ namespace mfmat
       return cat_index_sequence
         (make_index_range<start_idx, end_idx>(),
          make_upper_no_diag_mat_index_sequence<R, C, CURR_ROW + 1>());
+    }
+  }
+
+
+  /**
+   * @tparam R matrix's row count
+   * @tparam C matrix's column count, defaulted to R
+   * @tparam CURR_ROW keeps track of current processed row
+   * @return an index_sequence using row direction, pointing to all
+   *         matrix's cells, excluding its diagonal cells
+   */
+  template <std::size_t R, std::size_t C = R, std::size_t CURR_ROW = 0>
+  constexpr auto make_no_diag_index_sequence()
+  {
+    if constexpr (CURR_ROW >= R)
+      return std::index_sequence<>{};
+    else
+    {
+      constexpr auto start_idx = C * CURR_ROW;
+      constexpr auto diag_idx = start_idx + CURR_ROW;
+      constexpr auto end_idx = start_idx + C;
+      if constexpr (diag_idx > end_idx)
+        return cat_index_sequence
+          (make_index_range<start_idx, end_idx>(),
+           make_no_diag_index_sequence<R, C, CURR_ROW + 1>());
+      else
+        return cat_index_sequence
+          (cat_index_sequence(make_index_range<start_idx, diag_idx>(),
+                              make_index_range<diag_idx + 1, end_idx>()),
+           make_no_diag_index_sequence<R, C, CURR_ROW + 1>());
     }
   }
 
