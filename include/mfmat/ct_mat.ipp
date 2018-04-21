@@ -229,6 +229,29 @@ namespace mfmat
 
 
   template <typename T, std::size_t R, std::size_t C>
+  bool ct_mat<T, R, C>::is_diagonal() const noexcept
+  {
+    auto cell_test = [&]<auto... Is>(std::index_sequence<Is...>)
+      {
+        return (is_zero(this->scan<op_way::row, Is>()) && ... );
+      };
+    return cell_test(make_no_diag_index_sequence<R, C>());
+  }
+
+
+  template <typename T, std::size_t R, std::size_t C>
+  template <typename>
+  bool ct_mat<T, R, C>::is_diagonal(T eps_multiplier) const noexcept
+  {
+    auto cell_test = [&]<auto... Is>(std::index_sequence<Is...>)
+      {
+        return (is_zero(this->scan<op_way::row, Is>(), eps_multiplier) && ... );
+      };
+    return cell_test(make_no_diag_index_sequence<R, C>());
+  }
+
+
+  template <typename T, std::size_t R, std::size_t C>
   bool ct_mat<T, R, C>::operator!=(const ct_mat<T, R, C>& rhs) const noexcept
   {
     return !operator==(rhs);

@@ -132,6 +132,12 @@ namespace mfmat
     /// @return true if both matrices are different
     bool operator!=(const ct_mat& rhs) const noexcept;
 
+    /// @return true if matrix is diagonal
+    bool is_diagonal() const noexcept;
+    /// @return true if matrix is diagonal based on a provided tolerance
+    template <typename = std::enable_if_t<std::is_floating_point_v<T>>>
+    bool is_diagonal(T eps_multiplier) const noexcept;
+
     /**
      * @return norm of given row/column at IDX location
      * @tparam OW operation way, norm of row or column

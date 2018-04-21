@@ -11,30 +11,30 @@
 BOOST_AUTO_TEST_SUITE(orthonormalization_test_suite)
 
 template <typename T>
-void check_tolerence(const T& lhs, const T& rhs, double tolerence)
+void check_tolerance(const T& lhs, const T& rhs, double tolerance)
 {
   for (std::size_t r = 0; r < lhs.row_count; ++r)
     for (std::size_t c = 0; c < lhs.col_count; ++c)
     {
       auto cell_1 = lhs[{r, c}];
       auto cell_2 = rhs[{r, c}];
-      BOOST_CHECK_SMALL(cell_1 - cell_2, tolerence);
+      BOOST_CHECK_SMALL(cell_1 - cell_2, tolerance);
     }
 }
 
 
 template <typename T>
-void check_transpose_is_inverse(const T& mat, double tolerence = 0.0)
+void check_transpose_is_inverse(const T& mat, double tolerance = 0.0)
 {
   static_assert(mat.row_count == mat.col_count);
   auto identity = T(mfmat::identity_tag{});
   auto mul_by_transpose = mat * transpose(mat);
-  if (mfmat::is_zero(tolerence))
+  if (mfmat::is_zero(tolerance))
   {
     BOOST_CHECK(identity == mul_by_transpose);
   }
   else
-    check_tolerence(identity, mul_by_transpose, tolerence);
+    check_tolerance(identity, mul_by_transpose, tolerance);
 }
 
 
@@ -171,7 +171,7 @@ BOOST_AUTO_TEST_CASE(test_4_3x3)
      });
   auto on = mat;
   on.orthonormalize();
-  check_tolerence(on, res, 1.0e-14);
+  check_tolerance(on, res, 1.0e-14);
   check_transpose_is_inverse(on, 1.0e-14);
 }
 
@@ -206,7 +206,7 @@ BOOST_AUTO_TEST_CASE(test_5x3)
      });
   auto on = mat;
   on.orthonormalize();
-  check_tolerence(on, res, 1.0e-14);
+  check_tolerance(on, res, 1.0e-14);
 }
 
 

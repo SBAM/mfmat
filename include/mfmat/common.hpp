@@ -26,6 +26,11 @@ namespace mfmat
   template <typename T>
   constexpr bool is_zero(T arg) noexcept;
 
+  /// @brief compares floating point type against zero with tolerance
+  template <typename T,
+            typename = std::enable_if_t<std::is_floating_point_v<T>>>
+  constexpr bool is_zero(T arg, T eps_multiplier) noexcept;
+
   /// @brief defines operation way, row or column wise
   enum class op_way
   {
