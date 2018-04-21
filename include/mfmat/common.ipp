@@ -4,14 +4,14 @@ namespace mfmat
   template <typename T>
   constexpr bool are_equal(T lhs, T rhs) noexcept
   {
-    if constexpr (std::numeric_limits<T>::is_integer)
-      return lhs == rhs;
-    else
+    if constexpr (std::is_floating_point_v<T>)
       return
         std::abs(lhs - rhs) <=
         // scale machine epsilon to values magnitude
         std::numeric_limits<T>::epsilon() *
         std::max(T(1.0), std::abs(lhs) + std::abs(rhs));
+    else
+      return lhs == rhs;
   }
 
 

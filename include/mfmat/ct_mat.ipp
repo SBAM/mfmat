@@ -252,6 +252,19 @@ namespace mfmat
 
 
   template <typename T, std::size_t R, std::size_t C>
+  bool ct_mat<T, R, C>::is_symmetric() const noexcept
+  {
+    static_assert(R == C, "Only a square matrix can be symmetric");
+    auto cell_test = [&]<auto... Is>(std::index_sequence<Is...>)
+      {
+        return (are_equal(this->scan<op_way::row, Is>(),
+                          this->scan<op_way::col, Is>()) && ... );
+      };
+    return cell_test(make_upper_no_diag_mat_index_sequence<R, C>());
+  }
+
+
+  template <typename T, std::size_t R, std::size_t C>
   bool ct_mat<T, R, C>::operator!=(const ct_mat<T, R, C>& rhs) const noexcept
   {
     return !operator==(rhs);

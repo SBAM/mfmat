@@ -138,6 +138,9 @@ namespace mfmat
     template <typename = std::enable_if_t<std::is_floating_point_v<T>>>
     bool is_diagonal(T eps_multiplier) const noexcept;
 
+    /// @return true if matrix is symmetric
+    bool is_symmetric() const noexcept;
+
     /**
      * @return norm of given row/column at IDX location
      * @tparam OW operation way, norm of row or column
