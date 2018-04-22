@@ -64,9 +64,9 @@ BOOST_AUTO_TEST_CASE(upper_triangular_3x3)
   auto orig = mfmat::ct_mat<double, 3, 3>(mfmat::identity_tag());
   auto mat = mfmat::ct_mat<double, 3, 3>
     ({
-      { 3, 1, 1 },
-      { 0, 3, 1 },
-      { 0, 0, 3 }
+      { 3.0, 1.0, 1.0 },
+      { 0.0, 3.0, 1.0 },
+      { 0.0, 0.0, 3.0 }
      });
   auto on = mat;
   on.orthonormalize();
@@ -79,19 +79,19 @@ BOOST_AUTO_TEST_CASE(test_1_3x3)
 {
   auto mat = mfmat::ct_mat<double, 3, 3>
     ({
-      { 3, 1, 1 },
-      { 1, 3, 1 },
-      { 1, 1, 3 }
+      { 3.0, 1.0, 1.0 },
+      { 1.0, 3.0, 1.0 },
+      { 1.0, 1.0, 3.0 }
      });
   auto res = mfmat::ct_mat<double, 3, 3>
     ({
-      {   3.0 * std::sqrt(11)   / 11.0 ,
+      {   3.0 * std::sqrt(11.0) / 11.0 ,
         - 5.0 * std::sqrt(22.0) / 66.0 ,
         - 1.0 * std::sqrt(2.0)  /  6.0 },
-      {   1.0 * std::sqrt(11)   / 11.0 ,
+      {   1.0 * std::sqrt(11.0) / 11.0 ,
          13.0 * std::sqrt(22.0) / 66.0 ,
         - 1.0 * std::sqrt(2.0)  /  6.0 },
-      {   1.0 * std::sqrt(11)   / 11.0 ,
+      {   1.0 * std::sqrt(11.0) / 11.0 ,
           1.0 * std::sqrt(22.0) / 33.0 ,
           2.0 * std::sqrt(2.0)  /  3.0 }
      });
@@ -106,9 +106,9 @@ BOOST_AUTO_TEST_CASE(test_2_3x3)
 {
   auto mat = mfmat::ct_mat<double, 3, 3>
     ({
-      { 1, 1, 1 },
-      { 2, 1, 0 },
-      { 5, 1, 3 }
+      { 1.0, 1.0, 1.0 },
+      { 2.0, 1.0, 0.0 },
+      { 5.0, 1.0, 3.0 }
      });
   auto res = mfmat::ct_mat<double, 3, 3>
     ({
@@ -133,15 +133,15 @@ BOOST_AUTO_TEST_CASE(test_3_3x3)
 {
   auto mat = mfmat::ct_mat<double, 3, 3>
     ({
-      { 1, 1, 1 },
-      { 0, 0, 0 },
-      { 0, 0, 0 }
+      { 1.0, 1.0, 1.0 },
+      { 0.0, 0.0, 0.0 },
+      { 0.0, 0.0, 0.0 }
      });
   auto res = mfmat::ct_mat<double, 3, 3>
     ({
-      { 1, 0, 0 },
-      { 0, 0, 0 },
-      { 0, 0, 0 }
+      { 1.0, 0.0, 0.0 },
+      { 0.0, 0.0, 0.0 },
+      { 0.0, 0.0, 0.0 }
      });
   auto on = mat;
   on.orthonormalize();
@@ -153,9 +153,9 @@ BOOST_AUTO_TEST_CASE(test_4_3x3)
 {
   auto mat = mfmat::ct_mat<double, 3, 3>
     ({
-      {  1,  3,  5 },
-      {  7, 11, 13 },
-      { 17, 19, 23 }
+      {  1.0,  3.0,  5.0 },
+      {  7.0, 11.0, 13.0 },
+      { 17.0, 19.0, 23.0 }
      });
   auto res = mfmat::ct_mat<double, 3, 3>
     ({
@@ -180,11 +180,11 @@ BOOST_AUTO_TEST_CASE(test_5x3)
 {
   auto mat = mfmat::ct_mat<double, 5, 3>
     ({
-      {  1,  0, -1 },
-      { -1,  1,  1 },
-      {  0,  0,  1 },
-      {  1,  2, -2 },
-      {  0, -1,  2 }
+      {  1.0,  0.0, -1.0 },
+      { -1.0,  1.0,  1.0 },
+      {  0.0,  0.0,  1.0 },
+      {  1.0,  2.0, -2.0 },
+      {  0.0, -1.0,  2.0 }
      });
   auto res = mfmat::ct_mat<double, 5, 3>
     ({
@@ -214,11 +214,11 @@ BOOST_AUTO_TEST_CASE(test_5x5)
 {
   auto mat = mfmat::ct_mat<double, 5, 5>
     ({
-      {  1,  0, -1, -2,  2 },
-      { -1,  1,  1,  0, -2 },
-      {  0,  2,  1, -1,  0 },
-      {  1,  2, -2, -1,  1 },
-      {  0, -1,  2,  1, -2 }
+      {  1.0,  0.0, -1.0, -2.0,  2.0 },
+      { -1.0,  1.0,  1.0,  0.0, -2.0 },
+      {  0.0,  2.0,  1.0, -1.0,  0.0 },
+      {  1.0,  2.0, -2.0, -1.0,  1.0 },
+      {  0.0, -1.0,  2.0,  1.0, -2.0 }
      });
   auto res = mfmat::ct_mat<double, 5, 5>
     ({
@@ -252,6 +252,52 @@ BOOST_AUTO_TEST_CASE(test_5x5)
   on.orthonormalize();
   BOOST_CHECK(on == res);
   check_transpose_is_inverse(on);
+}
+
+
+BOOST_AUTO_TEST_CASE(test_3x5_1)
+{
+  auto mat = mfmat::ct_mat<double, 3, 5>
+    ({
+      { 1.0, 0.0, 0.0, 1.0, 3.0 },
+      { 0.0, 1.0, 0.0, 2.0, 2.0 },
+      { 0.0, 0.0, 1.0, 3.0, 1.0 }
+     });
+  auto res = mfmat::ct_mat<double, 3, 5>
+    ({
+      { 1.0, 0.0, 0.0, 0.0, 0.0 },
+      { 0.0, 1.0, 0.0, 0.0, 0.0 },
+      { 0.0, 0.0, 1.0, 0.0, 0.0 }
+     });
+  auto on = mat;
+  on.orthonormalize();
+  BOOST_CHECK(on == res);
+}
+
+
+BOOST_AUTO_TEST_CASE(test_3x5_2)
+{
+  auto mat = mfmat::ct_mat<double, 3, 5>
+    ({
+      { -1.0, 9.0,  2.0, 8.0,  7.0 },
+      {  5.0, 6.0, -5.0, 7.0,  2.0 },
+      { -9.0, 0.0,  1.0, 2.0, -3.0 }
+     });
+  auto res = mfmat::ct_mat<double, 3, 5>
+    ({
+      {  -1.0 * std::sqrt(107.0)    / 107.0,
+        164.0 * std::sqrt(143594.0) / 71797.0,
+          9.0 * std::sqrt(1342.0)   / 671.0,    0.0, 0.0 },
+      {   5.0 * std::sqrt(107.0)    / 107.0,
+        179.0 * std::sqrt(143594.0) / 143594.0,
+        -27.0 * std::sqrt(1342.0)   / 1342.0,   0.0, 0.0 },
+      {  -9.0 * std::sqrt(107.0)    / 107.0,
+         63.0 * std::sqrt(143594.0) / 143594.0,
+        -17.0 * std::sqrt(1342.0)   / 1342.0,   0.0, 0.0 }
+     });
+  auto on = mat;
+  on.orthonormalize();
+  BOOST_CHECK(on == res);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

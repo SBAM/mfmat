@@ -49,11 +49,11 @@ namespace mfmat
     ct_mat(const ct_mat<T, R2, C2>& rhs,
            std::index_sequence<IDXs...> seq) noexcept;
 
-    ct_mat(const ct_mat&) = default;
-    ct_mat(ct_mat&&) = default;
-    ct_mat& operator=(const ct_mat&) = default;
-    ct_mat& operator=(ct_mat&&) = default;
-    ~ct_mat() = default;
+    ct_mat(const ct_mat&) noexcept = default;
+    ct_mat(ct_mat&&) noexcept = default;
+    ct_mat& operator=(const ct_mat&) noexcept = default;
+    ct_mat& operator=(ct_mat&&) noexcept = default;
+    ~ct_mat() noexcept = default;
 
     /**
      * @brief constant runtime getter using indices pair

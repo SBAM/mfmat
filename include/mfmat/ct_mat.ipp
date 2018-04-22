@@ -340,7 +340,21 @@ namespace mfmat
           // normalize result column
           this->normalize<op_way::col, Is>()), ...);
       };
-    process_column(std::make_index_sequence<C>{});
+    // when matrix has more columns that rows, columns past the Rth column
+    // shouldn't be processed as they cannot be linearly independant
+    if constexpr(C <= R)
+      process_column(std::make_index_sequence<C>{});
+    else
+    {
+      // process first Rth columns
+      process_column(std::make_index_sequence<R>{});
+      // zero out remaining linearly dependant columns
+      auto set_zero = [&]<auto... Is>(std::index_sequence<Is...>)
+        {
+          ((this->scan<op_way::col, Is>() = T{}), ...);
+        };
+      set_zero(make_index_range<R * R, R * C>());
+    }
     return *this;
   }
 
