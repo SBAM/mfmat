@@ -10,7 +10,9 @@ if (NOT IS_CXX17_SUPPORTED)
 endif()
 
 # Pushes definitions
-add_definitions(-DBOOST_NO_AUTO_PTR)
+add_definitions(
+  -DBOOST_NO_AUTO_PTR
+  -DBOOST_TEST_DYN_LINK)
 
 # Handles debug/release differences
 set(CMAKE_CXX_FLAGS_DEBUG "-O0")
@@ -21,6 +23,8 @@ set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG")
 set(Boost_USE_MULTITHREADED ON)
 find_package(Boost REQUIRED COMPONENTS
   unit_test_framework)
+# - OpenCL
+find_package(OpenCL REQUIRED)
 # - Threads
 find_package(Threads REQUIRED)
 
@@ -30,7 +34,11 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -W -Wall -Wextra -Werror")
 
 # Sets up global system includes directories
 include_directories(SYSTEM
-  ${Boost_INCLUDE_DIRS})
+  ${Boost_INCLUDE_DIRS}
+  ${OpenCL_INCLUDE_DIRS})
+
+# Provide project directory
+add_subdirectory(src)
 
 # Provide tests directory
 enable_testing()
