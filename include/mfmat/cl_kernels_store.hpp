@@ -36,7 +36,6 @@ namespace mfmat
     /// @return static store instance
     static cl_kernels_store& instance(context_opt ctx = std::nullopt)
     {
-      /// @todo std::call_once cl_default_gpu_setter if ctx = nullopt
       static cl_kernels_store local(ctx);
       return local;
     }

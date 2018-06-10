@@ -1,3 +1,5 @@
+#include <sstream>
+
 #include <mfmat/cl_default_gpu_setter.hpp>
 
 namespace mfmat
@@ -37,10 +39,42 @@ namespace mfmat
           auto default_cmd_queue = cl::CommandQueue::setDefault(cmd_queue);
           if (default_cmd_queue != cmd_queue)
             throw std::runtime_error("Failed to set default CL command queue");
+          // split extensions
+          std::istringstream ext_iss(curr_dev.getInfo<CL_DEVICE_EXTENSIONS>());
+          using iss_it = std::istream_iterator<std::string>;
+          extensions_ = ext_vec_t(iss_it(ext_iss), iss_it{});
+          std::sort(extensions_.begin(), extensions_.end());
           return;
         }
     }
     throw std::runtime_error("No suitable CL environment was set");
+  }
+
+
+  const cl_default_gpu_setter::ext_vec_t&
+  cl_default_gpu_setter::get_extensions() const
+  {
+    return extensions_;
+  }
+
+
+  std::ostream& operator<<(std::ostream& os, const cl_default_gpu_setter& dd)
+  {
+    auto d = cl::Device::getDefault();
+    os
+      << "Default device:" << std::endl
+      << " name=" << d.getInfo<CL_DEVICE_NAME>() << std::endl
+      << " vendor=" << d.getInfo<CL_DEVICE_VENDOR>() << std::endl
+      << " profile=" << d.getInfo<CL_DEVICE_PROFILE>() << std::endl
+      << " device_ver=" << d.getInfo<CL_DEVICE_VERSION>() << std::endl
+      << " driver_ver=" << d.getInfo<CL_DRIVER_VERSION>() << std::endl
+      << " cl_ver=" << d.getInfo<CL_DEVICE_OPENCL_C_VERSION>() << std::endl
+      << " extensions" << std::endl
+      << "  [" << std::endl;
+    for (const auto& curr_ext : dd.get_extensions())
+      os << "   - " << curr_ext << std::endl;
+    os << "  ]";
+    return os;
   }
 
 } // !namespace mfmat

@@ -12,6 +12,7 @@ BOOST_AUTO_TEST_SUITE(kernels_store_initialization_test_suite)
 BOOST_AUTO_TEST_CASE(initialization)
 {
   BOOST_CHECK_NO_THROW(mfmat::cl_default_gpu_setter::instance());
+  std::cout << mfmat::cl_default_gpu_setter::instance() << std::endl;
   BOOST_CHECK_NO_THROW(mfmat::cl_kernels_store::instance());
 }
 

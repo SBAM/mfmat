@@ -21,6 +21,10 @@ namespace mfmat
   class cl_default_gpu_setter
   {
   public:
+    /// @typedef ext_vec_t Shorthand to extensions vector type
+    using ext_vec_t = std::vector<std::string>;
+
+  public:
     /// @return static helper instance
     static cl_default_gpu_setter& instance()
     {
@@ -28,12 +32,19 @@ namespace mfmat
       return local;
     }
 
-    /// @todo Provide getters to device descriptors
+    /// @return Extensions supported by device
+    const ext_vec_t& get_extensions() const;
 
   private:
     /// @brief Sets up facilities, throws on failure
     cl_default_gpu_setter();
+
+  private:
+    ext_vec_t extensions_; ///< stores device's supported extensions
   };
+
+  /// @brief Dumps default device description
+  std::ostream& operator<<(std::ostream&, const cl_default_gpu_setter&);
 
 } // !namespace mfmat
 
