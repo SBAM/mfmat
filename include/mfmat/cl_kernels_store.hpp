@@ -7,9 +7,11 @@
 
 # define DECL_MEMBER(name, ...)                           \
   const std::string name##_src_;                          \
-  const cl::Program name##_prog_;                         \
   using name##_func_t = cl::KernelFunctor<__VA_ARGS__>;   \
-  name##_func_t name
+  const cl::Program name##_float_prog_;                   \
+  name##_func_t name##_float;                             \
+  const cl::Program name##_double_prog_;                  \
+  name##_func_t name##_double
 
 namespace mfmat
 {
@@ -17,8 +19,8 @@ namespace mfmat
   /**
    * @brief Stores for each CL kernel:
    *         - its source
-   *         - its compiled program
-   *         - its invokable helper functor
+   *         - its compiled program for both float and double data types
+   *         - its invokable helper functors for each data types
    */
   struct cl_kernels_store
   {
@@ -44,12 +46,16 @@ namespace mfmat
      * @brief Wraps Program construction and reformats thrown exception with
      *        additional details upon compilation failure.
      * @param ctx Context to use
+     * @param prefix Specifies kernel defines
      * @param src Program source
      * @return compiled Program
      */
-    static cl::Program make_program(context_opt ctx, const std::string& src);
+    static cl::Program make_program(context_opt ctx,
+                                    const std::string& prefix,
+                                    const std::string& src);
 
-
+    const std::string prefix_float_src_; ///< prefixes float kernels
+    const std::string prefix_double_src_; ///< prefixes double kernels
     DECL_MEMBER(matrix_multiply,
                 std::size_t, std::size_t, std::size_t,
                 cl::Buffer, cl::Buffer, cl::Buffer);
