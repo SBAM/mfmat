@@ -7,7 +7,7 @@
 
 #include <mfmat/fwd.hpp>
 
-BOOST_AUTO_TEST_SUITE(construction_test_suite)
+BOOST_AUTO_TEST_SUITE(ct_construction_test_suite)
 
 constexpr auto owr = mfmat::op_way::row;
 constexpr auto owc = mfmat::op_way::col;

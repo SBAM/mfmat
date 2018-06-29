@@ -1,6 +1,7 @@
 #ifndef MFMAT_COMMON_HPP_
 # define MFMAT_COMMON_HPP_
 
+# include <cassert>
 # include <cstdint>
 # include <cmath>
 # include <limits>
