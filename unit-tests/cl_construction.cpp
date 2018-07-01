@@ -22,7 +22,6 @@ namespace
 
 } // !namespace anonymous
 
-
 BOOST_AUTO_TEST_CASE(rectangular_constructor, * but::fixture(&setup))
 {
   auto mat = mfmat::cl_mat_f{10, 20};

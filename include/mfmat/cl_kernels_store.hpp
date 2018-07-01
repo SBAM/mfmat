@@ -5,13 +5,29 @@
 
 # include "cl_default_gpu_setter.hpp"
 
-# define DECL_MEMBER(name, ...)                           \
-  const std::string name##_src_;                          \
-  using name##_func_t = cl::KernelFunctor<__VA_ARGS__>;   \
-  const cl::Program name##_float_prog_;                   \
-  name##_func_t name##_float;                             \
-  const cl::Program name##_double_prog_;                  \
-  name##_func_t name##_double
+# define DECL_KERNEL(name, ...)                      \
+  struct name##_t                                    \
+  {                                                  \
+    const std::string src_;                          \
+    struct f_t                                       \
+    {                                                \
+      using data_t = float;                          \
+      using func_t = cl::KernelFunctor<__VA_ARGS__>; \
+      const cl::Program prog_;                       \
+      func_t func_;                                  \
+    };                                               \
+    f_t f;                                           \
+    struct d_t                                       \
+    {                                                \
+      using data_t = double;                         \
+      using func_t = cl::KernelFunctor<__VA_ARGS__>; \
+      const cl::Program prog_;                       \
+      func_t func_;                                  \
+    };                                               \
+    d_t d;                                           \
+  };                                                 \
+  name##_t name
+
 
 namespace mfmat
 {
@@ -54,13 +70,20 @@ namespace mfmat
                                     const std::string& prefix,
                                     const std::string& src);
 
-    const std::string prefix_float_src_; ///< prefixes float kernels
-    const std::string prefix_double_src_; ///< prefixes double kernels
-    DECL_MEMBER(matrix_multiply,
+    const std::string prefix_f_src_; ///< prefixes float kernels
+    const std::string prefix_d_src_; ///< prefixes double kernels
+    DECL_KERNEL(matrix_scalar_add, cl::Buffer, data_t);
+    DECL_KERNEL(matrix_scalar_sub, cl::Buffer, data_t);
+    DECL_KERNEL(matrix_scalar_mul, cl::Buffer, data_t);
+    DECL_KERNEL(matrix_scalar_div, cl::Buffer, data_t);
+    DECL_KERNEL(matrix_multiply,
                 std::size_t, std::size_t, std::size_t,
                 cl::Buffer, cl::Buffer, cl::Buffer);
   };
 
 } // !namespace mfmat
+
+# undef DECL_KERNEL
+
 
 #endif // !MFMAT_CL_KERNELS_STORE_HPP_

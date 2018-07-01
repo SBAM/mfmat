@@ -93,6 +93,15 @@ namespace mfmat
      */
     inline T& get(std::size_t row_idx, std::size_t col_idx);
 
+    /// @brief adds scalar and stores result
+    cl_mat& operator+=(T val);
+    /// @brief substracts scalar and stores result
+    cl_mat& operator-=(T val);
+    /// @brief multiplies by scalar and stores result
+    cl_mat& operator*=(T val);
+    /// @brief divides by scalar and stores result
+    cl_mat& operator/=(T val);
+
   private:
     std::size_t row_count_; ///< keeps track of current row count
     std::size_t col_count_; ///< keeps track of current column count

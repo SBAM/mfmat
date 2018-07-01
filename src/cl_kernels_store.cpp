@@ -8,30 +8,45 @@
 
 DECL_BINARY_RESOURCE(prefix_float);
 DECL_BINARY_RESOURCE(prefix_double);
+DECL_BINARY_RESOURCE(matrix_scalar_add);
+DECL_BINARY_RESOURCE(matrix_scalar_sub);
+DECL_BINARY_RESOURCE(matrix_scalar_mul);
+DECL_BINARY_RESOURCE(matrix_scalar_div);
 DECL_BINARY_RESOURCE(matrix_multiply);
 
 
-#define INIT_BINARY_RESOURCE(name)        \
-  name##_src_(&_binary_##name##_cl_start, \
-              &_binary_##name##_cl_end -  \
+#define STR_BINARY_RESOURCE(name)           \
+  std::string(&_binary_##name##_cl_start,   \
+              &_binary_##name##_cl_end -    \
               &_binary_##name##_cl_start)
 
-#define INIT_DATA_TYPE_MEMBER(name, dt)                                    \
-  name##_##dt##_prog_(make_program(ctx, prefix_##dt##_src_, name##_src_)), \
-  name##_##dt(name##_##dt##_prog_, #name)
-
-#define INIT_MEMBER(name)                                 \
-  INIT_BINARY_RESOURCE(name),                             \
-  INIT_DATA_TYPE_MEMBER(name, float),                     \
-  INIT_DATA_TYPE_MEMBER(name, double)
+#define INIT_MEMBER(name)                                     \
+  name                                                        \
+  {                                                           \
+    .src_ { STR_BINARY_RESOURCE(name) },                      \
+    .f                                                        \
+    {                                                         \
+      .prog_ { make_program(ctx, prefix_f_src_, name.src_) }, \
+      .func_ { name.f.prog_, #name }                          \
+    },                                                        \
+    .d                                                        \
+    {                                                         \
+      .prog_ { make_program(ctx, prefix_d_src_, name.src_) }, \
+      .func_ { name.d.prog_, #name }                          \
+    }                                                         \
+  }
 
 
 namespace mfmat
 {
 
   cl_kernels_store::cl_kernels_store(context_opt ctx) :
-    INIT_BINARY_RESOURCE(prefix_float),
-    INIT_BINARY_RESOURCE(prefix_double),
+    prefix_f_src_(STR_BINARY_RESOURCE(prefix_float)),
+    prefix_d_src_(STR_BINARY_RESOURCE(prefix_double)),
+    INIT_MEMBER(matrix_scalar_add),
+    INIT_MEMBER(matrix_scalar_sub),
+    INIT_MEMBER(matrix_scalar_mul),
+    INIT_MEMBER(matrix_scalar_div),
     INIT_MEMBER(matrix_multiply)
   {
   }

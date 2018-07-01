@@ -7,7 +7,7 @@
 
 #include <mfmat/fwd.hpp>
 
-BOOST_AUTO_TEST_SUITE(scalar_ops_test_suite)
+BOOST_AUTO_TEST_SUITE(ct_scalar_ops_test_suite)
 
 BOOST_AUTO_TEST_CASE(add_and_store)
 {
