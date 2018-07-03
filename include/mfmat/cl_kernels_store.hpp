@@ -76,6 +76,12 @@ namespace mfmat
     DECL_KERNEL(matrix_scalar_sub, cl::Buffer, data_t);
     DECL_KERNEL(matrix_scalar_mul, cl::Buffer, data_t);
     DECL_KERNEL(matrix_scalar_div, cl::Buffer, data_t);
+    DECL_KERNEL(matrix_add, cl::Buffer, cl::Buffer);
+    DECL_KERNEL(matrix_add_column, cl::Buffer, std::size_t, cl::Buffer);
+    DECL_KERNEL(matrix_add_row, cl::Buffer, std::size_t, cl::Buffer);
+    DECL_KERNEL(matrix_sub, cl::Buffer, cl::Buffer);
+    DECL_KERNEL(matrix_sub_column, cl::Buffer, std::size_t, cl::Buffer);
+    DECL_KERNEL(matrix_sub_row, cl::Buffer, std::size_t, cl::Buffer);
     DECL_KERNEL(matrix_multiply,
                 std::size_t, std::size_t, std::size_t,
                 cl::Buffer, cl::Buffer, cl::Buffer);
@@ -84,6 +90,5 @@ namespace mfmat
 } // !namespace mfmat
 
 # undef DECL_KERNEL
-
 
 #endif // !MFMAT_CL_KERNELS_STORE_HPP_

@@ -102,6 +102,19 @@ namespace mfmat
     /// @brief divides by scalar and stores result
     cl_mat& operator/=(T val);
 
+    /**
+     * @brief adds matrix and stores result
+     * @note if rhs is a row/column, it will be added to each row/column of lhs
+     */
+    cl_mat& operator+=(const cl_mat& rhs);
+    /**
+     * @brief substracts matrix and stores result
+     * @note if rhs is a row/column, it will be substracted from each
+     *       row/column of lhs
+     */
+    cl_mat& operator-=(const cl_mat& rhs);
+
+
   private:
     std::size_t row_count_; ///< keeps track of current row count
     std::size_t col_count_; ///< keeps track of current column count

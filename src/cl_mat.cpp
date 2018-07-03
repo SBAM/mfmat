@@ -1,3 +1,6 @@
+#include <sstream>
+
+#include <mfmat/cl_bind_helpers.hpp>
 #include <mfmat/cl_mat.hpp>
 
 namespace mfmat
@@ -52,29 +55,13 @@ namespace mfmat
   }
 
 
-  template <typename K, typename T>
-  void invoke_scalar_kernel(std::vector<T>& storage, T val, K& ker)
-  {
-    cl::Buffer dat(storage.begin(), storage.end(),
-                   false, // read/write
-                   true); // contiguous data
-    if constexpr(std::is_same_v<float, T>)
-      ker.f.func_(cl::NDRange(storage.size()), dat, val);
-    else
-      ker.d.func_(cl::NDRange(storage.size()), dat, val);
-    auto queue = cl::CommandQueue::getDefault();
-    queue.enqueueReadBuffer
-      (dat, true /* blocking */, 0 /* offset */,
-       storage.size() * sizeof(T),
-       storage.data());
-  }
-
-
   template <typename T>
   cl_mat<T>& cl_mat<T>::operator+=(T val)
   {
     auto& ker = cl_kernels_store::instance().matrix_scalar_add;
-    invoke_scalar_kernel(storage_, val, ker);
+    auto lhs_dat = rw_bind(storage_);
+    bind_ker<T>(ker, cl::NDRange(storage_.size()), lhs_dat, val);
+    bind_res(lhs_dat, storage_);
     return *this;
   }
 
@@ -83,7 +70,9 @@ namespace mfmat
   cl_mat<T>& cl_mat<T>::operator-=(T val)
   {
     auto& ker = cl_kernels_store::instance().matrix_scalar_sub;
-    invoke_scalar_kernel(storage_, val, ker);
+    auto lhs_dat = rw_bind(storage_);
+    bind_ker<T>(ker, cl::NDRange(storage_.size()), lhs_dat, val);
+    bind_res(lhs_dat, storage_);
     return *this;
   }
 
@@ -92,7 +81,9 @@ namespace mfmat
   cl_mat<T>& cl_mat<T>::operator*=(T val)
   {
     auto& ker = cl_kernels_store::instance().matrix_scalar_mul;
-    invoke_scalar_kernel(storage_, val, ker);
+    auto lhs_dat = rw_bind(storage_);
+    bind_ker<T>(ker, cl::NDRange(storage_.size()), lhs_dat, val);
+    bind_res(lhs_dat, storage_);
     return *this;
   }
 
@@ -101,9 +92,88 @@ namespace mfmat
   cl_mat<T>& cl_mat<T>::operator/=(T val)
   {
     auto& ker = cl_kernels_store::instance().matrix_scalar_div;
-    invoke_scalar_kernel(storage_, val, ker);
+    auto lhs_dat = rw_bind(storage_);
+    bind_ker<T>(ker, cl::NDRange(storage_.size()), lhs_dat, val);
+    bind_res(lhs_dat, storage_);
     return *this;
   }
+
+
+  template <typename T>
+  cl_mat<T>& cl_mat<T>::operator+=(const cl_mat<T>& rhs)
+  {
+    auto lhs_dat = rw_bind(storage_);
+    auto rhs_dat = ro_bind(rhs.storage_);
+    if (row_count_ == rhs.row_count_ && col_count_ == rhs.col_count_)
+    {
+      auto& ker = cl_kernels_store::instance().matrix_add;
+      bind_ker<T>(ker, cl::NDRange(storage_.size()), lhs_dat, rhs_dat);
+    }
+    else
+      if (row_count_ == rhs.row_count_ && rhs.col_count_ == 1)
+      {
+        auto& ker = cl_kernels_store::instance().matrix_add_column;
+        bind_ker<T>(ker, cl::NDRange(row_count_, col_count_),
+                    lhs_dat, col_count_, rhs_dat);
+      }
+      else
+        if (rhs.row_count_ == 1 && col_count_ == rhs.col_count_)
+        {
+          auto& ker = cl_kernels_store::instance().matrix_add_row;
+          bind_ker<T>(ker, cl::NDRange(row_count_, col_count_),
+                      lhs_dat, col_count_, rhs_dat);
+        }
+        else
+        {
+          std::ostringstream err;
+          err
+            << "cl_mat::operator+= incompatible dimensions lhs["
+            << row_count_ << ',' << col_count_ << "] += rhs["
+            << rhs.row_count_ << ',' << rhs.col_count_ << ']';
+          throw std::out_of_range(err.str());
+        }
+    bind_res(lhs_dat, storage_);
+    return *this;
+  }
+
+
+  template <typename T>
+  cl_mat<T>& cl_mat<T>::operator-=(const cl_mat<T>& rhs)
+  {
+    auto lhs_dat = rw_bind(storage_);
+    auto rhs_dat = ro_bind(rhs.storage_);
+    if (row_count_ == rhs.row_count_ && col_count_ == rhs.col_count_)
+    {
+      auto& ker = cl_kernels_store::instance().matrix_sub;
+      bind_ker<T>(ker, cl::NDRange(storage_.size()), lhs_dat, rhs_dat);
+    }
+    else
+      if (row_count_ == rhs.row_count_ && rhs.col_count_ == 1)
+      {
+        auto& ker = cl_kernels_store::instance().matrix_sub_column;
+        bind_ker<T>(ker, cl::NDRange(row_count_, col_count_),
+                    lhs_dat, col_count_, rhs_dat);
+      }
+      else
+        if (rhs.row_count_ == 1 && col_count_ == rhs.col_count_)
+        {
+          auto& ker = cl_kernels_store::instance().matrix_sub_row;
+          bind_ker<T>(ker, cl::NDRange(row_count_, col_count_),
+                      lhs_dat, col_count_, rhs_dat);
+        }
+        else
+        {
+          std::ostringstream err;
+          err
+            << "cl_mat::operator-= incompatible dimensions lhs["
+            << row_count_ << ',' << col_count_ << "] -= rhs["
+            << rhs.row_count_ << ',' << rhs.col_count_ << ']';
+          throw std::out_of_range(err.str());
+        }
+    bind_res(lhs_dat, storage_);
+    return *this;
+  }
+
 
   template class cl_mat<float>;
   template class cl_mat<double>;

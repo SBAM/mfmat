@@ -61,7 +61,7 @@ namespace mfmat
   T cl_mat<T>::operator[](indices idx) const
   {
     assert(idx.first < row_count_ && idx.second < col_count_);
-    return storage_[idx.first + idx.second * row_count_];
+    return storage_[idx.first * col_count_ + idx.second];
   }
 
 
@@ -69,7 +69,7 @@ namespace mfmat
   T cl_mat<T>::get(std::size_t row_idx, std::size_t col_idx) const
   {
     assert(row_idx < row_count_ && col_idx < col_count_);
-    return storage_[row_idx + col_idx * row_count_];
+    return storage_[row_idx * col_count_ + col_idx];
   }
 
 
@@ -77,7 +77,7 @@ namespace mfmat
   T& cl_mat<T>::operator[](indices idx)
   {
     assert(idx.first < row_count_ && idx.second < col_count_);
-    return storage_[idx.first + idx.second * row_count_];
+    return storage_[idx.first * col_count_ + idx.second];
   }
 
 
@@ -85,7 +85,7 @@ namespace mfmat
   T& cl_mat<T>::get(std::size_t row_idx, std::size_t col_idx)
   {
     assert(row_idx < row_count_ && col_idx < col_count_);
-    return storage_[row_idx + col_idx * row_count_];
+    return storage_[row_idx * col_count_ + col_idx];
   }
 
 } // !namespace mfmat

@@ -8,6 +8,7 @@
 
 # include "cl_default_gpu_setter.hpp"
 # include "cl_kernels_store.hpp"
+# include "cl_bind_helpers.hpp"
 # include "cl_mat.hpp"
 
 #endif // !MFMAT_FWD_HPP_

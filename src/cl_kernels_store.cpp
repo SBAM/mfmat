@@ -12,6 +12,12 @@ DECL_BINARY_RESOURCE(matrix_scalar_add);
 DECL_BINARY_RESOURCE(matrix_scalar_sub);
 DECL_BINARY_RESOURCE(matrix_scalar_mul);
 DECL_BINARY_RESOURCE(matrix_scalar_div);
+DECL_BINARY_RESOURCE(matrix_add);
+DECL_BINARY_RESOURCE(matrix_add_column);
+DECL_BINARY_RESOURCE(matrix_add_row);
+DECL_BINARY_RESOURCE(matrix_sub);
+DECL_BINARY_RESOURCE(matrix_sub_column);
+DECL_BINARY_RESOURCE(matrix_sub_row);
 DECL_BINARY_RESOURCE(matrix_multiply);
 
 
@@ -47,6 +53,12 @@ namespace mfmat
     INIT_MEMBER(matrix_scalar_sub),
     INIT_MEMBER(matrix_scalar_mul),
     INIT_MEMBER(matrix_scalar_div),
+    INIT_MEMBER(matrix_add),
+    INIT_MEMBER(matrix_add_column),
+    INIT_MEMBER(matrix_add_row),
+    INIT_MEMBER(matrix_sub),
+    INIT_MEMBER(matrix_sub_column),
+    INIT_MEMBER(matrix_sub_row),
     INIT_MEMBER(matrix_multiply)
   {
   }
