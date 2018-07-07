@@ -10,5 +10,6 @@
 # include "cl_kernels_store.hpp"
 # include "cl_bind_helpers.hpp"
 # include "cl_mat.hpp"
+# include "cl_mat_externals.hpp"
 
 #endif // !MFMAT_FWD_HPP_
