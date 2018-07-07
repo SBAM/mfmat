@@ -7,7 +7,7 @@
 
 #include <mfmat/fwd.hpp>
 
-BOOST_AUTO_TEST_SUITE(transpose_test_suite)
+BOOST_AUTO_TEST_SUITE(ct_transpose_test_suite)
 
 BOOST_AUTO_TEST_CASE(transpose_1x1)
 {

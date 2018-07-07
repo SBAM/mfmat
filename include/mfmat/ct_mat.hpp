@@ -164,10 +164,10 @@ namespace mfmat
     ct_mat& orthonormalize() noexcept;
 
     /**
-     * @brief transposes in place this matrix
+     * @return this square matrix, in-place transposed
      * @note assumes this matrix is square
      */
-    void transpose() noexcept;
+    ct_mat& transpose() noexcept;
 
     /// @return matrix' trace
     T trace() const noexcept;

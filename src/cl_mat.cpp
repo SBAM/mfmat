@@ -175,6 +175,32 @@ namespace mfmat
   }
 
 
+  template <typename T>
+  cl_mat<T>& cl_mat<T>::transpose()
+  {
+    if (row_count_ == col_count_)
+    {
+      auto dat = rw_bind(storage_);
+      auto& ker = cl_kernels_store::instance().matrix_square_transpose;
+      bind_ker<T>(ker, cl::NDRange(row_count_, col_count_),
+                  dat, row_count_, col_count_);
+      bind_res(dat, storage_);
+    }
+    else
+    {
+      auto dat_in = ro_bind(storage_);
+      storage_t out_storage(storage_.size());
+      auto dat_out = rw_bind(out_storage);
+      auto& ker = cl_kernels_store::instance().matrix_transpose;
+      bind_ker<T>(ker, cl::NDRange(row_count_, col_count_),
+                  dat_in, row_count_, col_count_, dat_out);
+      bind_res(dat_out, out_storage);
+      std::swap(row_count_, col_count_);
+      std::swap(storage_, out_storage);
+    }
+    return *this;
+  }
+
   template class cl_mat<float>;
   template class cl_mat<double>;
 

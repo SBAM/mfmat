@@ -114,11 +114,16 @@ namespace mfmat
      */
     cl_mat& operator-=(const cl_mat& rhs);
 
+    /// @return this matrix in-place transposed, can be rectangular
+    cl_mat& transpose();
 
   private:
     std::size_t row_count_; ///< keeps track of current row count
     std::size_t col_count_; ///< keeps track of current column count
     storage_t storage_; ///< internal storage
+
+    template <typename U>
+    friend cl_mat<U> transpose(const cl_mat<U>&);
   };
 
   /// @typedef cl_mat_f shorthand to float specialized cl_mat

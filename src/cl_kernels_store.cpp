@@ -18,6 +18,8 @@ DECL_BINARY_RESOURCE(matrix_add_row);
 DECL_BINARY_RESOURCE(matrix_sub);
 DECL_BINARY_RESOURCE(matrix_sub_column);
 DECL_BINARY_RESOURCE(matrix_sub_row);
+DECL_BINARY_RESOURCE(matrix_square_transpose);
+DECL_BINARY_RESOURCE(matrix_transpose);
 DECL_BINARY_RESOURCE(matrix_multiply);
 
 
@@ -59,6 +61,8 @@ namespace mfmat
     INIT_MEMBER(matrix_sub),
     INIT_MEMBER(matrix_sub_column),
     INIT_MEMBER(matrix_sub_row),
+    INIT_MEMBER(matrix_square_transpose),
+    INIT_MEMBER(matrix_transpose),
     INIT_MEMBER(matrix_multiply)
   {
   }

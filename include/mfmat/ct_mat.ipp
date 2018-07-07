@@ -360,7 +360,7 @@ namespace mfmat
 
 
   template <typename T, std::size_t R, std::size_t C>
-  void ct_mat<T, R, C>::transpose() noexcept
+  ct_mat<T, R, C>& ct_mat<T, R, C>::transpose() noexcept
   {
     static_assert(R == C, "In place transpose only applies to a square matrix");
     auto cell_swap = [&]<auto... Is>(std::index_sequence<Is...>)
@@ -369,6 +369,7 @@ namespace mfmat
                     this->scan<op_way::col, Is>())), ...);
       };
     cell_swap(make_upper_no_diag_mat_index_sequence<R, C>());
+    return *this;
   }
 
 
