@@ -7,7 +7,7 @@
 
 #include <mfmat/fwd.hpp>
 
-BOOST_AUTO_TEST_SUITE(matrices_multiply_suite)
+BOOST_AUTO_TEST_SUITE(ct_matrices_multiply_suite)
 
 BOOST_AUTO_TEST_CASE(multiply_simple)
 {

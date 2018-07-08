@@ -85,8 +85,8 @@ namespace mfmat
     DECL_KERNEL(matrix_square_transpose, cl::Buffer, std::size_t, std::size_t);
     DECL_KERNEL(matrix_transpose, cl::Buffer, std::size_t, std::size_t,
                 cl::Buffer);
-    DECL_KERNEL(matrix_multiply, std::size_t, std::size_t, std::size_t,
-                cl::Buffer, cl::Buffer, cl::Buffer);
+    DECL_KERNEL(matrix_multiply, cl::Buffer, std::size_t, cl::Buffer,
+                std::size_t, cl::Buffer);
   };
 
 } // !namespace mfmat

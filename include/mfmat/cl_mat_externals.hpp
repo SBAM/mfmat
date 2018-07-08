@@ -49,6 +49,10 @@ namespace mfmat
   template <typename T>
   cl_mat<T> transpose(const cl_mat<T>& arg);
 
+  /// @brief multiplies matrices
+  template <typename T>
+  cl_mat<T> operator*(const cl_mat<T>& lhs, const cl_mat<T>& rhs);
+
 } // !namespace mfmat
 
 #endif // !MFMAT_CL_MAT_EXTERNALS_HPP_

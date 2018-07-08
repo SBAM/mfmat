@@ -22,6 +22,7 @@ endmacro()
 build_and_run_test(cl_construction.cpp)
 build_and_run_test(cl_kernels_store_initialization.cpp)
 build_and_run_test(cl_matrices_ops.cpp)
+build_and_run_test(cl_multiply.cpp)
 build_and_run_test(cl_scalar_ops.cpp)
 build_and_run_test(cl_transpose.cpp)
 

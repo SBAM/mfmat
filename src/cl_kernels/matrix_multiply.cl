@@ -1,17 +1,15 @@
-kernel void matrix_multiply(const ulong M, const ulong N, const ulong K,
-                            const global data_t* A,
-                            const global data_t* B,
-                            global data_t* C)
+kernel void matrix_multiply(const global data_t* lhs,
+                            const ulong lhs_N, /* lhs's column count */
+                            const global data_t* rhs,
+                            const ulong rhs_N, /* rhs's column count */
+                            global data_t* res)
 {
-  // Thread identifiers
-  const size_t globalRow = get_global_id(0); // Row ID of C (0..M)
-  const size_t globalCol = get_global_id(1); // Col ID of C (0..N)
-
-  // Computes a single element (loop over K)
+  const size_t row = get_global_id(0); // res' row index
+  const size_t col = get_global_id(1); // res' column index
+  // dot product of lhs' row with rhs' column
   data_t acc = 0.0;
-  for (size_t k = 0; k < K; ++k)
-    acc += A[k * M + globalRow] * B[globalCol * K + k];
-
-  // Stores the result
-  C[globalCol * M + globalRow] = acc;
+  for (size_t k = 0; k < lhs_N; ++k)
+    acc += lhs[row * lhs_N + k] * rhs[k * rhs_N + col];
+  // store result
+  res[row * rhs_N + col] = acc;
 }
