@@ -53,6 +53,13 @@ namespace mfmat
   template <typename T>
   cl_mat<T> operator*(const cl_mat<T>& lhs, const cl_mat<T>& rhs);
 
+  /**
+   * @brief Builds a row vector that stores mean value of columns
+   * @return a row of size arg.get_col_count()
+   */
+  template <typename T>
+  cl_mat<T> mean(const cl_mat<T>& arg);
+
 } // !namespace mfmat
 
 #endif // !MFMAT_CL_MAT_EXTERNALS_HPP_

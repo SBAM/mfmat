@@ -126,6 +126,8 @@ namespace mfmat
     friend cl_mat<U> transpose(const cl_mat<U>&);
     template <typename U>
     friend cl_mat<U> operator*(const cl_mat<U>&, const cl_mat<U>&);
+    template <typename U>
+    friend cl_mat<U> mean(const cl_mat<U>&);
   };
 
   /// @typedef cl_mat_f shorthand to float specialized cl_mat
