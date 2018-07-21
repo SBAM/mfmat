@@ -88,6 +88,7 @@ namespace mfmat
     DECL_KERNEL(matrix_multiply, cl::Buffer, std::size_t, cl::Buffer,
                 std::size_t, cl::Buffer);
     DECL_KERNEL(matrix_mean, cl::Buffer, std::size_t, std::size_t, cl::Buffer);
+    DECL_KERNEL(matrix_mean_center, cl::Buffer, std::size_t, std::size_t);
   };
 
 } // !namespace mfmat

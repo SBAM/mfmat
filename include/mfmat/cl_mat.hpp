@@ -117,6 +117,9 @@ namespace mfmat
     /// @return this matrix in-place transposed, can be rectangular
     cl_mat& transpose();
 
+    /// @brief Centers matrix according to columns' means, in-place modify
+    cl_mat& mean_center();
+
   private:
     std::size_t row_count_; ///< keeps track of current row count
     std::size_t col_count_; ///< keeps track of current column count

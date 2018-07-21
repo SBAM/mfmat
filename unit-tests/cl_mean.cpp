@@ -72,7 +72,7 @@ BOOST_AUTO_TEST_CASE(mean, * but::fixture(&setup))
 }
 
 
-BOOST_AUTO_TEST_CASE(empty_matrix, * but::fixture(&setup))
+BOOST_AUTO_TEST_CASE(mean_empty_matrix, * but::fixture(&setup))
 {
   auto mat_f = mfmat::cl_mat_f{0, 0};
   BOOST_CHECK_THROW(mfmat::mean(mat_f), std::runtime_error);
