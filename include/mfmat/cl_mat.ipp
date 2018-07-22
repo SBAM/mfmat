@@ -2,6 +2,19 @@ namespace mfmat
 {
 
   template <typename T>
+  template <std::size_t R, std::size_t C>
+  cl_mat<T>::cl_mat(const T(&arg)[R][C]) :
+    row_count_(R),
+    col_count_(C)
+  {
+    storage_.reserve(R * C);
+    for (std::size_t m = 0; m < R; ++m)
+      for (std::size_t n = 0; n < C; ++n)
+        storage_.push_back(arg[m][n]);
+  }
+
+
+  template <typename T>
   std::size_t cl_mat<T>::get_row_count() const
   {
     return row_count_;

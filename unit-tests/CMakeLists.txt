@@ -26,6 +26,8 @@ build_and_run_test(cl_mean.cpp)
 build_and_run_test(cl_mean_center.cpp)
 build_and_run_test(cl_multiply.cpp)
 build_and_run_test(cl_scalar_ops.cpp)
+build_and_run_test(cl_standard_deviation.cpp)
+build_and_run_test(cl_stddev_center.cpp)
 build_and_run_test(cl_transpose.cpp)
 
 build_and_run_test(ct_compare_ops.cpp)

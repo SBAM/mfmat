@@ -152,4 +152,29 @@ namespace mfmat
   template cl_mat_f mean(const cl_mat_f&);
   template cl_mat_d mean(const cl_mat_d&);
 
+
+  template <typename T>
+  cl_mat<T> std_dev(const cl_mat<T>& arg)
+  {
+    if (arg.get_row_count() == 0)
+    {
+      std::ostringstream err;
+      err
+        << "std_dev invalid matrix dimension [" << arg.get_row_count() << ','
+        << arg.get_col_count() << ']';
+      throw std::runtime_error(err.str());
+    }
+    auto arg_dat = ro_bind(arg.storage_);
+    cl_mat<T> res(1, arg.get_col_count());
+    auto res_dat = rw_bind(res.storage_);
+    auto& ker = cl_kernels_store::instance().matrix_stddev;
+    bind_ker<T>(ker, cl::NDRange(res.get_col_count()),
+                arg_dat, arg.get_row_count(), arg.get_col_count(),
+                res_dat);
+    bind_res(res_dat, res.storage_);
+    return res;
+  }
+  template cl_mat_f std_dev(const cl_mat_f&);
+  template cl_mat_d std_dev(const cl_mat_d&);
+
 } // !namespace mfmat

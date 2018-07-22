@@ -7,7 +7,7 @@
 
 #include <mfmat/fwd.hpp>
 
-BOOST_AUTO_TEST_SUITE(standard_deviation_test_suite)
+BOOST_AUTO_TEST_SUITE(ct_standard_deviation_test_suite)
 
 BOOST_AUTO_TEST_CASE(identity_1x1_standard_deviation)
 {

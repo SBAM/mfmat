@@ -7,7 +7,7 @@
 
 #include <mfmat/fwd.hpp>
 
-BOOST_AUTO_TEST_SUITE(stddev_center_test_suite)
+BOOST_AUTO_TEST_SUITE(ct_stddev_center_test_suite)
 
 BOOST_AUTO_TEST_CASE(identity_2x2_stddev_center)
 {

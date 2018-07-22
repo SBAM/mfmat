@@ -29,17 +29,17 @@ namespace mfmat
 
   template <typename T, std::size_t R, std::size_t C>
   template <typename T2, std::size_t R2, std::size_t C2>
-  ct_mat<T, R, C>::ct_mat(const T2(&mil)[R2][C2]) noexcept
+  ct_mat<T, R, C>::ct_mat(const T2(&arg)[R2][C2]) noexcept
   {
     static_assert(R == R2, "Rows count mismatch");
     static_assert(C == C2, "Columns count mismatch");
-    constexpr auto getter = [](const T2(&mil)[R2][C2], std::size_t idx)
+    constexpr auto getter = [](const T2(&arg)[R2][C2], std::size_t idx)
       {
-        return mil[idx / C2][idx % C2];
+        return arg[idx / C2][idx % C2];
       };
     auto cell_copy = [&]<auto... Is>(std::index_sequence<Is...>)
       {
-        ((this->scan<op_way::row, Is>() = getter(mil, Is)), ...);
+        ((this->scan<op_way::row, Is>() = getter(arg, Is)), ...);
       };
     cell_copy(std::make_index_sequence<R * C>{});
   }

@@ -118,4 +118,38 @@ BOOST_AUTO_TEST_CASE(assignement_operator, * but::fixture(&setup))
   BOOST_CHECK_EQUAL(dist2, 64 * 64);
 }
 
+
+BOOST_AUTO_TEST_CASE(initializer_list, * but::fixture(&setup))
+{
+  auto mat_f = mfmat::cl_mat_f
+    ({
+      { 0.0f,  1.0f,  2.0f },
+      { 3.0f,  4.0f,  5.0f },
+      { 6.0f,  7.0f,  8.0f },
+      { 9.0f, 10.0f, 11.0f }
+     });
+  BOOST_CHECK_EQUAL(mat_f.get_row_count(), 4);
+  BOOST_CHECK_EQUAL(mat_f.get_col_count(), 3);
+  auto curr_f = 0.0f;
+  for (auto cell : mat_f)
+  {
+    BOOST_CHECK(mfmat::are_equal(curr_f, cell));
+    curr_f += 1.0f;
+  }
+  auto mat_d = mfmat::cl_mat_d
+    ({
+      { 0.0,  1.0,  2.0,  3.0 },
+      { 4.0,  5.0,  6.0,  7.0 },
+      { 8.0,  9.0, 10.0, 11.0 }
+     });
+  BOOST_CHECK_EQUAL(mat_d.get_row_count(), 3);
+  BOOST_CHECK_EQUAL(mat_d.get_col_count(), 4);
+  auto curr_d = 0.0;
+  for (auto cell : mat_d)
+  {
+    BOOST_CHECK(mfmat::are_equal(curr_d, cell));
+    curr_d += 1.0;
+  }
+}
+
 BOOST_AUTO_TEST_SUITE_END()

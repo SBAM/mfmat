@@ -31,18 +31,19 @@ namespace mfmat
      * @param cols matrix cols count
      */
     cl_mat(std::size_t rows, std::size_t cols);
-
     /**
      * @brief Fills square matrix with zeroes
      * @param rows_cols matrix rows & cols
      */
     cl_mat(std::size_t rows_cols);
-
     /**
      * @brief Constructs an identity matrix
      * @param rows_cols matrix rows & cols
      */
     cl_mat(std::size_t rows_cols, identity_tag);
+    /// @brief Constructor based on full matrix initialization list
+    template <std::size_t R, std::size_t C>
+    cl_mat(const T(&arg)[R][C]);
 
     /// @brief Move constructor that zero out rhs dimensions
     cl_mat(cl_mat&& rhs);
@@ -120,6 +121,12 @@ namespace mfmat
     /// @brief Centers matrix according to columns' means, in-place modify
     cl_mat& mean_center();
 
+    /**
+     * @brief Centers matrix according to columns' standard deviations,
+     *        in-place modify
+     */
+    cl_mat& stddev_center();
+
   private:
     std::size_t row_count_; ///< keeps track of current row count
     std::size_t col_count_; ///< keeps track of current column count
@@ -131,6 +138,8 @@ namespace mfmat
     friend cl_mat<U> operator*(const cl_mat<U>&, const cl_mat<U>&);
     template <typename U>
     friend cl_mat<U> mean(const cl_mat<U>&);
+    template <typename U>
+    friend cl_mat<U> std_dev(const cl_mat<U>&);
   };
 
   /// @typedef cl_mat_f shorthand to float specialized cl_mat

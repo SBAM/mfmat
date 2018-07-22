@@ -220,6 +220,26 @@ namespace mfmat
     return *this;
   }
 
+
+  template <typename T>
+  cl_mat<T>& cl_mat<T>::stddev_center()
+  {
+    if (row_count_ == 0)
+    {
+      std::ostringstream err;
+      err
+        << "cl_mat::stddev_center invalid matrix dimension ["
+        << row_count_ << ',' << col_count_ << ']';
+      throw std::runtime_error(err.str());
+    }
+    auto dat = rw_bind(storage_);
+    auto& ker = cl_kernels_store::instance().matrix_stddev_center;
+    bind_ker<T>(ker, cl::NDRange(col_count_), dat, row_count_, col_count_);
+    bind_res(dat, storage_);
+    return *this;
+  }
+
+
   template class cl_mat<float>;
   template class cl_mat<double>;
 

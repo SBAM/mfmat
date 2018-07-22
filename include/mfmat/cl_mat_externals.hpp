@@ -60,6 +60,14 @@ namespace mfmat
   template <typename T>
   cl_mat<T> mean(const cl_mat<T>& arg);
 
+  /**
+   * @brief Builds a row vector that stores the standard deviation of each
+   *        column
+   * @return a row of size arg.get_col_count()
+   */
+  template <typename T>
+  cl_mat<T> std_dev(const cl_mat<T>& arg);
+
 } // !namespace mfmat
 
 #endif // !MFMAT_CL_MAT_EXTERNALS_HPP_
