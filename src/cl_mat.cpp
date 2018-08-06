@@ -215,7 +215,12 @@ namespace mfmat
     }
     auto dat = rw_bind(storage_);
     auto& ker = cl_kernels_store::instance().matrix_mean_center;
-    bind_ker<T>(ker, cl::NDRange(col_count_), dat, row_count_, col_count_);
+    auto range_args = cl::EnqueueArgs
+      {
+        cl::NDRange(row_count_, col_count_),
+        cl::NDRange(row_count_, 1)
+      };
+    bind_ker<T>(ker, range_args, dat, row_count_, col_count_);
     bind_res(dat, storage_);
     return *this;
   }
@@ -234,7 +239,12 @@ namespace mfmat
     }
     auto dat = rw_bind(storage_);
     auto& ker = cl_kernels_store::instance().matrix_stddev_center;
-    bind_ker<T>(ker, cl::NDRange(col_count_), dat, row_count_, col_count_);
+    auto range_args = cl::EnqueueArgs
+      {
+        cl::NDRange(row_count_, col_count_),
+        cl::NDRange(row_count_, 1)
+      };
+    bind_ker<T>(ker, range_args, dat, row_count_, col_count_);
     bind_res(dat, storage_);
     return *this;
   }
