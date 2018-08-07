@@ -1,1 +1,1 @@
-#define data_t float
+typedef float data_t;

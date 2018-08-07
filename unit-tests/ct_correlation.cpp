@@ -7,7 +7,7 @@
 
 #include <mfmat/fwd.hpp>
 
-BOOST_AUTO_TEST_SUITE(correlation_test_suite)
+BOOST_AUTO_TEST_SUITE(ct_correlation_test_suite)
 
 BOOST_AUTO_TEST_CASE(identity_2x2_correlation)
 {

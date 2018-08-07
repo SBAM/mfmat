@@ -140,6 +140,10 @@ namespace mfmat
     friend cl_mat<U> mean(const cl_mat<U>&);
     template <typename U>
     friend cl_mat<U> std_dev(const cl_mat<U>&);
+    template <typename U>
+    friend cl_mat<U> covariance(cl_mat<U>);
+    template <typename U>
+    friend cl_mat<U> correlation(cl_mat<U>);
   };
 
   /// @typedef cl_mat_f shorthand to float specialized cl_mat

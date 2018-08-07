@@ -177,4 +177,76 @@ namespace mfmat
   template cl_mat_f std_dev(const cl_mat_f&);
   template cl_mat_d std_dev(const cl_mat_d&);
 
+
+  template <typename T>
+  cl_mat<T> covariance(cl_mat<T> arg)
+  {
+    if (arg.get_row_count() == 0)
+    {
+      std::ostringstream err;
+      err
+        << "covariance invalid matrix dimension ["
+        << arg.get_row_count() << ','
+        << arg.get_col_count() << ']';
+      throw std::runtime_error(err.str());
+    }
+    // mean-center copied argument
+    auto arg_dat = rw_bind(arg.storage_);
+    auto& ker1 = cl_kernels_store::instance().matrix_mean_center;
+    auto range_args = cl::EnqueueArgs
+      {
+        cl::NDRange(arg.get_row_count(), arg.get_col_count()),
+        cl::NDRange(arg.get_row_count(), 1)
+      };
+    bind_ker<T>(ker1, range_args, arg_dat,
+                arg.get_row_count(), arg.get_col_count());
+    // allocate result and self mutliply mean-centered argument
+    cl_mat<T> res(arg.get_col_count(), arg.get_col_count());
+    auto res_dat = rw_bind(res.storage_);
+    auto& ker2 = cl_kernels_store::instance().matrix_self_multiply_regularized;
+    bind_ker<T>(ker2, cl::NDRange(res.get_row_count(), res.get_col_count()),
+                arg_dat, arg.get_row_count(), arg.get_col_count(),
+                res_dat);
+    bind_res(res_dat, res.storage_);
+    return res;
+  }
+  template cl_mat_f covariance(cl_mat_f);
+  template cl_mat_d covariance(cl_mat_d);
+
+
+  template <typename T>
+  cl_mat<T> correlation(cl_mat<T> arg)
+  {
+    if (arg.get_row_count() == 0)
+    {
+      std::ostringstream err;
+      err
+        << "correlation invalid matrix dimension ["
+        << arg.get_row_count() << ','
+        << arg.get_col_count() << ']';
+      throw std::runtime_error(err.str());
+    }
+    // stddev-center copied argument
+    auto arg_dat = rw_bind(arg.storage_);
+    auto& ker1 = cl_kernels_store::instance().matrix_stddev_center;
+    auto range_args = cl::EnqueueArgs
+      {
+        cl::NDRange(arg.get_row_count(), arg.get_col_count()),
+        cl::NDRange(arg.get_row_count(), 1)
+      };
+    bind_ker<T>(ker1, range_args, arg_dat,
+                arg.get_row_count(), arg.get_col_count());
+    // allocate result and self mutliply mean-centered argument
+    cl_mat<T> res(arg.get_col_count(), arg.get_col_count());
+    auto res_dat = rw_bind(res.storage_);
+    auto& ker2 = cl_kernels_store::instance().matrix_self_multiply_regularized;
+    bind_ker<T>(ker2, cl::NDRange(res.get_row_count(), res.get_col_count()),
+                arg_dat, arg.get_row_count(), arg.get_col_count(),
+                res_dat);
+    bind_res(res_dat, res.storage_);
+    return res;
+  }
+  template cl_mat_f correlation(cl_mat_f);
+  template cl_mat_d correlation(cl_mat_d);
+
 } // !namespace mfmat

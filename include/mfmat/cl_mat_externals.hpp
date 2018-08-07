@@ -68,6 +68,24 @@ namespace mfmat
   template <typename T>
   cl_mat<T> std_dev(const cl_mat<T>& arg);
 
+  /**
+   * @brief Computes covariance of a data-set where observations are stored as
+   *        rows.
+   * @param arg input matrix
+   * @return matrix normalized by the number of observations
+   */
+  template <typename T>
+  cl_mat<T> covariance(cl_mat<T> arg);
+
+  /**
+   * @brief Computes correlation of a data-set where observations are stored as
+   *        rows.
+   * @param arg input matrix
+   * @return correlation matrix normalized by the number of observations
+   */
+  template <typename T>
+  cl_mat<T> correlation(cl_mat<T> arg);
+
 } // !namespace mfmat
 
 #endif // !MFMAT_CL_MAT_EXTERNALS_HPP_
