@@ -1,3 +1,4 @@
+#include <iomanip>
 #include <sstream>
 
 #include <mfmat/cl_default_gpu_setter.hpp>
@@ -62,13 +63,25 @@ namespace mfmat
   {
     auto d = cl::Device::getDefault();
     os
+      << std::boolalpha
       << "Default device:" << std::endl
-      << " name=" << d.getInfo<CL_DEVICE_NAME>() << std::endl
       << " vendor=" << d.getInfo<CL_DEVICE_VENDOR>() << std::endl
-      << " profile=" << d.getInfo<CL_DEVICE_PROFILE>() << std::endl
-      << " device_ver=" << d.getInfo<CL_DEVICE_VERSION>() << std::endl
+      << " name=" << d.getInfo<CL_DEVICE_NAME>() << std::endl
       << " driver_ver=" << d.getInfo<CL_DRIVER_VERSION>() << std::endl
+      << " device_ver=" << d.getInfo<CL_DEVICE_VERSION>() << std::endl
       << " cl_ver=" << d.getInfo<CL_DEVICE_OPENCL_C_VERSION>() << std::endl
+      << " device_global_memory="
+      << d.getInfo<CL_DEVICE_GLOBAL_MEM_SIZE>() / (1 << 20) << "MB" << std::endl
+      << " device_local_memory="
+      << d.getInfo<CL_DEVICE_LOCAL_MEM_SIZE>() / (1 << 10) << "KB" << std::endl
+      << " device_max_work_dim="
+      << d.getInfo<CL_DEVICE_MAX_WORK_ITEM_DIMENSIONS>() << std::endl
+      << " device_max_work_group_size="
+      << d.getInfo<CL_DEVICE_MAX_WORK_GROUP_SIZE>() << std::endl
+      << " device_little_endian="
+      << (d.getInfo<CL_DEVICE_ENDIAN_LITTLE>() == CL_TRUE) << std::endl
+      << " device_profiling_resolution="
+      << d.getInfo<CL_DEVICE_PROFILING_TIMER_RESOLUTION>() << "ns" << std::endl
       << " extensions" << std::endl
       << "  [" << std::endl;
     for (const auto& curr_ext : dd.get_extensions())

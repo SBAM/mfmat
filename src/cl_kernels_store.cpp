@@ -89,7 +89,7 @@ namespace mfmat
       result = cl::Program({prefix, src});
     try
     {
-      result.build();
+      result.build("-Werror");
     }
     catch (const cl::Error& e)
     {
