@@ -7,7 +7,7 @@ namespace mfmat
 {
 
   /**
-   * @return read/write CL's buffer with a vector bound to it
+   * @return GPU can read and write to CL's buffer
    * @tparam Ts vector's parameters
    * @param vec in/out vector
    */
@@ -16,12 +16,37 @@ namespace mfmat
 
 
   /**
-   * @return read_only CL's buffer with a vector bound to it
+   * @return GPU can read_only CL's buffer
    * @tparam Ts vector's parameters
    * @param vec RO in vector
    */
   template <typename... Ts>
   inline cl::Buffer ro_bind(const std::vector<Ts...>& vec);
+
+
+  /**
+   * @return GPU can write_only to CL's buffer, only size to allocate on device
+   *         needs to be specified
+   * @param len bytes to allocate on device
+   */
+  inline cl::Buffer wo_bind(std::size_t len);
+
+
+  /**
+   * @return GPU can write_only to CL's buffer defined by input vector length
+   * @tparam Ts vector's parameters
+   * @param vec WO in vector
+   */
+  template <typename... Ts>
+  inline cl::Buffer wo_bind(const std::vector<Ts...>& vec);
+
+
+  /**
+   * @return Only GPU can read and write to CL's buffer, only size to allocate
+   *         on device needs to be specified
+   * @param len bytes to allocate on device
+   */
+  inline cl::Buffer no_host_bind(std::size_t len);
 
 
   /**
@@ -38,9 +63,11 @@ namespace mfmat
    * @brief Enqueues ouput read_buffer
    * @param clb CL's buffer
    * @param vec output storage
+   * @return cl::Event filled following read buffer, forwarded from
+   *         cl::KernelFunctor's call
    */
   template <typename... Ts>
-  inline void bind_res(const cl::Buffer& clb, std::vector<Ts...>& vec);
+  inline cl::Event bind_res(const cl::Buffer& clb, std::vector<Ts...>& vec);
 
 } // !namespace mfmat
 

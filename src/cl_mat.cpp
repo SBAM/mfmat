@@ -190,7 +190,7 @@ namespace mfmat
     {
       auto dat_in = ro_bind(storage_);
       storage_t out_storage(storage_.size());
-      auto dat_out = rw_bind(out_storage);
+      auto dat_out = wo_bind(out_storage);
       auto& ker = cl_kernels_store::instance().matrix_transpose;
       bind_ker<T>(ker, cl::NDRange(row_count_, col_count_),
                   dat_in, row_count_, col_count_, dat_out);

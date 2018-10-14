@@ -89,7 +89,7 @@ namespace mfmat
   {
     cl_mat<T> res(arg.get_col_count(), arg.get_row_count());
     auto dat_in = ro_bind(arg.storage_);
-    auto dat_out = rw_bind(res.storage_);
+    auto dat_out = wo_bind(res.storage_);
     auto& ker = cl_kernels_store::instance().matrix_transpose;
     bind_ker<T>(ker, cl::NDRange(arg.get_row_count(), arg.get_col_count()),
                 dat_in, arg.get_row_count(), arg.get_col_count(), dat_out);
@@ -115,7 +115,7 @@ namespace mfmat
     auto lhs_dat = ro_bind(lhs.storage_);
     auto rhs_dat = ro_bind(rhs.storage_);
     cl_mat<T> res(lhs.get_row_count(), rhs.get_col_count());
-    auto res_dat = rw_bind(res.storage_);
+    auto res_dat = wo_bind(res.storage_);
     auto& ker = cl_kernels_store::instance().matrix_multiply;
     bind_ker<T>(ker, cl::NDRange(res.get_row_count(), res.get_col_count()),
                 lhs_dat, lhs.get_col_count(),
@@ -141,7 +141,7 @@ namespace mfmat
     }
     auto arg_dat = ro_bind(arg.storage_);
     cl_mat<T> res(1, arg.get_col_count());
-    auto res_dat = rw_bind(res.storage_);
+    auto res_dat = wo_bind(res.storage_);
     auto& ker = cl_kernels_store::instance().matrix_mean;
     bind_ker<T>(ker, cl::NDRange(res.get_col_count()),
                 arg_dat, arg.get_row_count(), arg.get_col_count(),
@@ -166,7 +166,7 @@ namespace mfmat
     }
     auto arg_dat = ro_bind(arg.storage_);
     cl_mat<T> res(1, arg.get_col_count());
-    auto res_dat = rw_bind(res.storage_);
+    auto res_dat = wo_bind(res.storage_);
     auto& ker = cl_kernels_store::instance().matrix_stddev;
     bind_ker<T>(ker, cl::NDRange(res.get_col_count()),
                 arg_dat, arg.get_row_count(), arg.get_col_count(),
@@ -202,7 +202,7 @@ namespace mfmat
                 arg.get_row_count(), arg.get_col_count());
     // allocate result and self mutliply mean-centered argument
     cl_mat<T> res(arg.get_col_count(), arg.get_col_count());
-    auto res_dat = rw_bind(res.storage_);
+    auto res_dat = wo_bind(res.storage_);
     auto& ker2 = cl_kernels_store::instance().matrix_self_multiply_regularized;
     bind_ker<T>(ker2, cl::NDRange(res.get_row_count(), res.get_col_count()),
                 arg_dat, arg.get_row_count(), arg.get_col_count(),
@@ -238,7 +238,7 @@ namespace mfmat
                 arg.get_row_count(), arg.get_col_count());
     // allocate result and self mutliply mean-centered argument
     cl_mat<T> res(arg.get_col_count(), arg.get_col_count());
-    auto res_dat = rw_bind(res.storage_);
+    auto res_dat = wo_bind(res.storage_);
     auto& ker2 = cl_kernels_store::instance().matrix_self_multiply_regularized;
     bind_ker<T>(ker2, cl::NDRange(res.get_row_count(), res.get_col_count()),
                 arg_dat, arg.get_row_count(), arg.get_col_count(),
