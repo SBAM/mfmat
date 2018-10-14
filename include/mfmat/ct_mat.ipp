@@ -33,9 +33,9 @@ namespace mfmat
   {
     static_assert(R == R2, "Rows count mismatch");
     static_assert(C == C2, "Columns count mismatch");
-    constexpr auto getter = [](const T2(&arg)[R2][C2], std::size_t idx)
+    constexpr auto getter = [](const T2(&l_arg)[R2][C2], std::size_t idx)
       {
-        return arg[idx / C2][idx % C2];
+        return l_arg[idx / C2][idx % C2];
       };
     auto cell_copy = [&]<auto... Is>(std::index_sequence<Is...>)
       {

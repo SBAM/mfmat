@@ -5,18 +5,54 @@ project(mfmat)
 include(CheckCXXCompilerFlag)
 check_cxx_compiler_flag(-std=c++17 IS_CXX17_SUPPORTED)
 if (NOT IS_CXX17_SUPPORTED)
-  message(FATAL_ERROR "Compiler with c++17 capabilities required")
+  message(FATAL_ERROR "Compiler with c++17 (-std=c++17) capabilities required")
   return()
 endif()
 
-# Pushes definitions
-add_definitions(
-  -DBOOST_NO_AUTO_PTR
-  -DBOOST_TEST_DYN_LINK)
+option(LTO "Enables Link-Time-Optimization" ON)
 
-# Handles debug/release differences
-set(CMAKE_CXX_FLAGS_DEBUG "-O0")
-set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG")
+# Replace archive tools
+if (NOT $ENV{CMAKE_AR} STREQUAL "")
+  message("-- Using ar    =$ENV{CMAKE_AR}")
+  set(CMAKE_AR $ENV{CMAKE_AR})
+endif()
+if (NOT $ENV{CMAKE_NM} STREQUAL "")
+  message("-- Using nm    =$ENV{CMAKE_NM}")
+  set(CMAKE_NM $ENV{CMAKE_NM})
+endif()
+if (NOT $ENV{CMAKE_RANLIB} STREQUAL "")
+  message("-- Using ranlib=$ENV{CMAKE_RANLIB}")
+  set(CMAKE_RANLIB $ENV{CMAKE_RANLIB})
+endif()
+
+# Common compile flags
+string(CONCAT CMAKE_CXX_FLAGS
+  "-std=c++17 -ggdb3 -fPIC "
+  "-Wall -Wextra -Werror "
+  "-Wshadow "
+  "-Wfloat-equal "
+  "-Wdouble-promotion "
+  "-Wunreachable-code")
+
+# Handles debug/release differences-
+string(CONCAT CMAKE_CXX_FLAGS_DEBUG
+  "-O0")
+string(CONCAT CMAKE_CXX_FLAGS_RELEASE
+  "-O3 "
+  "-DNDEBUG")
+if (LTO)
+  string(CONCAT CMAKE_CXX_FLAGS_RELEASE
+    "${CMAKE_CXX_FLAGS_RELEASE} "
+    "-flto")
+endif()
+
+# Push definitions
+add_definitions(
+  -DBOOST_TEST_DYN_LINK
+  -DGIT_AUTHOR=$ENV{GIT_AUTHOR}
+  -DGIT_COMMIT_DATE=$ENV{GIT_COMMIT_DATE}
+  -DGIT_COMMIT_HASH=$ENV{GIT_COMMIT_HASH}
+  -DGIT_TAG=$ENV{GIT_TAG})
 
 # Searches for dependencies
 # - Boost
@@ -27,10 +63,6 @@ find_package(Boost REQUIRED COMPONENTS
 find_package(OpenCL REQUIRED)
 # - Threads
 find_package(Threads REQUIRED)
-
-# - Compile Flags
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -ggdb3 -fPIC")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -W -Wall -Wextra -Werror")
 
 # Sets up global system includes directories
 include_directories(SYSTEM
