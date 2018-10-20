@@ -192,11 +192,12 @@ namespace mfmat
     }
     // mean-center copied argument
     auto arg_dat = rw_bind(arg.storage_);
+    auto mwgs = cl_default_gpu_setter::instance().get_max_work_group_size();
     auto& ker1 = cl_kernels_store::instance().matrix_mean_center;
     auto range_args = cl::EnqueueArgs
       {
-        cl::NDRange(arg.get_row_count(), arg.get_col_count()),
-        cl::NDRange(arg.get_row_count(), 1)
+        cl::NDRange(std::min(arg.get_row_count(), mwgs), arg.get_col_count()),
+        cl::NDRange(std::min(arg.get_row_count(), mwgs), 1)
       };
     bind_ker<T>(ker1, range_args, arg_dat,
                 arg.get_row_count(), arg.get_col_count());
@@ -228,11 +229,12 @@ namespace mfmat
     }
     // stddev-center copied argument
     auto arg_dat = rw_bind(arg.storage_);
+    auto mwgs = cl_default_gpu_setter::instance().get_max_work_group_size();
     auto& ker1 = cl_kernels_store::instance().matrix_stddev_center;
     auto range_args = cl::EnqueueArgs
       {
-        cl::NDRange(arg.get_row_count(), arg.get_col_count()),
-        cl::NDRange(arg.get_row_count(), 1)
+        cl::NDRange(std::min(arg.get_row_count(), mwgs), arg.get_col_count()),
+        cl::NDRange(std::min(arg.get_row_count(), mwgs), 1)
       };
     bind_ker<T>(ker1, range_args, arg_dat,
                 arg.get_row_count(), arg.get_col_count());

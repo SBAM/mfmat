@@ -173,7 +173,7 @@ while true; do
       esac; shift 2 ;;
     -c|--compiler)
       case $2 in
-        gcc|clang|analyzer) COMPILER=$2 ;;
+        gcc|clang) COMPILER=$2 ;;
         *) usage_die ;;
       esac; shift 2 ;;
     -l|--lto)
