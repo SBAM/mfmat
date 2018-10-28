@@ -83,6 +83,8 @@ namespace mfmat
     DECL_KERNEL(matrix_sub_column, cl::Buffer, std::size_t, cl::Buffer);
     DECL_KERNEL(matrix_sub_row, cl::Buffer, std::size_t, cl::Buffer);
     DECL_KERNEL(matrix_square_transpose, cl::Buffer, std::size_t, std::size_t);
+    DECL_KERNEL(matrix_orthonormalize, cl::Buffer, std::size_t, std::size_t,
+                cl::LocalSpaceArg);
     DECL_KERNEL(matrix_transpose, cl::Buffer, std::size_t, std::size_t,
                 cl::Buffer);
     DECL_KERNEL(matrix_multiply, cl::Buffer, std::size_t, cl::Buffer,

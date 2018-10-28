@@ -115,6 +115,9 @@ namespace mfmat
      */
     cl_mat& operator-=(const cl_mat& rhs);
 
+    /// @return this matrix ortho-normalized in-place, using Gram-Schmidt
+    cl_mat& orthonormalize();
+
     /// @return this matrix in-place transposed, can be rectangular
     cl_mat& transpose();
 

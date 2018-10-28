@@ -176,6 +176,33 @@ namespace mfmat
 
 
   template <typename T>
+  cl_mat<T>& cl_mat<T>::orthonormalize()
+  {
+    if (row_count_ == 0)
+    {
+      std::ostringstream err;
+      err
+        << "cl_mat::orthonormalize invalid matrix dimension ["
+        << row_count_ << ',' << col_count_ << ']';
+      throw std::runtime_error(err.str());
+    }
+    auto dat = rw_bind(storage_);
+    auto mwgs = cl_default_gpu_setter::instance().get_max_work_group_size();
+    auto& ker = cl_kernels_store::instance().matrix_orthonormalize;
+    auto range = std::min(row_count_, mwgs);
+    auto range_args = cl::EnqueueArgs
+      {
+        cl::NDRange(range),
+        cl::NDRange(range)
+      };
+    bind_ker<T>(ker, range_args, dat, row_count_, col_count_,
+                cl::Local(range * sizeof(T)));
+    bind_res(dat, storage_);
+    return *this;
+  }
+
+
+  template <typename T>
   cl_mat<T>& cl_mat<T>::transpose()
   {
     if (row_count_ == col_count_)
@@ -214,11 +241,12 @@ namespace mfmat
       throw std::runtime_error(err.str());
     }
     auto dat = rw_bind(storage_);
+    auto mwgs = cl_default_gpu_setter::instance().get_max_work_group_size();
     auto& ker = cl_kernels_store::instance().matrix_mean_center;
     auto range_args = cl::EnqueueArgs
       {
-        cl::NDRange(row_count_, col_count_),
-        cl::NDRange(row_count_, 1)
+        cl::NDRange(std::min(row_count_, mwgs), col_count_),
+        cl::NDRange(std::min(row_count_, mwgs), 1)
       };
     bind_ker<T>(ker, range_args, dat, row_count_, col_count_);
     bind_res(dat, storage_);
@@ -238,11 +266,12 @@ namespace mfmat
       throw std::runtime_error(err.str());
     }
     auto dat = rw_bind(storage_);
+    auto mwgs = cl_default_gpu_setter::instance().get_max_work_group_size();
     auto& ker = cl_kernels_store::instance().matrix_stddev_center;
     auto range_args = cl::EnqueueArgs
       {
-        cl::NDRange(row_count_, col_count_),
-        cl::NDRange(row_count_, 1)
+        cl::NDRange(std::min(row_count_, mwgs), col_count_),
+        cl::NDRange(std::min(row_count_, mwgs), 1)
       };
     bind_ker<T>(ker, range_args, dat, row_count_, col_count_);
     bind_res(dat, storage_);
