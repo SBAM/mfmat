@@ -8,6 +8,14 @@ namespace mfmat
 
 
   template <typename T>
+  cl_mat<T>::cl_mat() :
+    row_count_{},
+    col_count_{}
+  {
+  }
+
+
+  template <typename T>
   cl_mat<T>::cl_mat(std::size_t rows, std::size_t cols) :
     row_count_(rows),
     col_count_(cols),
@@ -172,6 +180,30 @@ namespace mfmat
         }
     bind_res(lhs_dat, storage_);
     return *this;
+  }
+
+
+  template <typename T>
+  bool cl_mat<T>::operator==(const cl_mat<T>& rhs) const
+  {
+    if (row_count_ != rhs.row_count_ || col_count_ != rhs.col_count_)
+      return false;
+    auto lhs_dat = ro_bind(storage_);
+    auto rhs_dat = ro_bind(rhs.storage_);
+    std::int32_t res{};
+    auto res_dat = wo_bind(sizeof(res));
+    auto& ker = cl_kernels_store::instance().matrix_is_equal;
+    bind_ker<T>(ker, cl::NDRange(row_count_ * col_count_),
+                lhs_dat, rhs_dat, res_dat);
+    bind_res(res_dat, &res, 1ul);
+    return res == 1;
+  }
+
+
+  template <typename T>
+  bool cl_mat<T>::operator!=(const cl_mat<T>& rhs) const
+  {
+    return !operator==(rhs);
   }
 
 

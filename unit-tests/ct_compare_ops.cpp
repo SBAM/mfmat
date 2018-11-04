@@ -7,7 +7,7 @@
 
 #include <mfmat/fwd.hpp>
 
-BOOST_AUTO_TEST_SUITE(compare_ops_test_suite)
+BOOST_AUTO_TEST_SUITE(ct_compare_ops_test_suite)
 
 BOOST_AUTO_TEST_CASE(integer_compare)
 {

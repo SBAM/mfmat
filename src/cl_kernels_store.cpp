@@ -18,6 +18,7 @@ DECL_BINARY_RESOURCE(matrix_add_row);
 DECL_BINARY_RESOURCE(matrix_sub);
 DECL_BINARY_RESOURCE(matrix_sub_column);
 DECL_BINARY_RESOURCE(matrix_sub_row);
+DECL_BINARY_RESOURCE(matrix_is_equal);
 DECL_BINARY_RESOURCE(matrix_square_transpose);
 DECL_BINARY_RESOURCE(matrix_orthonormalize);
 DECL_BINARY_RESOURCE(matrix_transpose);
@@ -27,6 +28,7 @@ DECL_BINARY_RESOURCE(matrix_mean_center);
 DECL_BINARY_RESOURCE(matrix_stddev);
 DECL_BINARY_RESOURCE(matrix_stddev_center);
 DECL_BINARY_RESOURCE(matrix_self_multiply_regularized);
+DECL_BINARY_RESOURCE(matrix_transpose_multiply);
 
 
 #define STR_BINARY_RESOURCE(name)           \
@@ -67,6 +69,7 @@ namespace mfmat
     INIT_MEMBER(matrix_sub),
     INIT_MEMBER(matrix_sub_column),
     INIT_MEMBER(matrix_sub_row),
+    INIT_MEMBER(matrix_is_equal),
     INIT_MEMBER(matrix_square_transpose),
     INIT_MEMBER(matrix_orthonormalize),
     INIT_MEMBER(matrix_transpose),
@@ -75,7 +78,8 @@ namespace mfmat
     INIT_MEMBER(matrix_mean_center),
     INIT_MEMBER(matrix_stddev),
     INIT_MEMBER(matrix_stddev_center),
-    INIT_MEMBER(matrix_self_multiply_regularized)
+    INIT_MEMBER(matrix_self_multiply_regularized),
+    INIT_MEMBER(matrix_transpose_multiply)
   {
   }
 

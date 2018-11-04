@@ -1,7 +1,7 @@
 #ifndef MFMAT_CT_MAT_QR_EIGEN_HPP_
 # define MFMAT_CT_MAT_QR_EIGEN_HPP_
 
-# include "ct_mat_qr_decomposition.hpp"
+# include "qr_decomposition.hpp"
 
 namespace mfmat
 {
@@ -52,7 +52,7 @@ namespace mfmat
     m_t values_; ///< eigen values
     m_t prev_values_; ///< previous iteration eigen values
     m_t vectors_; ///< eigen vectors
-    qr_decomposition<T, D, D> decomp_; ///< underlying QR decomposition
+    qr_decomposition<m_t> decomp_; ///< underlying QR decomposition
   };
 
 } // !namespace mfmat

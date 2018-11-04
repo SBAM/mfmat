@@ -69,6 +69,18 @@ namespace mfmat
   template <typename... Ts>
   inline cl::Event bind_res(const cl::Buffer& clb, std::vector<Ts...>& vec);
 
+
+  /**
+   * @brief Enqueues ouput read_buffer
+   * @param clb CL's buffer
+   * @param ptr output region
+   * @param elt_count element count
+   * @return cl::Event filled following read buffer, forwarded from
+   *         cl::KernelFunctor's call
+   */
+  template <typename T>
+  inline cl::Event bind_res(const cl::Buffer& clb, T* ptr, std::size_t elt_count);
+
 } // !namespace mfmat
 
 # include "cl_bind_helpers.ipp"

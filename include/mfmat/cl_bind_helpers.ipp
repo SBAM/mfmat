@@ -83,4 +83,21 @@ namespace mfmat
     return map_event;
   }
 
+
+  template <typename T>
+  inline cl::Event bind_res
+  (const cl::Buffer& clb, T* ptr, std::size_t elt_count)
+  {
+    auto queue = cl::CommandQueue::getDefault();
+    cl::Event event;
+    queue.enqueueReadBuffer(clb,
+                            true, // blocking
+                            0, // offset
+                            elt_count * sizeof(T),
+                            ptr,
+                            nullptr,
+                            &event);
+    return event;
+  }
+
 } // !namespace mfmat

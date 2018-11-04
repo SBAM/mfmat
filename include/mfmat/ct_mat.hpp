@@ -31,6 +31,10 @@ namespace mfmat
     /// @typedef opt shorthand to optional ct_mat
     template<typename T2, std::size_t R2, std::size_t C2>
     using opt = std::optional<ct_mat<T2, R2, C2>>;
+    /// @typedef square_rr_t defines square RxR ct_mat
+    using square_rr_t = ct_mat<T, R, R>;
+    /// @typedef square_cc_t defines square CxC ct_mat
+    using square_cc_t = ct_mat<T, C, C>;
 
   public:
     /// @brief Fills matrix with zeroes
@@ -129,7 +133,7 @@ namespace mfmat
 
     /// @return true if both matrices are equal
     bool operator==(const ct_mat& rhs) const noexcept;
-    /// @return true if both matrices are different
+    /// @return true if matrices are different
     bool operator!=(const ct_mat& rhs) const noexcept;
 
     /// @return true if matrix is diagonal
@@ -201,6 +205,15 @@ namespace mfmat
   /// @typedef ct_mat_opt shorthand to optional ct_mat
   template<typename T, std::size_t R, std::size_t C>
   using ct_mat_opt = std::optional<ct_mat<T, R, C>>;
+
+
+  /// @typedef is_ct_mat type traits helper for ct_mat, false_type
+  template <typename T>
+  struct is_ct_mat : std::false_type {};
+
+  /// @typedef is_ct_mat type traits helper for ct_mat, true_type
+  template <typename T, std::size_t R, std::size_t C>
+  struct is_ct_mat<ct_mat<T, R, C>> : std::true_type {};
 
 } // !namespace mfmat
 

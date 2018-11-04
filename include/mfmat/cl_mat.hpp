@@ -23,8 +23,16 @@ namespace mfmat
     using iterator = typename storage_t::iterator;
     /// @typedef const_iterator shorthand to storage const_iterator
     using const_iterator = typename storage_t::const_iterator;
+    /// @typedef opt shorthand to optional cl_mat
+    using opt = std::optional<cl_mat<T>>;
+    /// @typedef square_rr_t defines square cl_mat (requires runtime init)
+    using square_rr_t = cl_mat<T>;
+    /// @typedef square_cc_t defines square cl_mat (requires runtime init)
+    using square_cc_t = cl_mat<T>;
 
   public:
+    /// @brief Sets rows/cols counts to zero and empty storage
+    cl_mat();
     /**
      * @brief Fills rectangular matrix with zeroes
      * @param rows matrix rows count
@@ -115,6 +123,11 @@ namespace mfmat
      */
     cl_mat& operator-=(const cl_mat& rhs);
 
+    /// @return true if both matrices are equal
+    bool operator==(const cl_mat& rhs) const;
+    /// @return true if matrices are different
+    bool operator!=(const cl_mat& rhs) const;
+
     /// @return this matrix ortho-normalized in-place, using Gram-Schmidt
     cl_mat& orthonormalize();
 
@@ -147,16 +160,30 @@ namespace mfmat
     friend cl_mat<U> covariance(cl_mat<U>);
     template <typename U>
     friend cl_mat<U> correlation(cl_mat<U>);
+    template <typename U>
+    friend class qr_decomposition;
   };
+
 
   /// @typedef cl_mat_f shorthand to float specialized cl_mat
   using cl_mat_f = cl_mat<float>;
+
   /// @typedef cl_mat_d shorthand to double specialized cl_mat
   using cl_mat_d = cl_mat<double>;
+
 
   /// @typedef cl_mat_opt shorthand to optional cl_mat
   template <typename T>
   using cl_mat_opt = std::optional<cl_mat<T>>;
+
+
+  /// @typedef is_cl_mat type traits helper for cl_mat, false_type
+  template <typename T>
+  struct is_cl_mat : std::false_type {};
+
+  /// @typedef is_cl_mat type traits helper for cl_mat, true_type
+  template <typename T>
+  struct is_cl_mat<cl_mat<T>> : std::true_type {};
 
 } // !namespace mfmat
 
