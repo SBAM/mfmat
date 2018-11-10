@@ -7,7 +7,7 @@
 
 #include <mfmat/fwd.hpp>
 
-BOOST_AUTO_TEST_SUITE(is_diagonal_test_suite)
+BOOST_AUTO_TEST_SUITE(ct_is_diagonal_test_suite)
 
 BOOST_AUTO_TEST_CASE(is_diagonal_1)
 {

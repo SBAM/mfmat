@@ -128,6 +128,11 @@ namespace mfmat
     /// @return true if matrices are different
     bool operator!=(const cl_mat& rhs) const;
 
+    /// @return true if matrix is diagonal
+    bool is_diagonal() const;
+    /// @return true if matrix is symmetric
+    bool is_symmetric() const;
+
     /// @return this matrix ortho-normalized in-place, using Gram-Schmidt
     cl_mat& orthonormalize();
 

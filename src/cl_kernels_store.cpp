@@ -19,6 +19,8 @@ DECL_BINARY_RESOURCE(matrix_sub);
 DECL_BINARY_RESOURCE(matrix_sub_column);
 DECL_BINARY_RESOURCE(matrix_sub_row);
 DECL_BINARY_RESOURCE(matrix_is_equal);
+DECL_BINARY_RESOURCE(matrix_is_diagonal);
+DECL_BINARY_RESOURCE(matrix_is_symmetric);
 DECL_BINARY_RESOURCE(matrix_square_transpose);
 DECL_BINARY_RESOURCE(matrix_orthonormalize);
 DECL_BINARY_RESOURCE(matrix_transpose);
@@ -70,6 +72,8 @@ namespace mfmat
     INIT_MEMBER(matrix_sub_column),
     INIT_MEMBER(matrix_sub_row),
     INIT_MEMBER(matrix_is_equal),
+    INIT_MEMBER(matrix_is_diagonal),
+    INIT_MEMBER(matrix_is_symmetric),
     INIT_MEMBER(matrix_square_transpose),
     INIT_MEMBER(matrix_orthonormalize),
     INIT_MEMBER(matrix_transpose),

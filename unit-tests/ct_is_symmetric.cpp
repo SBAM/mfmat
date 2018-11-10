@@ -7,7 +7,7 @@
 
 #include <mfmat/fwd.hpp>
 
-BOOST_AUTO_TEST_SUITE(is_symmetric_test_suite)
+BOOST_AUTO_TEST_SUITE(ct_is_symmetric_test_suite)
 
 BOOST_AUTO_TEST_CASE(is_symmetric_1)
 {

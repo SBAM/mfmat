@@ -201,6 +201,50 @@ namespace mfmat
 
 
   template <typename T>
+  bool cl_mat<T>::is_diagonal() const
+  {
+    if (row_count_ == 0)
+    {
+      std::ostringstream err;
+      err
+        << "cl_mat::is_diagonal invalid matrix dimension ["
+        << row_count_ << ',' << col_count_ << ']';
+      throw std::runtime_error(err.str());
+    }
+    auto dat = ro_bind(storage_);
+    std::int32_t res{};
+    auto res_dat = wo_bind(sizeof(res));
+    auto& ker = cl_kernels_store::instance().matrix_is_diagonal;
+    bind_ker<T>(ker, cl::NDRange(row_count_, col_count_),
+                dat, col_count_, res_dat);
+    bind_res(res_dat, &res, 1ul);
+    return res == 1;
+  }
+
+
+  template <typename T>
+  bool cl_mat<T>::is_symmetric() const
+  {
+    if (row_count_ == 0 || row_count_ != col_count_)
+    {
+      std::ostringstream err;
+      err
+        << "cl_mat::is_symmetric invalid matrix dimension ["
+        << row_count_ << ',' << col_count_ << ']';
+      throw std::runtime_error(err.str());
+    }
+    auto dat = ro_bind(storage_);
+    std::int32_t res{};
+    auto res_dat = wo_bind(sizeof(res));
+    auto& ker = cl_kernels_store::instance().matrix_is_symmetric;
+    bind_ker<T>(ker, cl::NDRange(row_count_, col_count_),
+                dat, col_count_, res_dat);
+    bind_res(res_dat, &res, 1ul);
+    return res == 1;
+  }
+
+
+  template <typename T>
   bool cl_mat<T>::operator!=(const cl_mat<T>& rhs) const
   {
     return !operator==(rhs);
