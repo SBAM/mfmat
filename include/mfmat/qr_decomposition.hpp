@@ -28,10 +28,10 @@ namespace mfmat
 
   public:
     /// @brief Default initializes Q and R to zero
-    qr_decomposition() noexcept = default;
+    qr_decomposition() = default;
     /// @brief Invokes operator() on input and stores result
     qr_decomposition(const m_t& input);
-    ~qr_decomposition() noexcept = default;
+    ~qr_decomposition() = default;
 
     qr_decomposition(const qr_decomposition&) = delete;
     qr_decomposition(qr_decomposition&&) = delete;

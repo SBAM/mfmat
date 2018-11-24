@@ -1,5 +1,5 @@
-#ifndef MFMAT_CT_MAT_QR_EIGEN_HPP_
-# define MFMAT_CT_MAT_QR_EIGEN_HPP_
+#ifndef MFMAT_QR_EIGEN_HPP_
+# define MFMAT_QR_EIGEN_HPP_
 
 # include "qr_decomposition.hpp"
 
@@ -9,21 +9,21 @@ namespace mfmat
   /**
    * @brief Extracts eigen values and eigen vectors from given symmetric matrix
    *        using QR decompositions.
-   *        Square input has dimension D.
+   *        Input must be square.
    */
-  template <typename T, std::size_t D>
+  template <typename T>
   class qr_eigen
   {
   public:
     /// @typedef m_t working matrix type
-    using m_t = ct_mat<T, D, D>;
+    using m_t = T;
 
   public:
     /// @brief Default initializes eigen values/vectors to zero
-    qr_eigen() noexcept = default;
+    qr_eigen() = default;
     /// @brief Invokes operator() with iteration limitation
-    qr_eigen(const m_t& input, std::size_t max_iter = 32) noexcept;
-    ~qr_eigen() noexcept = default;
+    qr_eigen(const m_t& input, std::size_t max_iter = 32);
+    ~qr_eigen() = default;
 
     qr_eigen(const qr_eigen&) = delete;
     qr_eigen(qr_eigen&&) = delete;
@@ -36,7 +36,7 @@ namespace mfmat
      *         - values no longer changes between iterations
      *         - max_iter is reached.
      */
-    qr_eigen& operator()(const m_t& input, std::size_t max_iter = 32) noexcept;
+    qr_eigen& operator()(const m_t& input, std::size_t max_iter = 32);
 
     /// @return stored eigen values
     constexpr m_t& get_values();
@@ -57,6 +57,6 @@ namespace mfmat
 
 } // !namespace mfmat
 
-# include "ct_mat_qr_eigen.ipp"
+# include "qr_eigen.ipp"
 
-#endif // !
+#endif // !MFMAT_QR_EIGEN_HPP_
