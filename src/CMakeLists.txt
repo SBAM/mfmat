@@ -1,11 +1,16 @@
+# Push definitions
+add_compile_definitions(
+  GIT_AUTHOR=$ENV{GIT_AUTHOR}
+  GIT_COMMIT_DATE=$ENV{GIT_COMMIT_DATE}
+  GIT_COMMIT_HASH=$ENV{GIT_COMMIT_HASH}
+  GIT_TAG=$ENV{GIT_TAG})
+
 set(HEADERS_DIR ${CMAKE_SOURCE_DIR}/include)
 set(CL_KERNELS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/cl_kernels)
 
 file(GLOB_RECURSE HEADERS ${HEADERS_DIR}/*.hpp ${HEADERS_DIR}/*.ipp)
 file(GLOB SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
 file(GLOB CL_KERNELS ${CL_KERNELS_DIR}/*.cl)
-
-include_directories(${HEADERS_DIR})
 
 # static resources helper
 macro(add_cl_kernels out_obj_list)
@@ -32,5 +37,24 @@ add_library(mfmat STATIC
   ${SOURCES}
   ${CL_KERNELS_OBJ})
 
+target_include_directories(mfmat
+  PUBLIC
+    $<INSTALL_INTERFACE:include>
+    $<BUILD_INTERFACE:${HEADERS_DIR}>)
+
+target_compile_features(mfmat
+  PUBLIC cxx_std_17)
+
+# todo: use INTERPROCEDURAL_OPTIMIZATION property instead of -flto once cmake
+#       properly relies on AR/NM/RANLIB with LTO plugin
+target_compile_options(mfmat
+  PUBLIC
+    $<$<AND:$<CONFIG:Release>,$<BOOL:${LTO}>>:-flto>
+  PRIVATE
+    ${MFMAT_CXX_FLAGS})
+
 target_link_libraries(mfmat
-  ${OpenCL_LIBRARIES})
+  PUBLIC
+    OpenCL::OpenCL
+  PRIVATE
+    PkgConfig::LibLZ4)

@@ -54,7 +54,6 @@ COMPILER=gcc
 LTO=ON
 
 # $1 path
-# $2 Debug/Release
 # $N additional flags
 function cmake_config
 {
@@ -80,114 +79,64 @@ function cmake_config
   popd > /dev/null 2>&1
 }
 
-function launch
+function invoke_cmake
 {
+  export AMDAPPSDKROOT=/opt/amdgpu-pro
+  case $COMPILER in
+    clang)
+      export CXX=$(which clang++)
+      export TOOLCHAIN_FILE=ClangToolchain.cmake ;;
+    gcc)
+      export CXX=$(which g++)
+      export TOOLCHAIN_FILE=GNUToolchain.cmake ;;
+  esac
   DEBUGDIR=$BASEDIR/build/Debug
   RELEASEDIR=$BASEDIR/build/Release
   shift
   cmake_config $DEBUGDIR \
                -DCMAKE_BUILD_TYPE=Debug \
                -DLTO=$LTO \
+               -DCMAKE_TOOLCHAIN_FILE:string=$TOOLCHAIN_FILE \
                $@
   cmake_config $RELEASEDIR \
                -DCMAKE_BUILD_TYPE=Release \
                -DLTO=$LTO \
+               -DCMAKE_TOOLCHAIN_FILE:string=$TOOLCHAIN_FILE \
                $@
-}
-
-function setup_fedora
-{
-  export THIRD_PARTIES_SYS=/usr
-  case $COMPILER in
-    clang)
-      export CC=$THIRD_PARTIES_SYS/bin/clang
-      export CXX=$THIRD_PARTIES_SYS/bin/clang++
-      export CMAKE_AR=$THIRD_PARTIES_SYS/bin/llvm-ar
-      export CMAKE_NM=$THIRD_PARTIES_SYS/bin/llvm-nm
-      export CMAKE_RANLIB=$THIRD_PARTIES_SYS/bin/llvm-ranlib ;;
-    gcc)
-      export CC=$THIRD_PARTIES_SYS/bin/gcc
-      export CXX=$THIRD_PARTIES_SYS/bin/g++
-      export CMAKE_AR=$THIRD_PARTIES_SYS/bin/gcc-ar
-      export CMAKE_NM=$THIRD_PARTIES_SYS/bin/gcc-nm
-      export CMAKE_RANLIB=$THIRD_PARTIES_SYS/bin/gcc-ranlib ;;
-  esac
-  export BOOST_ROOT=$THIRD_PARTIES_SYS
-  launch $@
-}
-
-function setup_centos
-{
-  export THIRD_PARTIES_SYS=/usr/local
-  export AMDAPPSDKROOT=/opt/amdgpu-pro
-  case $COMPILER in
-    gcc)
-      export CC=$THIRD_PARTIES_SYS/bin/gcc
-      export CXX=$THIRD_PARTIES_SYS/bin/g++
-      export CMAKE_AR=$THIRD_PARTIES_SYS/bin/gcc-ar
-      export CMAKE_NM=$THIRD_PARTIES_SYS/bin/gcc-nm
-      export CMAKE_RANLIB=$THIRD_PARTIES_SYS/bin/gcc-ranlib ;;
-    *)
-      red_echo "Unsupported compiler=$COMPILER on platform=$PLATFORM"
-      usage_die ;;
-  esac
-  export BOOST_ROOT=$THIRD_PARTIES_SYS
-  launch $@
 }
 
 USAGE_STR=\
 "usage: $0 \
-[-p|--platform=<fedora|centos>] \
 [-c|--compiler=<gcc|clang>] \
 [-l|--lto=<ON|OFF>] \
 [-h|--help]"
 
-function usage_die()
-{
-  red_echo $USAGE_STR
-  exit 1
-}
-
-function usage_help()
-{
-  green_echo $USAGE_STR
-  exit 0
-}
-
 GETOPT_CMD=\
 $(getopt \
-    -o p:c:l:h \
-    -l platform:,compiler:,lto:,help \
+    -o c:l:h \
+    -l compiler:,lto:,help \
     -n $0 -- $@)
 
 if [ $? -ne 0 ]; then
-  usage_die
+  red_echo $USAGE_STR && exit 1
 fi
 
 while true; do
   case $1 in
-    -p|--platform)
-      case $2 in
-        centos*|fedora*) PLATFORM=$2 ;;
-        *) usage_die ;;
-      esac; shift 2 ;;
     -c|--compiler)
       case $2 in
         gcc|clang) COMPILER=$2 ;;
-        *) usage_die ;;
+        *) red_echo $USAGE_STR && exit 1 ;;
       esac; shift 2 ;;
     -l|--lto)
       case $2 in
         ON|OFF) LTO=$2 ;;
         *) usage_die ;;
       esac; shift 2 ;;
-    -h|--help) usage_help ;;
+    -h|--help)
+        green_echo $USAGE_STR && exit 0 ;;
     *) break ;;
   esac
 done
 
-case $PLATFORM in
-  centos*) setup_centos ;;
-  fedora*) setup_fedora ;;
-  *) red_echo "Unsupported platform=$PLATFORM"; usage_die ;;
-esac
+invoke_cmake
