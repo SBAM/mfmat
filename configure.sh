@@ -95,7 +95,7 @@ function invoke_cmake
   shift
   cmake_config $DEBUGDIR \
                -DCMAKE_BUILD_TYPE=Debug \
-               -DLTO=$LTO \
+               -DLTO=OFF \
                -DCMAKE_TOOLCHAIN_FILE:string=$TOOLCHAIN_FILE \
                $@
   cmake_config $RELEASEDIR \
