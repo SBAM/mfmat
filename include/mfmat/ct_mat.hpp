@@ -139,8 +139,9 @@ namespace mfmat
     /// @return true if matrix is diagonal
     bool is_diagonal() const noexcept;
     /// @return true if matrix is diagonal based on a provided tolerance
-    template <typename = std::enable_if_t<std::is_floating_point_v<T>>>
-    bool is_diagonal(T eps_multiplier) const noexcept;
+    template <typename U,
+              typename = std::enable_if_t<std::is_floating_point_v<U>>>
+    bool is_diagonal(U eps_multiplier) const noexcept;
 
     /// @return true if matrix is symmetric
     bool is_symmetric() const noexcept;

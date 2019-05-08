@@ -240,8 +240,8 @@ namespace mfmat
 
 
   template <typename T, std::size_t R, std::size_t C>
-  template <typename>
-  bool ct_mat<T, R, C>::is_diagonal(T eps_multiplier) const noexcept
+  template <typename U, typename>
+  bool ct_mat<T, R, C>::is_diagonal(U eps_multiplier) const noexcept
   {
     auto cell_test = [&]<auto... Is>(std::index_sequence<Is...>)
       {
