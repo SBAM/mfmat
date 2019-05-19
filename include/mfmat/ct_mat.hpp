@@ -42,8 +42,8 @@ namespace mfmat
     /// @brief Constructs an identity matrix
     ct_mat(identity_tag) noexcept;
     /// @brief Constructor based on full matrix initialization list
-    template <typename T2, std::size_t R2, std::size_t C2>
-    ct_mat(const T2(&arg)[R2][C2]) noexcept;
+    template <std::size_t R2, std::size_t C2>
+    ct_mat(const T(&arg)[R2][C2]) noexcept;
     /**
      * @brief Initializes this matrix by picking only elements pointed by IDXs
      *        from rhs. Those elements are copied sequentially along rows of

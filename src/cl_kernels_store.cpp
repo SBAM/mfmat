@@ -2,9 +2,38 @@
 
 #include <mfmat/cl_kernels_store.hpp>
 
-#define DECL_BINARY_RESOURCE(name)             \
-  extern const char _binary_##name##_cl_start; \
+#define DECL_BINARY_RESOURCE(name)                          \
+  extern const char _binary_##name##_cl_start;              \
   extern const char _binary_##name##_cl_end
+
+
+#define STR_BINARY_RESOURCE_LEN(name)                       \
+  static_cast<std::size_t>                                  \
+    (&_binary_##name##_cl_end -                             \
+     &_binary_##name##_cl_start)
+
+
+#define STR_BINARY_RESOURCE(name)                           \
+  std::string(&_binary_##name##_cl_start,                   \
+              STR_BINARY_RESOURCE_LEN(name))
+
+
+#define INIT_MEMBER(name)                                   \
+  name                                                      \
+  {                                                         \
+    .src_ = STR_BINARY_RESOURCE(name),                      \
+    .f =                                                    \
+    {                                                       \
+      .prog_ = make_program(ctx, prefix_f_src_, name.src_), \
+      .func_ = { name.f.prog_, #name }                      \
+    },                                                      \
+    .d =                                                    \
+    {                                                       \
+      .prog_ = make_program(ctx, prefix_d_src_, name.src_), \
+      .func_ = { name.d.prog_, #name }                      \
+    }                                                       \
+  }
+
 
 DECL_BINARY_RESOURCE(prefix_float);
 DECL_BINARY_RESOURCE(prefix_double);
@@ -31,28 +60,6 @@ DECL_BINARY_RESOURCE(matrix_stddev);
 DECL_BINARY_RESOURCE(matrix_stddev_center);
 DECL_BINARY_RESOURCE(matrix_self_multiply_regularized);
 DECL_BINARY_RESOURCE(matrix_transpose_multiply);
-
-
-#define STR_BINARY_RESOURCE(name)           \
-  std::string(&_binary_##name##_cl_start,   \
-              &_binary_##name##_cl_end -    \
-              &_binary_##name##_cl_start)
-
-#define INIT_MEMBER(name)                                   \
-  name                                                      \
-  {                                                         \
-    .src_ = STR_BINARY_RESOURCE(name),                      \
-    .f =                                                    \
-    {                                                       \
-      .prog_ = make_program(ctx, prefix_f_src_, name.src_), \
-      .func_ = { name.f.prog_, #name }                      \
-    },                                                      \
-    .d =                                                    \
-    {                                                       \
-      .prog_ = make_program(ctx, prefix_d_src_, name.src_), \
-      .func_ = { name.d.prog_, #name }                      \
-    }                                                       \
-  }
 
 
 namespace mfmat

@@ -16,9 +16,9 @@ BOOST_AUTO_TEST_CASE(identity_1x1_norm)
 {
   auto mat1 = mfmat::ct_mat<std::int32_t, 1, 1>(mfmat::identity_tag());
   auto norm1_1 = mat1.norm<owr, 0>();
-  BOOST_CHECK(norm1_1 == 1);
+  BOOST_CHECK_EQUAL(norm1_1, 1);
   auto norm1_2 = mat1.norm<owc, 0>();
-  BOOST_CHECK(norm1_2 == 1);
+  BOOST_CHECK_EQUAL(norm1_2, 1);
   auto mat2 = mfmat::ct_mat<double, 1, 1>({{2.0}});
   auto norm2_1 = mat2.norm<owr, 0>();
   BOOST_CHECK_CLOSE(norm2_1, 2.0, 0.001);

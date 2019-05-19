@@ -170,9 +170,13 @@ namespace mfmat
     auto stddev_col = [&]<auto N, auto... Is>
       (decl_ic<N>, std::index_sequence<Is...>)
       {
-        return std::sqrt
-          (((std::pow(arg.template get<Is, N>() -
-                      mean_vec.template get<0, N>(), 2)) + ...) / T{R});
+        auto pow_acc =
+          ((std::pow(arg.template get<Is, N>() -
+                     mean_vec.template get<0, N>(), 2)) + ...);
+        if constexpr (std::is_floating_point_v<T>)
+          return std::sqrt(pow_acc / T{R});
+        else
+          return static_cast<T>(std::lround(std::sqrt(pow_acc / T{R})));
       };
     // computes standard deviation on all columns
     auto process_col = [&]<auto... Is>(std::index_sequence<Is...>)

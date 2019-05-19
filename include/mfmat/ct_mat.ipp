@@ -28,12 +28,12 @@ namespace mfmat
 
 
   template <typename T, std::size_t R, std::size_t C>
-  template <typename T2, std::size_t R2, std::size_t C2>
-  ct_mat<T, R, C>::ct_mat(const T2(&arg)[R2][C2]) noexcept
+  template <std::size_t R2, std::size_t C2>
+  ct_mat<T, R, C>::ct_mat(const T(&arg)[R2][C2]) noexcept
   {
     static_assert(R == R2, "Rows count mismatch");
     static_assert(C == C2, "Columns count mismatch");
-    constexpr auto getter = [](const T2(&l_arg)[R2][C2], std::size_t idx)
+    constexpr auto getter = [](const T(&l_arg)[R2][C2], std::size_t idx)
       {
         return l_arg[idx / C2][idx % C2];
       };
@@ -280,7 +280,11 @@ namespace mfmat
       {
         return ((this->get<OW, IDX, Is>() * this->get<OW, IDX, Is>()) + ...);
       };
-    return std::sqrt(sum_square(std::make_index_sequence<VL>{}));
+    auto res = std::sqrt(sum_square(std::make_index_sequence<VL>{}));
+    if constexpr (std::is_floating_point_v<T>)
+      return res;
+    else
+      return static_cast<T>(std::lround(res));
   }
 
 

@@ -33,7 +33,7 @@ namespace mfmat::util
         << LZ4F_getErrorName(cb_res);
       throw std::runtime_error(err.str());
     }
-    os_.write(&dest_.front(), cb_res);
+    os_.write(&dest_.front(),  static_cast<std::streamsize>(cb_res));
   }
 
 
@@ -45,7 +45,7 @@ namespace mfmat::util
                                    dest_.capacity(),
                                    nullptr);
     if (!LZ4F_isError(ce_res))
-      os_.write(&dest_.front(), ce_res);
+      os_.write(&dest_.front(), static_cast<std::streamsize>(ce_res));
     LZ4F_freeCompressionContext(ctx_);
   }
 
@@ -67,7 +67,7 @@ namespace mfmat::util
                                       &dest_.front(),
                                       dest_.capacity(),
                                       pbase(),
-                                      orig_size,
+                                      static_cast<std::size_t>(orig_size),
                                       nullptr);
     if (LZ4F_isError(cu_res) != 0)
     {
@@ -77,7 +77,7 @@ namespace mfmat::util
         << LZ4F_getErrorName(cu_res);
       throw std::runtime_error(err.str());
     }
-    os_.write(&dest_.front(), cu_res);
+    os_.write(&dest_.front(), static_cast<std::streamsize>(cu_res));
     return 0;
   }
 
@@ -115,7 +115,7 @@ namespace mfmat::util
     {
       if (offset_ == src_buf_size_)
       {
-        is_.read(&src_.front(), src_.size());
+        is_.read(&src_.front(), static_cast<std::streamsize>(src_.size()));
         src_buf_size_ = static_cast<std::size_t>(is_.gcount());
         offset_ = 0;
       }

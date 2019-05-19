@@ -27,7 +27,7 @@ BOOST_AUTO_TEST_CASE(compress_decompress_sstream)
   auto orig = orig_os.str();
   mfmat::util::lz4_ostream<std::stringstream> os;
   os << orig;
-  auto sstream = std::move(os.release());
+  auto sstream = os.release();
   BOOST_CHECK(os.eof());
   mfmat::util::lz4_istream<std::stringstream> is(std::move(sstream));
   auto res = std::string(std::istreambuf_iterator<char>(is), {});
@@ -37,18 +37,20 @@ BOOST_AUTO_TEST_CASE(compress_decompress_sstream)
 
 BOOST_AUTO_TEST_CASE(compress_decompress_binary)
 {
-  std::vector<std::int64_t> orig_vec;
+  std::vector<std::uint64_t> orig_vec;
   orig_vec.reserve(len);
   for (auto i = 0ul; i < len; ++i)
     orig_vec.push_back(i);
   mfmat::util::lz4_ostream<std::stringstream> os;
   os.write(reinterpret_cast<char*>(orig_vec.data()),
-           orig_vec.size() * sizeof(std::int64_t));
+           static_cast<std::streamsize>(orig_vec.size() *
+                                        sizeof(std::uint64_t)));
   mfmat::util::lz4_istream<std::stringstream> is(os.release());
   for (auto i = 0ul; i < len; ++i)
   {
-    std::int64_t tmp;
-    is.read(reinterpret_cast<char*>(&tmp), sizeof(std::int64_t));
+    std::uint64_t tmp;
+    is.read(reinterpret_cast<char*>(&tmp),
+            static_cast<std::streamsize>(sizeof(std::uint64_t)));
     BOOST_CHECK_EQUAL(orig_vec[i], tmp);
   }
 }
@@ -56,23 +58,26 @@ BOOST_AUTO_TEST_CASE(compress_decompress_binary)
 
 BOOST_AUTO_TEST_CASE(decompress_and_seek)
 {
-  std::vector<std::int64_t> orig_vec;
+  std::vector<std::uint64_t> orig_vec;
   orig_vec.reserve(len);
   for (auto i = 0ul; i < len; ++i)
     orig_vec.push_back(i);
   mfmat::util::lz4_ostream<std::stringstream> os;
   os.write(reinterpret_cast<char*>(orig_vec.data()),
-           orig_vec.size() * sizeof(std::int64_t));
+           static_cast<std::streamsize>(orig_vec.size() *
+                                        sizeof(std::uint64_t)));
   mfmat::util::lz4_istream<std::stringstream> is(os.release());
   // check first half
   for (auto i = 0ul; i < half_len; ++i)
   {
-    std::int64_t tmp;
-    is.read(reinterpret_cast<char*>(&tmp), sizeof(std::int64_t));
+    std::uint64_t tmp;
+    is.read(reinterpret_cast<char*>(&tmp),
+            static_cast<std::streamsize>(sizeof(std::uint64_t)));
     BOOST_CHECK_EQUAL(orig_vec[i], tmp);
   }
-  std::size_t seek_count = 100;
-  std::size_t seek_len = seek_count * sizeof(std::int64_t);
+  auto seek_count = 100ul;
+  auto seek_len = static_cast<std::streamsize>(seek_count) *
+    static_cast<std::streamsize>(sizeof(std::uint64_t));
   // rewind with invalid direction
   is.seekg(-seek_len, std::ios::beg);
   BOOST_CHECK(is.fail());
@@ -91,8 +96,8 @@ BOOST_AUTO_TEST_CASE(decompress_and_seek)
   // check from rewinded position to last
   for (auto i = half_len - seek_count; i < len; ++i)
   {
-    std::int64_t tmp;
-    is.read(reinterpret_cast<char*>(&tmp), sizeof(std::int64_t));
+    std::uint64_t tmp;
+    is.read(reinterpret_cast<char*>(&tmp), sizeof(std::uint64_t));
     BOOST_CHECK_EQUAL(orig_vec[i], tmp);
   }
 }
@@ -100,7 +105,7 @@ BOOST_AUTO_TEST_CASE(decompress_and_seek)
 
 BOOST_AUTO_TEST_CASE(move_constructor_test)
 {
-  std::vector<std::int64_t> orig_vec;
+  std::vector<std::uint64_t> orig_vec;
   orig_vec.reserve(len);
   for (auto i = 0ul; i < len; ++i)
     orig_vec.push_back(i);
@@ -108,26 +113,26 @@ BOOST_AUTO_TEST_CASE(move_constructor_test)
   mfmat::util::lz4_ostream<std::stringstream> os1;
   auto* dat_ptr = orig_vec.data();
   os1.write(reinterpret_cast<char*>(dat_ptr),
-            half_len * sizeof(std::int64_t));
+            half_len * sizeof(std::uint64_t));
   // write second half using move constructed ostream
   mfmat::util::lz4_ostream<std::stringstream> os2(std::move(os1));
   dat_ptr += half_len;
   os2.write(reinterpret_cast<char*>(dat_ptr),
-            half_len * sizeof(std::int64_t));
+            half_len * sizeof(std::uint64_t));
   // check first half using first istream
   mfmat::util::lz4_istream<std::stringstream> is1(os2.release());
   for (auto i = 0ul; i < half_len; ++i)
   {
-    std::int64_t tmp;
-    is1.read(reinterpret_cast<char*>(&tmp), sizeof(std::int64_t));
+    std::uint64_t tmp;
+    is1.read(reinterpret_cast<char*>(&tmp), sizeof(std::uint64_t));
     BOOST_CHECK_EQUAL(orig_vec[i], tmp);
   }
   // check second half using move constructed istream
   mfmat::util::lz4_istream<std::stringstream> is2(std::move(is1));
   for (auto i = half_len; i < len; ++i)
   {
-    std::int64_t tmp;
-    is2.read(reinterpret_cast<char*>(&tmp), sizeof(std::int64_t));
+    std::uint64_t tmp;
+    is2.read(reinterpret_cast<char*>(&tmp), sizeof(std::uint64_t));
     BOOST_CHECK_EQUAL(orig_vec[i], tmp);
   }
 }
