@@ -43,7 +43,7 @@ target_include_directories(mfmat
     $<BUILD_INTERFACE:${HEADERS_DIR}>)
 
 target_compile_features(mfmat
-  PUBLIC cxx_std_17)
+  PUBLIC cxx_std_20)
 
 # todo: use INTERPROCEDURAL_OPTIMIZATION property instead of -flto once cmake
 #       properly relies on AR/NM/RANLIB with LTO plugin

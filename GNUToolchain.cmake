@@ -10,7 +10,8 @@ set(CMAKE_CXX_FLAGS_RELEASE "-DNDEBUG -O3")
 # regroups compilation flags used to build mfmat
 set(MFMAT_CXX_FLAGS
   -Wall -Wextra -Werror
-  -Wshadow
-  -Wfloat-equal
+  -Wdisabled-optimization
   -Wdouble-promotion
-  -Wunreachable-code)
+  -Wfloat-equal
+  -Winline
+  -Wshadow)

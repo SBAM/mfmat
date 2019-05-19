@@ -25,8 +25,7 @@ namespace mfmat
   }
 
 
-  template <typename T,
-            typename = std::enable_if_t<std::is_floating_point_v<T>>>
+  template <typename T, typename>
   constexpr bool is_zero(T arg, T eps_multiplier) noexcept
   {
     return std::abs(arg) <= eps_multiplier * std::numeric_limits<T>::epsilon();

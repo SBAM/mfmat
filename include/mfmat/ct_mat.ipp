@@ -143,7 +143,7 @@ namespace mfmat
   template <typename T, std::size_t R, std::size_t C>
   ct_mat<T, R, C>& ct_mat<T, R, C>::operator+=(T val) noexcept
   {
-    auto cell_add = [=]<auto... Is>(std::index_sequence<Is...>)
+    auto cell_add = [=, this]<auto... Is>(std::index_sequence<Is...>)
       {
         ((this->scan<op_way::row, Is>() += val), ...);
       };
@@ -155,7 +155,7 @@ namespace mfmat
   template <typename T, std::size_t R, std::size_t C>
   ct_mat<T, R, C>& ct_mat<T, R, C>::operator-=(T val) noexcept
   {
-    auto cell_sub = [=]<auto... Is>(std::index_sequence<Is...>)
+    auto cell_sub = [=, this]<auto... Is>(std::index_sequence<Is...>)
       {
         ((this->scan<op_way::row, Is>() -= val), ...);
       };
@@ -167,7 +167,7 @@ namespace mfmat
   template <typename T, std::size_t R, std::size_t C>
   ct_mat<T, R, C>& ct_mat<T, R, C>::operator*=(T val) noexcept
   {
-    auto cell_mul = [=]<auto... Is>(std::index_sequence<Is...>)
+    auto cell_mul = [=, this]<auto... Is>(std::index_sequence<Is...>)
       {
         ((this->scan<op_way::row, Is>() *= val), ...);
       };
@@ -179,7 +179,7 @@ namespace mfmat
   template <typename T, std::size_t R, std::size_t C>
   ct_mat<T, R, C>& ct_mat<T, R, C>::operator/=(T val) noexcept
   {
-    auto cell_div = [=]<auto... Is>(std::index_sequence<Is...>)
+    auto cell_div = [=, this]<auto... Is>(std::index_sequence<Is...>)
       {
         ((this->scan<op_way::row, Is>() /= val), ...);
       };

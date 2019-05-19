@@ -38,20 +38,20 @@ DECL_BINARY_RESOURCE(matrix_transpose_multiply);
               &_binary_##name##_cl_end -    \
               &_binary_##name##_cl_start)
 
-#define INIT_MEMBER(name)                                     \
-  name                                                        \
-  {                                                           \
-    .src_ { STR_BINARY_RESOURCE(name) },                      \
-    .f                                                        \
-    {                                                         \
-      .prog_ { make_program(ctx, prefix_f_src_, name.src_) }, \
-      .func_ { name.f.prog_, #name }                          \
-    },                                                        \
-    .d                                                        \
-    {                                                         \
-      .prog_ { make_program(ctx, prefix_d_src_, name.src_) }, \
-      .func_ { name.d.prog_, #name }                          \
-    }                                                         \
+#define INIT_MEMBER(name)                                   \
+  name                                                      \
+  {                                                         \
+    .src_ = STR_BINARY_RESOURCE(name),                      \
+    .f =                                                    \
+    {                                                       \
+      .prog_ = make_program(ctx, prefix_f_src_, name.src_), \
+      .func_ = { name.f.prog_, #name }                      \
+    },                                                      \
+    .d =                                                    \
+    {                                                       \
+      .prog_ = make_program(ctx, prefix_d_src_, name.src_), \
+      .func_ = { name.d.prog_, #name }                      \
+    }                                                       \
   }
 
 

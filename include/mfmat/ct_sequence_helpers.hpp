@@ -144,9 +144,6 @@ namespace mfmat
       return std::index_sequence<>{};
     else
     {
-      // silence warning, self is not used when TAIL is empty
-# pragma GCC diagnostic push
-# pragma GCC diagnostic ignored "-Wunused-but-set-parameter"
       constexpr auto build = []<std::size_t HEAD, std::size_t... TAIL>
         (const auto& self, std::index_sequence<HEAD, TAIL...>)
         {
@@ -170,7 +167,6 @@ namespace mfmat
           }
         };
       return build(build, seq);
-# pragma GCC diagnostic pop
     }
   }
 
