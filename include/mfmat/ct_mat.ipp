@@ -21,7 +21,7 @@ namespace mfmat
     static_assert(R == C, "Identity constructor requires a square matrix");
     auto diag_set = [this]<auto... Is>(std::index_sequence<Is...>)
       {
-        ((get<Is, Is>() = 1), ...);
+        ((this->get<Is, Is>() = 1), ...);
       };
     diag_set(std::make_index_sequence<R>{});
   }
@@ -383,7 +383,7 @@ namespace mfmat
     static_assert(R == C, "Trace only applies to a square matrix");
     auto diag_sum = [this]<auto... Is>(std::index_sequence<Is...>)
       {
-        return (get<Is, Is>() + ...);
+        return (this->get<Is, Is>() + ...);
       };
     return diag_sum(std::make_index_sequence<R>{});
   }

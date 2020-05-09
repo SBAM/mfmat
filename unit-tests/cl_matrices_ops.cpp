@@ -233,12 +233,18 @@ BOOST_AUTO_TEST_CASE(self_sub_and_store, * but::fixture(&setup))
 {
   auto mat_f = mfmat::cl_mat_f{50, 50};
   mat_f += 1.1f;
-  mat_f -= mat_f;
+  {
+    auto tmp = mat_f;
+    mat_f -= tmp;
+  }
   for (auto i : mat_f)
     BOOST_CHECK(mfmat::are_equal(i, 0.0f));
   auto mat_d = mfmat::cl_mat_d{60, 60};
   mat_d += 3.3;
-  mat_d -= mat_d;
+  {
+    auto tmp = mat_d;
+    mat_d -= tmp;
+  }
   for (auto i : mat_d)
     BOOST_CHECK(mfmat::are_equal(i, 0.0));
 }

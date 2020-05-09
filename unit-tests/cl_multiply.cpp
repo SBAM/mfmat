@@ -127,9 +127,9 @@ BOOST_AUTO_TEST_CASE(multiply_alternate, * but::fixture(&setup))
   for (std::size_t m = 0; m < mat_d_rhs.get_row_count(); ++m)
     for (std::size_t n = 0; n < mat_d_rhs.get_col_count(); ++n)
       if (m % 2 == 0)
-        mat_d_rhs.get(m, n) = 1.0f;
+        mat_d_rhs.get(m, n) = 1.0;
       else
-        mat_d_rhs.get(m, n) = -1.0f;
+        mat_d_rhs.get(m, n) = -1.0;
   auto res_d = mat_d_lhs * mat_d_rhs;
   BOOST_CHECK_EQUAL(res_d.get_row_count(), 450);
   BOOST_CHECK_EQUAL(res_d.get_col_count(), 350);

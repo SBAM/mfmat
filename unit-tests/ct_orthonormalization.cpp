@@ -25,7 +25,7 @@ void check_tolerance(const T& lhs, const T& rhs, double tolerance)
 template <typename T>
 void check_transpose_is_inverse(const T& mat, double tolerance = 0.0)
 {
-  static_assert(mat.row_count == mat.col_count);
+  static_assert(T::row_count == T::col_count);
   auto identity = T(mfmat::identity_tag{});
   auto mul_by_transpose = mat * transpose(mat);
   if (mfmat::is_zero(tolerance))

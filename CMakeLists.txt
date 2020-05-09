@@ -1,33 +1,34 @@
-cmake_minimum_required(VERSION 3.9)
+# CMP0083 PIE policy introduced in 3.14
+cmake_minimum_required(VERSION 3.14)
 
 project(mfmat
   VERSION 1.0
   LANGUAGES CXX)
 
+message("-- cmake toolchain file = ${CMAKE_TOOLCHAIN_FILE}")
+
 # Expose LTO option
 option(LTO "Enables Link-Time-Optimization" ON)
 
-# Check IPO(LTO) support
+# check position independent support (-fPIE)
+include(CheckPIESupported)
+check_pie_supported(OUTPUT_VARIABLE PIE_MSG
+  LANGUAGES CXX)
+if (NOT CMAKE_CXX_LINK_PIE_SUPPORTED)
+  message(FATAL_ERROR "Linker with PIE capabilities required: ${PIE_MSG}")
+endif()
+
+# check link-time-optimisation support (-flto)
 if (LTO)
   include(CheckIPOSupported)
-  check_ipo_supported(RESULT ipo_result
-    OUTPUT ipo_output
+  check_ipo_supported(RESULT IPO_SUPPORTED
+    OUTPUT IPO_MSG
     LANGUAGES CXX)
-  if (NOT ipo_result)
-    message(WARNING "LTO requested but not supported: ${ipo_output}")
+  if (NOT IPO_SUPPORTED)
+    message(WARNING "LTO requested but not supported: ${IPO_MSG}")
     set(LTO OFF CACHE BOOL FORCE)
   else()
-    # Provide ar/nm/ranlib with LTO plugin
-    get_filename_component(TOOLCHAIN_PATH
-      ${CMAKE_CXX_COMPILER}
-      DIRECTORY)
-    message("-- Deduced TOOLCHAIN_PATH=${TOOLCHAIN_PATH}")
-    set(CMAKE_AR ${TOOLCHAIN_PATH}/${CMAKE_AR_NAME})
-    message("-- Using ar              =${CMAKE_AR}")
-    set(CMAKE_NM ${TOOLCHAIN_PATH}/${CMAKE_NM_NAME})
-    message("-- Using nm              =${CMAKE_NM}")
-    set(CMAKE_RANLIB ${TOOLCHAIN_PATH}/${CMAKE_RANLIB_NAME})
-    message("-- Using ranlib          =${CMAKE_RANLIB}")
+    set(CMAKE_INTERPROCEDURAL_OPTIMIZATION_RELEASE TRUE)
   endif()
 endif()
 
@@ -35,7 +36,6 @@ endif()
 # - pkg-config
 find_package(PkgConfig REQUIRED)
 # - Boost
-set(Boost_USE_MULTITHREADED ON)
 find_package(Boost REQUIRED COMPONENTS
   unit_test_framework)
 # - libLZ4
