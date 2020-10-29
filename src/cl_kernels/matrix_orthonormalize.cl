@@ -5,6 +5,8 @@ kernel void matrix_orthonormalize(global data_t* dat,
 {
   const size_t base_row = get_global_id(0); // base row index
   const size_t wg_size = get_local_size(0); // work-group size
+  local data_t local_dot;
+  local data_t norm;
   size_t min_mn = min(M, N);
   // loop over all columns
   for (size_t col = 0; col < min_mn; ++col)
@@ -17,7 +19,6 @@ kernel void matrix_orthonormalize(global data_t* dat,
       for (size_t row = base_row; row < M; row += wg_size)
         loc[base_row] += dat[row * N + col] * dat[row * N + col_proj];
       barrier(CLK_LOCAL_MEM_FENCE);
-      local data_t local_dot;
       if (base_row == 0)
       {
         local_dot = (data_t)0.0;
@@ -35,7 +36,6 @@ kernel void matrix_orthonormalize(global data_t* dat,
     for (size_t row = base_row; row < M; row += wg_size)
       loc[base_row] += dat[row * N + col] * dat[row * N + col];
     barrier(CLK_LOCAL_MEM_FENCE);
-    local data_t norm;
     if (base_row == 0)
     {
       norm = (data_t)0.0;
