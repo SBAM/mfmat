@@ -106,7 +106,7 @@ namespace mfmat
       result = cl::Program({prefix, src});
     try
     {
-      result.build("-Werror");
+      result.build("-cl-std=CL1.1 -Werror");
     }
     catch (const cl::Error& e)
     {
