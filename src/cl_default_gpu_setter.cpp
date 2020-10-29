@@ -121,7 +121,6 @@ namespace mfmat
     max_group_size_ = d.getInfo<CL_DEVICE_MAX_WORK_GROUP_SIZE>();
     little_endian_ = d.getInfo<CL_DEVICE_ENDIAN_LITTLE>() == CL_TRUE;
     ts_res_ = d.getInfo<CL_DEVICE_PROFILING_TIMER_RESOLUTION>();
-    queue_size_ = d.getInfo<CL_DEVICE_QUEUE_ON_DEVICE_MAX_SIZE>();
     image_support_ = d.getInfo<CL_DEVICE_IMAGE_SUPPORT>() == CL_TRUE;
     max_kernel_samplers_ = d.getInfo<CL_DEVICE_MAX_SAMPLERS>();
     // image1d_max_width_ = d.getInfo<CL_DEVICE_IMAGE_MAX_BUFFER_SIZE>();
@@ -165,7 +164,6 @@ namespace mfmat
       << " device_max_work_group_size=" << d.max_group_size_ << '\n'
       << " device_little_endian=" << d.little_endian_ << '\n'
       << " device_profiling_resolution=" << d.ts_res_ << "ns\n"
-      << " device_queue_max_size=" << d.queue_size_ / kb << "KB\n"
       << " device_image_support=" << d.image_support_ << '\n'
       << " device_max_kernel_samplers=" << d.max_kernel_samplers_ << '\n'
       // " device_image1D_max=[ " << d.image1d_max_width_ << " ]" << '\n'

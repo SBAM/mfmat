@@ -60,7 +60,6 @@ namespace mfmat
     std::size_t max_group_size_; ///< max work group size
     bool little_endian_; ///< true if device has little endian byte-order
     std::size_t ts_res_; ///< profiling event timestamp's resolution, in ns
-    std::size_t queue_size_; ///< device queue max size
     bool image_support_; ///< true if device has image support
     std::size_t max_kernel_samplers_; ///< max samplers per kernel
     // std::size_t image1d_max_width_; ///< image1D max width
