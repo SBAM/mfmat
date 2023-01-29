@@ -6,7 +6,7 @@
 # define CL_HPP_MINIMUM_OPENCL_VERSION 200
 # define CL_HPP_ENABLE_EXCEPTIONS
 
-# include <CL/cl2.hpp>
+# include <CL/opencl.hpp>
 
 namespace mfmat
 {

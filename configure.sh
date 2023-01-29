@@ -29,11 +29,6 @@ function yellow_echo
 CONFIGURE_LOCATION=$(readlink -f $0)
 BASEDIR=$(dirname $CONFIGURE_LOCATION)
 
-export GIT_TAG=${GIT_TAG:-$(git -C $BASEDIR describe --tags --always)}
-export GIT_AUTHOR=$(git -C $BASEDIR log -1 | sed -r -n 's/^Author:\s+(.*)/\1/p')
-export GIT_COMMIT_DATE=$(git -C $BASEDIR log -1 | sed -r -n 's/^Date:\s+(.*)/\1/p')
-export GIT_COMMIT_HASH=$(git -C $BASEDIR log -1 | sed -r -n 's/^commit\s+(.*)/\1/p')
-
 # attempts to determine current OS
 function guess_os
 {
@@ -51,92 +46,99 @@ function guess_os
 
 PLATFORM=$(guess_os)
 COMPILER=gcc
-LTO=ON
+SHARED=False
+LTO=True
 
-# $1 path
-# $N additional flags
-function cmake_config
+# $1 build type (Debug/Release)
+function configure_build
 {
-  OUTPUT_PATH=$1
-  shift
-  mkdir -p $OUTPUT_PATH
-  if [ 0 -eq $? ]; then
-    green_echo "[Will build artifacts in $OUTPUT_PATH]"
-  else
-    red_echo "[Could not create $OUTPUT_PATH]"
-  fi
-  pushd > /dev/null $OUTPUT_PATH 2>&1
+  OUTPUT_PATH=$BASEDIR/build/$1
   grey_echo "  ==> platform=$YELLOW$PLATFORM"
   grey_echo "  ==> compiler=$YELLOW$COMPILER"
-  grey_echo "  ==> GIT_AUTHOR=$YELLOW$GIT_AUTHOR"
-  grey_echo "  ==> GIT_TAG=$YELLOW$GIT_TAG"
-  grey_echo "  ==> GIT_COMMIT_DATE=$YELLOW$GIT_COMMIT_DATE"
-  grey_echo "  ==> GIT_COMMIT_HASH=$YELLOW$GIT_COMMIT_HASH"
-  grey_echo "  ==> (from $OUTPUT_PATH)"
-  grey_echo "  ==> cmake $@ $BASEDIR"
-  cmake $@ $BASEDIR
-  #cmake --trace $@ $BASEDIR
-  popd > /dev/null 2>&1
+  grey_echo "  ==> SHARED=$YELLOW$SHARED"
+  grey_echo "  ==> LINK_TIME_OPTIMIZATION=$YELLOW$LTO"
+  conan install $BASEDIR \
+        -b missing \
+        -pr $BASEDIR/conan/profiles/$2 \
+        -s build_type=$1 \
+        -if $OUTPUT_PATH \
+        -o *:shared=$SHARED \
+        -o *:lto=$LTO
+  conan build $BASEDIR -bf $OUTPUT_PATH -c
 }
 
-function invoke_cmake
+function setup_fedora
 {
-  export AMDAPPSDKROOT=/opt/amdgpu-pro
   case $COMPILER in
     clang)
-      export CXX=$(which clang++)
-      export TOOLCHAIN_FILE=ClangToolchain.cmake ;;
+      configure_build Debug fedora_clang
+      configure_build Release fedora_clang ;;
     gcc)
-      export CXX=$(which g++)
-      export TOOLCHAIN_FILE=GNUToolchain.cmake ;;
+      configure_build Debug fedora_gcc
+      configure_build Release fedora_gcc ;;
+    *)
+      red_echo "Unsupported compiler=$COMPILER on platform=$PLATFORM"
+      usage_die ;;
   esac
-  DEBUGDIR=$BASEDIR/build/Debug
-  RELEASEDIR=$BASEDIR/build/Release
-  shift
-  cmake_config $DEBUGDIR \
-               -DCMAKE_BUILD_TYPE=Debug \
-               -DLTO=OFF \
-               -DCMAKE_TOOLCHAIN_FILE:string=$TOOLCHAIN_FILE \
-               $@
-  cmake_config $RELEASEDIR \
-               -DCMAKE_BUILD_TYPE=Release \
-               -DLTO=$LTO \
-               -DCMAKE_TOOLCHAIN_FILE:string=$TOOLCHAIN_FILE \
-               $@
 }
 
 USAGE_STR=\
 "usage: $0 \
-[-c|--compiler=<gcc|clang>] \
-[-l|--lto=<ON|OFF>] \
-[-h|--help]"
+[-p|--platform <fedora>] \
+[-c|--compiler <gcc|clang>] \
+[-s|--shared <True|False>] \
+[-l|--lto <True|False>]"
+
+function usage_die()
+{
+  red_echo $USAGE_STR
+  exit 1
+}
+
+function usage_help()
+{
+  green_echo $USAGE_STR
+  exit 0
+}
 
 GETOPT_CMD=\
 $(getopt \
-    -o c:l:h \
-    -l compiler:,lto:,help \
+    -o p:c:s:l:h \
+    -l platform:,compiler:,shared:,lto:,help \
     -n $0 -- $@)
 
 if [ $? -ne 0 ]; then
-  red_echo $USAGE_STR && exit 1
+  usage_die
 fi
 
 while true; do
   case $1 in
+    -p|--platform)
+      case $2 in
+        fedora*) PLATFORM=$2 ;;
+        *) usage_die ;;
+      esac; shift 2 ;;
     -c|--compiler)
       case $2 in
         gcc|clang) COMPILER=$2 ;;
-        *) red_echo $USAGE_STR && exit 1 ;;
+        *) usage_die ;;
+      esac; shift 2 ;;
+    -s|--shared)
+      case $2 in
+        True|False) SHARED=$2 ;;
+        *) usage_die ;;
       esac; shift 2 ;;
     -l|--lto)
       case $2 in
-        ON|OFF) LTO=$2 ;;
+        True|False) LTO=$2 ;;
         *) usage_die ;;
       esac; shift 2 ;;
-    -h|--help)
-        green_echo $USAGE_STR && exit 0 ;;
+    -h|--help) usage_help ;;
     *) break ;;
   esac
 done
 
-invoke_cmake
+case $PLATFORM in
+  fedora*) setup_fedora ;;
+  *) red_echo "Unsupported platform=$PLATFORM"; usage_die ;;
+esac

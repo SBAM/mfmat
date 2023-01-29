@@ -1,0 +1,18 @@
+include(linux)
+
+[settings]
+compiler=clang
+compiler.version=15
+compiler.libcxx=libstdc++11
+# TODO use clang's own libstdc++
+#compiler.libcxx=libc++
+compiler.cppstd=20
+
+[options]
+toolchain_file=ClangToolchain.cmake
+
+[build_requires]
+
+[env]
+CC=/usr/bin/clang
+CXX=/usr/bin/clang++

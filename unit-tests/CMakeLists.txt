@@ -1,5 +1,3 @@
-add_compile_definitions(BOOST_TEST_DYN_LINK)
-
 # Customize cmake tests command
 add_custom_target(tests
   COMMAND ${CMAKE_CTEST_COMMAND}
@@ -12,12 +10,15 @@ macro(build_and_run_test source_file)
   add_executable(${test_name} ${source_file})
   target_compile_options(${test_name}
     PRIVATE
+      $<$<BOOL:${SHARED}>:BOOST_TEST_DYN_LINK>
       ${MFMAT_CXX_FLAGS})
   target_link_libraries(${test_name}
     PRIVATE
-      mfmat Boost::unit_test_framework)
+      Boost::unit_test_framework
+      mfmat)
   add_dependencies(tests ${test_name})
-  add_test(${test_name} ${test_name})
+  add_test(NAME ${test_name}
+    COMMAND ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${test_name})
   set_tests_properties(${test_name} PROPERTIES TIMEOUT 30)
 endmacro()
 

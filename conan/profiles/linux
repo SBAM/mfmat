@@ -1,0 +1,7 @@
+[settings]
+os=Linux
+os_build=Linux
+arch=x86_64
+arch_build=x86_64
+# always use conancenter's cmake in Release mode
+cmake:build_type=Release

@@ -30,16 +30,10 @@ add_library(mfmat STATIC
   ${SOURCES}
   ${CL_KERNELS_OBJ})
 
-set_property(TARGET mfmat
-  PROPERTY POSITION_INDEPENDENT_CODE ON)
-
 target_include_directories(mfmat
   PUBLIC
     $<INSTALL_INTERFACE:include>
     $<BUILD_INTERFACE:${HEADERS_DIR}>)
-
-target_compile_features(mfmat
-  PUBLIC cxx_std_20)
 
 target_compile_options(mfmat
   PRIVATE
@@ -49,4 +43,4 @@ target_link_libraries(mfmat
   PUBLIC
     OpenCL::OpenCL
   PRIVATE
-    PkgConfig::LibLZ4)
+    lz4::lz4)
